@@ -1,6 +1,7 @@
 from TextProvider import TextProvider, ProviderError
 from BaseXClient import BaseXClient
 from timeout_decorator import timeout
+import Nestle1904LowfatProvider_Config as Config
 
 
 class Nestle1904LowfatProvider(TextProvider):
@@ -9,7 +10,10 @@ class Nestle1904LowfatProvider(TextProvider):
 
     def __init__(self):
         try:
-            self.session = BaseXClient.Session('localhost', 1984, 'admin', 'admin')
+            self.session = BaseXClient.Session(Config.basex['host'],
+                                               Config.basex['port'],
+                                               Config.basex['username'],
+                                               Config.basex['password'])
             self.session.execute('open nestle1904lowfat')
         except Exception as err:
             self.error = f'Error opening BaseX XML database: {type(err).__name__}'
