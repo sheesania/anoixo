@@ -1,6 +1,6 @@
-from flask import Flask, abort, jsonify, make_response
+from flask import Flask, abort, jsonify, make_response, request
 from typing import Dict
-from TextProvider import TextProvider
+from TextProvider import TextProvider, ProviderError
 from Nestle1904LowfatProvider import Nestle1904LowfatProvider
 
 app = Flask(__name__)
@@ -16,14 +16,39 @@ def not_found(error):
                          404)
 
 
+@app.errorhandler(400)
+def bad_request(error):
+    return make_response(jsonify({'error': 'Bad request', 'description': error.description}),
+                         400)
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    return make_response(jsonify({'error': 'Internal server error',
+                                  'description': error.description}),
+                         500)
+
+
+def parse_json(json):
+    if not json or 'reference' not in request.json:
+        abort(400, 'Malformed JSON')
+    else:
+        return json
+
+
 @app.route('/text/<string:text_id>', methods=['POST'])
-def query(text_id: str):
+def text_query(text_id: str):
     if text_id not in text_providers:
         abort(404, f'Text provider with id \'{text_id}\' was not found. ' 
                    f'Available texts: {" ".join(text_providers.keys())}')
     provider = text_providers[text_id]
-    return jsonify({'name': provider.get_provided_text_name(),
-                    'source': provider.get_source_name()})
+    query = parse_json(request.json)
+
+    try:
+        result = provider.get_text_for_reference(query['reference'])
+        return jsonify({'text': result})
+    except ProviderError as err:
+        abort(500, err.message)
 
 
 if __name__ == '__main__':
