@@ -1,8 +1,9 @@
 from flask import Flask, abort, jsonify, make_response, request
 from flask_cors import cross_origin
-from typing import Dict
+from typing import Any, Dict
 from TextProvider import TextProvider, ProviderError
 from Nestle1904LowfatProvider import Nestle1904LowfatProvider
+from TextQuery import TextQuery
 
 app = Flask(__name__)
 
@@ -30,6 +31,12 @@ def internal_error(error):
                          500)
 
 
+def as_text_query(json: Dict[Any, Any]) -> TextQuery:
+    def error(message: str):
+        abort(400, f'Malformed JSON: {message}')
+    return TextQuery(json, error)
+
+
 def parse_json(json):
     if not json or 'reference' not in request.json:
         abort(400, 'Malformed JSON')
@@ -45,6 +52,8 @@ def text_query(text_id: str):
                    f'Available texts: {" ".join(text_providers.keys())}')
     provider = text_providers[text_id]
     query = parse_json(request.json)
+
+    as_text_query(query)
 
     try:
         result = provider.get_text_for_reference(query['reference'])
