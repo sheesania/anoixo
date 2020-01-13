@@ -5,8 +5,8 @@ Currently under development at Taylor University.
 
 [Original proposal with background, rationale, and an overview of existing morphological/syntactic search tools](https://docs.google.com/document/d/1tC8CPp7WmkOH8jjgBRM_YxbxWEMFS7oJpzKfHDsqlTA/edit?usp=sharing)
 
-## Setup
-### Environment
+## Setup for development
+### Database
 Install the BaseX XML database.
 
 ```
@@ -53,3 +53,19 @@ Now run the development server!
 ```
 python3 app.py
 ```
+
+### Client
+Change to the client directory and install its dependencies.
+
+```
+cd ../../client/anoixo-client
+npm install
+```
+
+Now start the development server.
+
+```
+npm start
+```
+
+By default, it expects to find the API server at `http://localhost:5000/`.
