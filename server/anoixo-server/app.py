@@ -1,4 +1,5 @@
 from flask import Flask, abort, jsonify, make_response, request
+from flask_cors import cross_origin
 from typing import Dict
 from TextProvider import TextProvider, ProviderError
 from Nestle1904LowfatProvider import Nestle1904LowfatProvider
@@ -37,6 +38,7 @@ def parse_json(json):
 
 
 @app.route('/text/<string:text_id>', methods=['POST'])
+@cross_origin()
 def text_query(text_id: str):
     if text_id not in text_providers:
         abort(404, f'Text provider with id \'{text_id}\' was not found. ' 
