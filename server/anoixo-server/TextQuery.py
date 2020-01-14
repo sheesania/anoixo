@@ -17,10 +17,16 @@ class WordQuery:
     def __init__(self, word_query_json: Any, on_parsing_error: Callable[[str], Any]):
         if not isinstance(word_query_json, dict):
             on_parsing_error('Word query is not a dictionary')
+
         self.link_to_next_word: Optional[Link] = None
         if 'link' in word_query_json:
-            self.link_to_next_word = Link(word_query_json.pop('link'), on_parsing_error)
-        self.attributes: Dict[str, str] = word_query_json
+            self.link_to_next_word = Link(word_query_json['link'], on_parsing_error)
+
+        self.attributes: Dict[str, str] = {}
+        if 'attributes' in word_query_json:
+            if not isinstance(word_query_json['attributes'], dict):
+                on_parsing_error('\'Attributes\' in word query is not a dictionary')
+            self.attributes = word_query_json['attributes']
 
     def __repr__(self):
         return f'{{attributes: {str(self.attributes)}, link_to_next_word: {{{str(self.link_to_next_word)}}}}}'
