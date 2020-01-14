@@ -77,19 +77,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WordSequence'
-          example: '[[{"root": "ουδε","link": {"allowedWordsBetween": 0}},{"pos": "Verb","mood": "Infinitive"}],[{"pos": "Verb","mood": "Infinitive"}]]'
+          example: '[[{"attributes": {"root": "ουδε"}, "link": {"allowedWordsBetween": 0}}, {"attributes": {"pos": "Verb", "mood": "Infinitive"}}], [{"attributes": {"pos": "Verb", "mood": "Infinitive"}}]]'
       required:
         - sequences
       example:  # A query for ουδε immediately followed by an infinitive in the
                 # same sentence as another infinitive (like in 1 Tim 2:12)
         sequences:
-          - - root: ουδε
+          - - attributes:
+                root: ουδε
               link:
                 allowedWordsBetween: 0
-            - pos: Verb
-              mood: Infinitive
-          - - pos: Verb
-              mood: Infinitive
+            - attributes:
+                pos: Verb
+                mood: Infinitive
+          - - attributes: 
+                pos: Verb
+                mood: Infinitive
               
     WordSequence:
       title: WordSequence
@@ -103,7 +106,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/WordQuery'
-      example: '[{"root": "ουδε","link": {"allowedWordsBetween": 0}},{"pos": "Verb","mood": "Infinitive"}]'
+      example: '[{"attributes": {"root": "ουδε"}, "link": {"allowedWordsBetween": 0}}, {"attributes": {"pos": "Verb", "mood": "Infinitive"}}]'
       
     WordQuery:
       title: WordQuery
@@ -125,19 +128,23 @@ components:
               type: integer
           required:
             - allowedWordsBetween
-      additionalProperties:
-        title: Attributes
-        description: Attributes of the word to match. The attributes and their 
-          values available for words will depend on the specific text, but will 
-          generally be morphological and/or syntactic categories (root, case, 
-          number, tense, etc). You can include as many attributes as you want,
-          and they will all be ANDed together to find words that match all
-          given attribute values. An endpoint for getting all available
-          attributes and values for a text is still TODO.
-        type: string
-      example: '{"root": "ουδε","link": {"allowedWordsBetween": 0}}'
-      
-    
+        attributes:
+          title: Attributes
+          description: Attributes of the word to match. The attributes and their 
+            values available for words will depend on the specific text, but will 
+            generally be morphological and/or syntactic categories (root, case, 
+            number, tense, etc). You can include as many attributes as you want,
+            and they will all be ANDed together to find words that match all
+            given attribute values. An endpoint for getting all available
+            attributes and values for a text is still TODO.
+            
+            This is optional because the user may just want to search for "any
+            word" as part of a sequence, and not set any attribute filters on
+            it.
+          type: object
+      example: '{"attributes": {"root": "ουδε"}, "link": {"allowedWordsBetween": 0}}'
+
+
 # Schemas for results sent FROM the server.
     QueryResults:
       title: QueryResults
