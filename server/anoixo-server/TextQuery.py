@@ -26,12 +26,12 @@ class WordQuery:
         return f'{{attributes: {str(self.attributes)}, link_to_next_word: {{{str(self.link_to_next_word)}}}}}'
 
 
-class LinkedWordGroup:
-    def __init__(self, group_json: Any, on_parsing_error: Callable[[str], Any]):
-        if not isinstance(group_json, list):
-            on_parsing_error('Group is not a list')
+class WordSequence:
+    def __init__(self, sequence_json: Any, on_parsing_error: Callable[[str], Any]):
+        if not isinstance(sequence_json, list):
+            on_parsing_error('Sequence is not a list')
         self.word_queries: List[WordQuery] = []
-        for word_query in group_json:
+        for word_query in sequence_json:
             self.word_queries.append(WordQuery(word_query, on_parsing_error))
 
     def __repr__(self):
@@ -40,11 +40,11 @@ class LinkedWordGroup:
 
 class TextQuery:
     def __init__(self, json: Dict[Any, Any], on_parsing_error: Callable[[str], Any]):
-        if not ('groups' in json and isinstance(json['groups'], list)):
-            on_parsing_error('Does not contain a list \'groups\'')
-        self.groups: List[LinkedWordGroup] = []
-        for group in json['groups']:
-            self.groups.append(LinkedWordGroup(group, on_parsing_error))
+        if not ('sequences' in json and isinstance(json['sequences'], list)):
+            on_parsing_error('Does not contain a list \'sequences\'')
+        self.sequences: List[WordSequence] = []
+        for sequence in json['sequences']:
+            self.sequences.append(WordSequence(sequence, on_parsing_error))
 
     def __repr__(self):
-        return str(self.groups)
+        return str(self.sequences)
