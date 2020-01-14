@@ -1,8 +1,9 @@
 from flask import Flask, abort, jsonify, make_response, request
 from flask_cors import CORS
-from typing import Dict
+from typing import Any, Dict, Union
 from TextProvider import TextProvider, ProviderError
 from Nestle1904LowfatProvider import Nestle1904LowfatProvider
+from TextQuery import TextQuery
 
 app = Flask(__name__)
 CORS(app)
@@ -31,11 +32,13 @@ def internal_error(error):
                          500)
 
 
-def parse_json(json):
-    if not json or 'reference' not in request.json:
-        abort(400, 'Malformed JSON')
-    else:
-        return json
+def json_to_text_query(json: Union[Dict[Any, Any], None]) -> TextQuery:
+    if json is None:
+        abort(400, 'Request does not contain a JSON body')
+
+    def on_error(message: str):
+        abort(400, f'Error parsing JSON: {message}')
+    return TextQuery(json, on_error)
 
 
 @app.route('/text/<string:text_id>', methods=['POST'])
@@ -44,10 +47,12 @@ def text_query(text_id: str):
         abort(404, f'Text provider with id \'{text_id}\' was not found. ' 
                    f'Available texts: {" ".join(text_providers.keys())}')
     provider = text_providers[text_id]
-    query = parse_json(request.json)
 
     try:
-        result = provider.get_text_for_reference(query['reference'])
+        query = json_to_text_query(request.json)
+        print(query)
+
+        result = provider.get_text_for_reference(request.json['reference'])
         return jsonify({'text': result})
     except ProviderError as err:
         abort(500, err.message)
