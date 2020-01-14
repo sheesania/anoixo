@@ -1,0 +1,265 @@
+# This is an OpenAPI Specification document. It's not tied to the actual
+# implementation in any way (I didn't use it to generate code or anything);
+# it's just serving as documentation. You can view and edit it using Swagger
+# Editor (https://swagger.io/tools/swagger-editor/) or another Swagger or OAS
+# tool.
+
+openapi: 3.0.2
+info:
+  version: 0.1.0
+  title: Anoixo Server
+  description: Server API for Anoixo Grammatical Bible Search. Meant to be
+    consumed by the Anoixo client.
+
+
+
+paths: 
+  /text/{textId}:
+    post:
+      summary: Get passages in a given text that match a query.
+      description: Given a text ID and a query, return passages that match that 
+        query in that text. An endpoint for getting all available texts is still
+        TODO.
+      parameters:
+        - name: textId
+          in: path
+          description: Short ID of the text to query.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Query to search the text for.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextQuery'
+      responses:
+        200:
+          description: Successfully queried the text.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResults'
+        400:
+          description: JSON request body was not properly formatted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: The server encountered an error executing the query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+            
+components:
+  schemas:
+  
+	# Schemas for queries sent TO the server.
+    TextQuery:
+      title: TextQuery
+      description: A query for passages in the text that match the given 
+        parameters.
+      type: object
+      properties:
+        sequences:
+          description: List of sequences of words to search for. Word queries
+            in the same sequence must have matches following each other, but 
+            word queries in separate sequences can have matches anywhere in the 
+            verse relative to each other. So if you search for [[A, B], [C]],
+            there must be a word matching A preceding a word matching B, but a
+            word matching C can appear anywhere (before there, in between them,
+            after them...)
+          type: array
+          items:
+            $ref: '#/components/schemas/WordSequence'
+          example: '[[{"root": "ουδε","link": {"allowedWordsBetween": 0}},{"pos": "Verb","mood": "Infinitive"}],[{"pos": "Verb","mood": "Infinitive"}]]'
+      required:
+        - sequences
+      example:  # A query for ουδε immediately followed by an infinitive in the
+                # same sentence as another infinitive (like in 1 Tim 2:12)
+        sequences:
+          - - root: ουδε
+              link:
+                allowedWordsBetween: 0
+            - pos: Verb
+              mood: Infinitive
+          - - pos: Verb
+              mood: Infinitive
+              
+    WordSequence:
+      title: WordSequence
+      description: A series of word queries to search for following each other.
+        Order matters! If your WordSequence is [A, B, C], the server will look
+        for a sequence of words matching A, then B, then C (not B, A, C or
+        anything else). However, there may be any number of words in between
+        each match (though the search overall is limited to one sentence). If
+        you want to limit words allowed between each match, use the `link`
+        property on the word queries.
+      type: array
+      items:
+        $ref: '#/components/schemas/WordQuery'
+      example: '[{"root": "ουδε","link": {"allowedWordsBetween": 0}},{"pos": "Verb","mood": "Infinitive"}]'
+      
+    WordQuery:
+      title: WordQuery
+      description: Query for a word to match.
+      type: object
+      properties:
+        link:
+          title: Link
+          description: Parameters for the link to the next word in the sequence.
+            Optional; only include it if you want to put more restrictions on
+            this word and the next word than simply that they must follow each 
+            other.
+          type: object
+          properties:
+            allowedWordsBetween:
+              description: How many words to allow between this word and the
+                following word. <= `allowedWordsBetween` can be between the two
+                words for a match.
+              type: integer
+          required:
+            - allowedWordsBetween
+      additionalProperties:
+        title: Attributes
+        description: Attributes of the word to match. The attributes and their 
+          values available for words will depend on the specific text, but will 
+          generally be morphological and/or syntactic categories (root, case, 
+          number, tense, etc). You can include as many attributes as you want,
+          and they will all be ANDed together to find words that match all
+          given attribute values. An endpoint for getting all available
+          attributes and values for a text is still TODO.
+        type: string
+      example: '{"root": "ουδε","link": {"allowedWordsBetween": 0}}'
+      
+    
+	# Schemas for results sent FROM the server.
+    QueryResults:
+      title: QueryResults
+      description: Results of a search for passages matching a query.
+      type: array
+      items:
+        $ref: '#/components/schemas/PassageResult'
+      example:
+        - references:
+            - book: John
+              chapter: 11
+              verse: 35
+        - words:
+            - text: ἐδάκρυσεν
+              matchedSequence: 0
+              matchedWordQuery: 0
+              partOfSpeech: Verb
+            - text: ὁ
+              matchedSequence: 0
+              matchedWordQuery: 1
+              partOfSpeech: Determiner
+            - text: Ἰησοῦς
+              matchedSequence: -1
+              matchedWordQuery: -1
+              partOfSpeech: Noun
+            - text: .
+              matchedSequence: -1
+              matchedWordQuery: -1
+    
+    PassageResult:
+      title: PassageResult
+      description: Information about a passage that matched the query.
+      type: object
+      properties:
+        references:
+          title: References
+          description: A list of references that point to the sentence that
+            matched the query. For example, if a sentence that matched the query
+            stretched over multiple verses, there would be multiple references. 
+            There will always be at least one reference.
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        words:
+          title: Words
+          description: A list of words in the sentence that matched the query.
+            Contains information about each word and whether it was part of the
+            match. The text stored in each word can be used to reconstruct the
+            whole sentence.
+          type: array
+          items:
+            $ref: '#/components/schemas/WordResult'
+      required:
+        - references
+        - words
+    
+    Reference:
+      title: Reference
+      description: A reference to a verse in a text.
+      type: object
+      properties:
+        book:
+          type: string
+          example: 'John'
+        chapter:
+          type: integer
+          example: 11
+        verse:
+          type: integer
+          example: 35
+      required:
+        - book
+        - chapter
+        - verse
+        
+    WordResult:
+      title: WordResult
+      description: Information about a specific word that was part of a passage
+        that matched a query.
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text of the word, which can be used to reconstruct
+            the sentence when joined with the other words' texts.
+          example: ἐδάκρυσεν
+        matchedSequence:
+          type: integer
+          description: The index of the sequence the word matched, starting at 
+            0. If it did not match any sequence, it will be -1.
+          example: 1
+        matchedWordQuery:
+          type: integer
+          description: The index of the word query the word matched, starting at
+            0, within the sequenced indicated by `matchedSequence`. If the word 
+            did not match any word query, it will be -1.
+          example: 0
+      additionalProperties:
+        title: Attributes
+        description: Other attributes of the word, such as morphological parsing
+          information. What is returned here depends on the specific text
+          provider, and may vary based on the specific word as well (for
+          instance, nouns may not come back with a "tense" attribute).
+        type: string
+      required:
+        - text
+        - matchedSequence
+        - matchedWordQuery
+    
+    
+    ErrorResponse:
+      title: ErrorResponse
+      description: Information about the error returned if there was a problem
+        with a request.
+      type: object
+      properties:
+        error:
+          description: Brief summary of the kind of error
+          example: Internal server error
+        description:
+          description: Longer explanation of the error encountered
+          example: Error connecting to database
+      required:
+        - error
+        - description
