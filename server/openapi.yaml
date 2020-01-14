@@ -59,7 +59,7 @@ paths:
 components:
   schemas:
   
-	# Schemas for queries sent TO the server.
+# Schemas for queries sent TO the server.
     TextQuery:
       title: TextQuery
       description: A query for passages in the text that match the given 
@@ -138,7 +138,7 @@ components:
       example: '{"root": "ουδε","link": {"allowedWordsBetween": 0}}'
       
     
-	# Schemas for results sent FROM the server.
+# Schemas for results sent FROM the server.
     QueryResults:
       title: QueryResults
       description: Results of a search for passages matching a query.
