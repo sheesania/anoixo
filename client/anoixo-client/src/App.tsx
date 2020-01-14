@@ -10,7 +10,8 @@ const App: React.FC = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        reference: 'Matt.5.1'
+        reference: 'Matt.5.1',
+        sequences: [],
       }),
     })
     .then(response => response.json())
