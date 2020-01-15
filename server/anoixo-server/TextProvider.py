@@ -1,4 +1,5 @@
 import abc
+from TextQuery import TextQuery
 
 
 class ProviderError(Exception):
@@ -17,4 +18,8 @@ class TextProvider(abc.ABC):
 
     @abc.abstractmethod
     def get_text_for_reference(self, reference: str) -> str:
+        pass
+
+    @abc.abstractmethod
+    def text_query(self, query: TextQuery):  # -> Query Result
         pass
