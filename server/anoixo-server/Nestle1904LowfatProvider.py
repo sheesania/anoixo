@@ -131,10 +131,12 @@ class Nestle1904LowfatProvider(TextProvider):
         sequence_matchers: List[str] = []
         # names for the variables containing each sequence's matches
         sequence_match_variables: List[str] = []
-        # if clauses that check whether a word in the result was part of this sequence
-        sequence_member_conditionals: List[str] = []
-        # clauses to get a matched word's index within its sequence
+        # variables with information about whether a word is part of a matched sequence
+        part_of_sequence_variables: List[str] = []
+        # clauses to get a matched word's sequence index
         sequence_index_getters: List[str] = []
+        # clauses to get a matched word's index within its sequence
+        word_query_index_getters: List[str] = []
 
         for sequence_index, sequence in enumerate(query.sequences):
             sequence_var = f'$matching_sequences{sequence_index}'
@@ -176,23 +178,35 @@ class Nestle1904LowfatProvider(TextProvider):
             sequence_matchers.append(sequence_matcher)
 
             """
-            Now build conditionals that can check whether a word that got through to the results was part of this
-            sequence (as opposed to another one), and what word query index it matched within the sequence. 
-            The two conditionals will look something like this:
-            if ($w = $matching_sequences0) then 0                                       <-- is it part of this sequence?
-            if ($w = $matching_sequences0) then index-of($matching_words0, $w)[1] - 1   <-- what index is it?
-            
-            This is where I must apologize for XQuery. `$item = $list` evaluates to true if $item is a member of the
-            list. Also, array indices start at 1, so `index_of($list, $item)[1]` gets the index of the first occurrence
-            of $item, and subtracting 1 gives the 0-indexed equivalent. You have permission to scream.
-            
+            Now build:
+            - variable declarations that hold information about what sequence a word that got through to the 
+            results matched (if any)
+            - conditionals that check these variables and return 1) the index of the sequence the word matched and 
+            2) the index of the word query the word matched within the sequence.
+        
             If there are multiple matches for the sequence within the sentence, they will still have the correct 
             matched sequence index and matched word query index. (So for instance, you could have multiple instances of
             2 words following each other, one with matchedSequence=0/matchedWordQuery=0 and the following with
             matchedSequence=0/matchedWordQuery=1.)
             """
-            sequence_member_conditionals.append(f'if ($w = {sequence_var}) then {sequence_index}')
-            sequence_index_getters.append(f'if ($w = {sequence_var}) then index-of({sequence_var}, $w)[1] - 1')
+            # This will look something like:
+            # let $matches_sequence_0 :=
+            #   some $matched_word in $matching_sequences0 satisfies $matched_word/@osisId = $w/@osisId
+            part_of_sequence_var = f'$matches_sequence_{sequence_index}'
+            part_of_sequence_declaration = f"""
+                let {part_of_sequence_var} := 
+                    some $matched_word in {sequence_var} satisfies $matched_word/@osisId = $w/@osisId
+                """
+            part_of_sequence_variables.append(part_of_sequence_declaration)
+            # This will look like:
+            # if ($matches_sequence_0) then 0
+            sequence_index_getters.append(f'if ({part_of_sequence_var}) then {sequence_index}')
+            # This will look like:
+            # if ($matches_sequence_0) then index-of($matching_sequences0, $w)[1] - 1
+            # (This is where I must apologize for XQuery. Array indices start at 1, so `index_of($list, $item)[1]` gets
+            # the index of the first occurrence of $item, and subtracting 1 gives the 0-indexed equivalent.)
+            word_query_index_getters.append(
+                f'if ({part_of_sequence_var}) then index-of({sequence_var}, $w)[1] - 1')
 
         """
         Let's finally build the full query!
@@ -201,16 +215,17 @@ class Nestle1904LowfatProvider(TextProvider):
         # Produces something like:
         # where matching_sequences0 and matching_sequences1
         where_matching_sequences_found = f'where {" and ".join(sequence_match_variables)}'
+        declare_part_of_sequence_variables = '\n'.join(part_of_sequence_variables)
         # Produces something like:
         # if ($w = $matching_sequences0) then 0
         # else if ($w = $matching_sequences1) then 1
         # else -1
-        matched_sequence_switch = '\nelse '.join(sequence_member_conditionals) + '\nelse -1'
+        matched_sequence_switch = '\nelse '.join(sequence_index_getters) + '\nelse -1'
         # Produces something like:
         # if ($w = $matching_sequences0) then index-of(matching_sequences0, $w)[1] - 1
         # else if ($w = $matching_sequences1) then index-of(matching_sequences1, $w)[1] - 1
         # else -1
-        matched_word_query_switch = '\nelse '.join(sequence_index_getters) + '\nelse -1'
+        matched_word_query_switch = '\nelse '.join(word_query_index_getters) + '\nelse -1'
 
         return f"""
         declare function local:punctuated($w as node()) as xs:string {{
@@ -231,6 +246,7 @@ class Nestle1904LowfatProvider(TextProvider):
               "sentence": $sentence//p/text(),
               "words":  array {{
                 for $w in $sentence//w
+                {declare_part_of_sequence_variables}
                 order by $w/@n 
                 return map {{
                   "text": local:punctuated($w),
