@@ -1,8 +1,9 @@
 from TextProvider import TextProvider, ProviderError
-from TextQuery import TextQuery
+from TextQuery import TextQuery, WordQuery
 from BaseXClient import BaseXClient
+from collections import defaultdict
 from timeout_decorator import timeout
-from typing import List
+from typing import DefaultDict, Dict, List
 import json
 import Nestle1904LowfatProvider_Config as Config
 
@@ -242,21 +243,67 @@ class Nestle1904LowfatProvider(TextProvider):
         )
         """
 
-    def _check_order(self, query: TextQuery, results: List) -> List:
+    """
+    Map each sequence index to all its word query indexes mapped to indexes of occurrences in this result
+    Example:
+    sequence 0: {word query 0: [indexes 1, 4, 19], word query 1: [indexes 3, 30]}
+    sequence 1: {word query 0: [indexes 2, 14]}
+    """
+    def _get_word_matches_for_sequences(self, words_in_result: List) -> DefaultDict[int, DefaultDict[int, List[int]]]:
+        word_matches_for_sequences: DefaultDict[int, DefaultDict[int, List[int]]] = \
+            defaultdict(lambda: defaultdict(list))
+        for word_index, word in enumerate(words_in_result):
+            if word['matchedSequence'] < 0:
+                continue
+            word_matches_for_sequences[word['matchedSequence']][word['matchedWordQuery']].append(word_index)
+        return word_matches_for_sequences
+
+    def _check_matches_for_linked_word_queries(self, words_from_result: List[Dict], word1_match_indexes: List,
+                                               word2_match_indexes: List, allowed_words_between: int) -> bool:
+        word1_has_valid_match = False
+        for word1_match_index in word1_match_indexes:
+            index_is_valid_match = False
+            for word2_match_index in word2_match_indexes:
+                if word2_match_index - word1_match_index - 1 <= allowed_words_between:
+                    index_is_valid_match = True
+            if index_is_valid_match:
+                word1_has_valid_match = True
+            else:
+                words_from_result[word1_match_index]['matchedSequence'] = -1
+                words_from_result[word1_match_index]['matchedWordQuery'] = -1
+        return word1_has_valid_match
+
+    def _check_allowed_words_between(self, query: TextQuery, results: List) -> List:
         filtered_results = []
         for result in results:
-            passes_check = True
-            # TODO: Optimize to only do one pass for all sequences. Turn found_up_to into an array indexed by sequence
-            # index. This isn't an urgent optimization since there won't usually be many sequences.
+            words: List = result['words']
+            word_matches_for_sequences = self._get_word_matches_for_sequences(words)
+            print(word_matches_for_sequences)
+            valid_result = True
+
             for sequence_index, sequence in enumerate(query.sequences):
-                found_up_to = 0
-                for word in result['words']:
-                    if word['matchedSequence'] == sequence_index and word['matchedWordQuery'] == found_up_to:
-                        found_up_to += 1
-                if found_up_to != len(sequence.word_queries):
-                    passes_check = False
-            if passes_check:
+                sequence_word_matches = word_matches_for_sequences[sequence_index]
+                word_query_pairs: List[List[WordQuery]] = \
+                    [sequence.word_queries[index:index + 2] for index in range(0, len(sequence.word_queries) - 1)]
+                for word1_query_index, (word1, word2) in enumerate(word_query_pairs):
+                    if not word1.link_to_next_word:
+                        continue
+                    allowed_words_between = word1.link_to_next_word.allowed_words_between
+                    word1_matches = sequence_word_matches[word1_query_index]
+                    word2_matches = sequence_word_matches[word1_query_index + 1]
+                    word1_has_valid_match = \
+                        self._check_matches_for_linked_word_queries(words, word1_matches, word2_matches,
+                                                                    allowed_words_between)
+                    print(f'{word1} has a valid match: {word1_has_valid_match}')
+                    if not word1_has_valid_match:
+                        valid_result = False
+                        break
+                if not valid_result:
+                    break
+
+            if valid_result:
                 filtered_results.append(result)
+
         return filtered_results
 
     def _parse_references(self, results: List):
@@ -264,14 +311,19 @@ class Nestle1904LowfatProvider(TextProvider):
 
     def text_query(self, query: TextQuery):  # -> QueryResult
         query_string = self._build_query_string(query)
+        print(query_string)
         try:
             raw_results = self._execute_query(query_string)
             results = json.loads(raw_results)
+            if not (isinstance(results, List)):
+                raise ProviderError('XQuery result is not a list')
+            print(f'length of results: {len(results)}')
+            filtered_results = self._check_allowed_words_between(query, results)
+            print(f'length of filtered results: {len(filtered_results)}')
+            print()
+            print(filtered_results)
         except ProviderError:
             raise
         except Exception as err:
             self.error = f'Error executing query: {type(err).__name__}'
             raise ProviderError(self.error)
-
-        print(results)
-        # print(len(self._check_order(query, results)))
