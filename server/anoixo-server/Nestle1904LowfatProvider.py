@@ -113,7 +113,7 @@ class Nestle1904LowfatProvider(TextProvider):
     make sure word queries that only allow a certain number of words between matches have an acceptable number of words, 
     handle multiple matches in the same sentence, etc.
     
-    TODO: Split this function up into smaller pieces
+    TODO: Split this function up into smaller pieces. Sorry for how long this is. At least it's mostly comments.
     """
     def _build_query_string(self, query: TextQuery) -> str:
         """
@@ -184,6 +184,11 @@ class Nestle1904LowfatProvider(TextProvider):
             This is where I must apologize for XQuery. `$item = $list` evaluates to true if $item is a member of the
             list. Also, array indices start at 1, so `index_of($list, $item)[1]` gets the index of the first occurrence
             of $item, and subtracting 1 gives the 0-indexed equivalent. You have permission to scream.
+            
+            If there are multiple matches for the sequence within the sentence, they will still have the correct 
+            matched sequence index and matched word query index. (So for instance, you could have multiple instances of
+            2 words following each other, one with matchedSequence=0/matchedWordQuery=0 and the following with
+            matchedSequence=0/matchedWordQuery=1.)
             """
             sequence_member_conditionals.append(f'if ($w = {sequence_var}) then {sequence_index}')
             sequence_index_getters.append(f'if ($w = {sequence_var}) then index-of({sequence_var}, $w)[1] - 1')
@@ -259,7 +264,6 @@ class Nestle1904LowfatProvider(TextProvider):
 
     def text_query(self, query: TextQuery):  # -> QueryResult
         query_string = self._build_query_string(query)
-        results = []
         try:
             raw_results = self._execute_query(query_string)
             results = json.loads(raw_results)
