@@ -2,6 +2,7 @@ from TextProvider import TextProvider, ProviderError
 from TextQuery import TextQuery, WordQuery
 from BaseXClient import BaseXClient
 from collections import defaultdict
+from pprint import pprint
 from timeout_decorator import timeout
 from typing import DefaultDict, Dict, List
 import json
@@ -266,7 +267,8 @@ class Nestle1904LowfatProvider(TextProvider):
         """
 
     """
-    Map each sequence index to all its word query indexes mapped to indexes of occurrences in this result
+    Returns a dictionary with each sequence index pointing to a mapping of its word query indexes to indexes of matches 
+    for that word query in this result
     Example:
     sequence 0: {word query 0: [indexes 1, 4, 19], word query 1: [indexes 3, 30]}
     sequence 1: {word query 0: [indexes 2, 14]}
@@ -280,6 +282,12 @@ class Nestle1904LowfatProvider(TextProvider):
             word_matches_for_sequences[word['matchedSequence']][word['matchedWordQuery']].append(word_index)
         return word_matches_for_sequences
 
+    """
+    Given query results, matches from the results for two contiguous word queries, and the number of words allowed 
+    between matches for these 2 word queries:
+    - check if at least 1 pair of results has an acceptable number of words between them
+    - mark any results that don't have the second word within an acceptable number of words as not a match after all
+    """
     def _check_matches_for_linked_word_queries(self, words_from_result: List[Dict], word1_match_indexes: List,
                                                word2_match_indexes: List, allowed_words_between: int) -> bool:
         word1_has_valid_match = False
@@ -290,25 +298,30 @@ class Nestle1904LowfatProvider(TextProvider):
                     index_is_valid_match = True
             if index_is_valid_match:
                 word1_has_valid_match = True
-            else:
+            else:  # not actually a match; mark it as such
                 words_from_result[word1_match_index]['matchedSequence'] = -1
                 words_from_result[word1_match_index]['matchedWordQuery'] = -1
         return word1_has_valid_match
 
+    """
+    Uses the link.allowed_words_between parameters in the TextQuery to:
+    - filter out results that don't actually have any valid matches
+    - edit words marked as "matched" in the results that don't pass this check so they are no longer marked as matched
+    """
     def _check_allowed_words_between(self, query: TextQuery, results: List) -> List:
         filtered_results = []
         for result in results:
             words: List = result['words']
             word_matches_for_sequences = self._get_word_matches_for_sequences(words)
-            print(word_matches_for_sequences)
             valid_result = True
 
             for sequence_index, sequence in enumerate(query.sequences):
                 sequence_word_matches = word_matches_for_sequences[sequence_index]
+                # get every contiguous pair of word queries; each might have a link parameter applying to them
                 word_query_pairs: List[List[WordQuery]] = \
                     [sequence.word_queries[index:index + 2] for index in range(0, len(sequence.word_queries) - 1)]
                 for word1_query_index, (word1, word2) in enumerate(word_query_pairs):
-                    if not word1.link_to_next_word:
+                    if not word1.link_to_next_word:  # no parameters specified on the link between these words
                         continue
                     allowed_words_between = word1.link_to_next_word.allowed_words_between
                     word1_matches = sequence_word_matches[word1_query_index]
@@ -316,12 +329,11 @@ class Nestle1904LowfatProvider(TextProvider):
                     word1_has_valid_match = \
                         self._check_matches_for_linked_word_queries(words, word1_matches, word2_matches,
                                                                     allowed_words_between)
-                    print(f'{word1} has a valid match: {word1_has_valid_match}')
                     if not word1_has_valid_match:
                         valid_result = False
                         break
                 if not valid_result:
-                    break
+                    break  # if any sequence doesn't have a match in this result, the whole result should be thrown out
 
             if valid_result:
                 filtered_results.append(result)
@@ -333,17 +345,19 @@ class Nestle1904LowfatProvider(TextProvider):
 
     def text_query(self, query: TextQuery):  # -> QueryResult
         query_string = self._build_query_string(query)
-        print(query_string)
         try:
             raw_results = self._execute_query(query_string)
             results = json.loads(raw_results)
             if not (isinstance(results, List)):
                 raise ProviderError('XQuery result is not a list')
-            print(f'length of results: {len(results)}')
+            print('UNFILTERED RESULTS')
+            print('==================')
+            pprint(results)
             filtered_results = self._check_allowed_words_between(query, results)
-            print(f'length of filtered results: {len(filtered_results)}')
             print()
-            print(filtered_results)
+            print('FILTERED RESULTS')
+            print('================')
+            pprint(filtered_results)
         except ProviderError:
             raise
         except Exception as err:
