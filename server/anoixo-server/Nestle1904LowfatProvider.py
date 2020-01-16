@@ -117,33 +117,34 @@ class Nestle1904LowfatProvider(TextProvider):
     TODO: Split this function up into smaller pieces. Sorry for how long this is. At least it's mostly comments.
     """
     def _build_query_string(self, query: TextQuery) -> str:
-        """
-        First, build XQuery loops to grab matching words for each sequence. The goal is to produce something like this
-        for every sequence:
-        let $matching_sequences0 :=
-          for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
-          for $word1 in $sentence//w[@lemma='Ἰησοῦς' and @case='genitive']
-          for $word2 in $sentence//w[@lemma='Χριστός' and @case='genitive']
-          where $word0 << $word1 and $word1 << $word2
-          return ($word0, $word1, $word2)
-        """
         # the code for getting matches for each sequence
         sequence_matchers: List[str] = []
-        # names for the variables containing each sequence's matches
-        sequence_match_variables: List[str] = []
-        # variables with information about whether a word is part of a matched sequence
-        part_of_sequence_variables: List[str] = []
+        # checks for whether a sequence had matches
+        sequence_match_checks: List[str] = []
+        # variables with what index a word matched in each sequence (if any)
+        index_in_sequences_variables: List[str] = []
         # clauses to get a matched word's sequence index
         sequence_index_getters: List[str] = []
         # clauses to get a matched word's index within its sequence
         word_query_index_getters: List[str] = []
 
         for sequence_index, sequence in enumerate(query.sequences):
-            sequence_var = f'$matching_sequences{sequence_index}'
-            sequence_match_variables.append(sequence_var)
+            """
+            First, build XQuery loops to grab matching words for each sequence. The goal is to produce something like 
+            this for every sequence:
+            let $matching_sequences0 :=
+              for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
+              for $word1 in $sentence//w[@lemma='Ἰησοῦς' and @case='genitive']
+              for $word2 in $sentence//w[@lemma='Χριστός' and @case='genitive']
+              where $word0 << $word1 and $word1 << $word2
+              return map {$word0/@osisId: 0, $word1/@osisId: 1, $word2/@osisId: 2}
+            """
+            sequence_var = f'$matching_sequence{sequence_index}'
 
             word_match_variables: List[str] = []  # names for the variables containing words matched by each word query
             word_matchers: List[str] = []  # loops for getting matches for each word query
+            # dictionary entries mapping the word's ID to its matched word query index
+            word_ids_to_indexes: List[str] = []
             for word_query_index, word_query in enumerate(sequence.word_queries):
                 word_variable = f'$word{word_query_index}'
                 word_match_variables.append(word_variable)
@@ -156,6 +157,10 @@ class Nestle1904LowfatProvider(TextProvider):
                 # for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
                 word_matchers.append(f'for {word_variable} in $sentence//w[{attribute_filters}]')
 
+                # Will be used to build a dictionary mapping word IDs to their matched word query indexes. Looks like:
+                # $word0/@osisId: 0
+                word_ids_to_indexes.append(f'{word_variable}/@osisId: {word_query_index}')
+
             for_matching_words = ' '.join(word_matchers)
 
             # Build a conditional to only keep matched words that are in order. Will look something like:
@@ -167,20 +172,27 @@ class Nestle1904LowfatProvider(TextProvider):
             where_words_in_order = \
                 f'where {" and ".join(words_in_order_checks)}' if words_in_order_checks else ''
 
-            word_match_variables_list = f'({", ".join(word_match_variables)})'
+            # Build the dictionary mapping word IDs to their matched word query indexes. Looks like:
+            # map {$word0/@osisId: 0, $word1/@osisId: 1}
+            word_id_to_index_map = f'map {{{", ".join(word_ids_to_indexes)}}}'
 
             sequence_matcher = f"""
-                let {sequence_var} :=
+                let {sequence_var} := map:merge(
                     {for_matching_words}
                     {where_words_in_order}
-                    return {word_match_variables_list}
+                    return {word_id_to_index_map}
+                )
             """
             sequence_matchers.append(sequence_matcher)
 
+            # Build a check for whether this sequence found any matches. Looks like:
+            # (map:size($matching_sequence0) > 0)
+            sequence_match_checks.append(f'(map:size({sequence_var}) > 0)')
+
             """
-            Now build:
-            - variable declarations that hold information about what sequence a word that got through to the 
-            results matched (if any)
+            Now we're onto handling the results found by the sequence matchers. Let's build:
+            - variable declarations that hold information about what index in each sequence a word that got through to 
+            the results matched (if any)
             - conditionals that check these variables and return 1) the index of the sequence the word matched and 
             2) the index of the word query the word matched within the sequence.
         
@@ -190,32 +202,26 @@ class Nestle1904LowfatProvider(TextProvider):
             matchedSequence=0/matchedWordQuery=1.)
             """
             # This will look something like:
-            # let $matches_sequence_0 :=
-            #   some $matched_word in $matching_sequences0 satisfies $matched_word/@osisId = $w/@osisId
-            part_of_sequence_var = f'$matches_sequence_{sequence_index}'
-            part_of_sequence_declaration = f"""
-                let {part_of_sequence_var} := 
-                    some $matched_word in {sequence_var} satisfies $matched_word/@osisId = $w/@osisId
-                """
-            part_of_sequence_variables.append(part_of_sequence_declaration)
+            # let $index_in_sequence_0 := map:get($matching_sequence0, $w/@osisId)
+            index_in_sequence_var = f'$index_in_sequence_{sequence_index}'
+            index_in_sequence_declaration = f'let {index_in_sequence_var} := map:get({sequence_var}, $w/@osisId)'
+
+            index_in_sequences_variables.append(index_in_sequence_declaration)
             # This will look like:
-            # if ($matches_sequence_0) then 0
-            sequence_index_getters.append(f'if ({part_of_sequence_var}) then {sequence_index}')
+            # if (not(empty($index_in_sequence_0))) then 0
+            sequence_index_getters.append(f'if (not(empty({index_in_sequence_var}))) then {sequence_index}')
             # This will look like:
-            # if ($matches_sequence_0) then index-of($matching_sequences0, $w)[1] - 1
-            # (This is where I must apologize for XQuery. Array indices start at 1, so `index_of($list, $item)[1]` gets
-            # the index of the first occurrence of $item, and subtracting 1 gives the 0-indexed equivalent.)
-            word_query_index_getters.append(
-                f'if ({part_of_sequence_var}) then index-of({sequence_var}, $w)[1] - 1')
+            # if (not(empty($index_in_sequence_0))) then $index_in_sequence_0
+            word_query_index_getters.append(f'if (not(empty({index_in_sequence_var}))) then {index_in_sequence_var}')
 
         """
-        Let's finally build the full query!
+        Now that we've built code snippets for each sequence, let's finally build the full query!
         """
         get_matching_sequences = '\n'.join(sequence_matchers)
         # Produces something like:
         # where matching_sequences0 and matching_sequences1
-        where_matching_sequences_found = f'where {" and ".join(sequence_match_variables)}'
-        declare_part_of_sequence_variables = '\n'.join(part_of_sequence_variables)
+        where_matching_sequences_found = f'where {" and ".join(sequence_match_checks)}'
+        declare_index_in_sequences_variables = '\n'.join(index_in_sequences_variables)
         # Produces something like:
         # if ($w = $matching_sequences0) then 0
         # else if ($w = $matching_sequences1) then 1
@@ -246,7 +252,7 @@ class Nestle1904LowfatProvider(TextProvider):
               "sentence": $sentence//p/text(),
               "words":  array {{
                 for $w in $sentence//w
-                {declare_part_of_sequence_variables}
+                {declare_index_in_sequences_variables}
                 order by $w/@n 
                 return map {{
                   "text": local:punctuated($w),
