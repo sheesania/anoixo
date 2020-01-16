@@ -7,6 +7,7 @@ from timeout_decorator import timeout
 from typing import DefaultDict, Dict, List
 import json
 import Nestle1904LowfatProvider_Config as Config
+from QueryResult import QueryResult
 
 
 # All searchable attributes and their possible values.
@@ -340,39 +341,31 @@ class Nestle1904LowfatProvider(TextProvider):
 
         return filtered_results
 
-    def _parse_references(self, results: List) -> List:
-        results_with_parsed_references: List[Dict] = []
-        for result in results:
-            parsed_references: List[Dict[str, str]] = []
-            for reference in result['references']:
-                components = reference.split('.')
-                parsed_references.append({
-                    'book': components[0],
-                    'chapter': components[1],
-                    'verse': components[2],
-                })
-            results_with_parsed_references.append({**result, 'references': parsed_references})
-        return results_with_parsed_references
-
     def text_query(self, query: TextQuery):  # -> QueryResult
         query_string = self._build_query_string(query)
         try:
             raw_results = self._execute_query(query_string)
             results = json.loads(raw_results)
-            if not (isinstance(results, List)):
-                raise ProviderError('XQuery result is not a list')
-            print('UNFILTERED RESULTS')
-            print('==================')
-            pprint(results)
-            filtered_results = self._check_allowed_words_between(query, results)
-            print()
-            print('FILTERED RESULTS')
-            print('================')
-            pprint(filtered_results)
-            results_with_parsed_references = self._parse_references(filtered_results)
-            print('PARSED REFS')
-            print('===========')
-            pprint(results_with_parsed_references)
+
+            def on_parsing_error(message: str):
+                raise ProviderError(message)
+            results_parsed = QueryResult(results, on_parsing_error)
+
+            print(results_parsed)
+            # if not (isinstance(results, List)):
+            #     raise ProviderError('XQuery result is not a list')
+            # print('UNFILTERED RESULTS')
+            # print('==================')
+            # pprint(results)
+            # filtered_results = self._check_allowed_words_between(query, results)
+            # print()
+            # print('FILTERED RESULTS')
+            # print('================')
+            # pprint(filtered_results)
+            # results_with_parsed_references = self._parse_references(filtered_results)
+            # print('PARSED REFS')
+            # print('===========')
+            # pprint(results_with_parsed_references)
         except ProviderError:
             raise
         except Exception as err:
