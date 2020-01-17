@@ -25,6 +25,7 @@ available_attributes = {
         'intj',
     ],
     'lemma': [],  # too many to list them all
+    'normalized': [],  # surface form
     'person': [
         'first',
         'second',
