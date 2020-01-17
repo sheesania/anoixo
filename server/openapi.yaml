@@ -162,17 +162,17 @@ components:
               matchedSequence: 0
               matchedWordQuery: 0
               partOfSpeech: Verb
+			  tense: Aorist
             - text: ὁ
               matchedSequence: 0
               matchedWordQuery: 1
               partOfSpeech: Determiner
-            - text: Ἰησοῦς
+			  case: Nominative
+            - text: Ἰησοῦς.
               matchedSequence: -1
               matchedWordQuery: -1
               partOfSpeech: Noun
-            - text: .
-              matchedSequence: -1
-              matchedWordQuery: -1
+			  case: Nominative
     
     PassageResult:
       title: PassageResult
@@ -207,7 +207,10 @@ components:
       type: object
       properties:
         book:
-          type: string
+		  description: The book this passage is from. The format of the book
+			string depends on the provider, so it could be a full name like
+			'1 Timothy', an abbreviation like '1Tim', or something else.
+		  type: string
           example: 'John'
         chapter:
           type: integer
@@ -227,9 +230,10 @@ components:
       type: object
       properties:
         text:
+		  description: The text of the word, which can be used to reconstruct
+            the sentence when joined with the other words' texts. May contain
+			punctuation.
           type: string
-          description: The text of the word, which can be used to reconstruct
-            the sentence when joined with the other words' texts.
           example: ἐδάκρυσεν
         matchedSequence:
           type: integer
@@ -237,10 +241,10 @@ components:
             0. If it did not match any sequence, it will be -1.
           example: 1
         matchedWordQuery:
-          type: integer
-          description: The index of the word query the word matched, starting at
+	 	  description: The index of the word query the word matched, starting at
             0, within the sequenced indicated by `matchedSequence`. If the word 
             did not match any word query, it will be -1.
+          type: integer
           example: 0
       additionalProperties:
         title: Attributes
@@ -263,9 +267,11 @@ components:
       properties:
         error:
           description: Brief summary of the kind of error
+		  type: string
           example: Internal server error
         description:
           description: Longer explanation of the error encountered
+		  type: string
           example: Error connecting to database
       required:
         - error
