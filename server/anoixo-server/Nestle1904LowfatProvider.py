@@ -134,7 +134,7 @@ class Nestle1904LowfatProvider(TextProvider):
             """
             First, build XQuery loops to grab matching words for each sequence. The goal is to produce something like 
             this for every sequence:
-            let $matching_sequences0 :=
+            let $matching_sequence0 :=
               for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
               for $word1 in $sentence//w[@lemma='Ἰησοῦς' and @case='genitive']
               for $word2 in $sentence//w[@lemma='Χριστός' and @case='genitive']
@@ -195,8 +195,9 @@ class Nestle1904LowfatProvider(TextProvider):
             Now we're onto handling the results found by the sequence matchers. Let's build:
             - variable declarations that hold information about what index in each sequence a word that got through to 
             the results matched (if any)
-            - conditionals that check these variables and return 1) the index of the sequence the word matched and 
-            2) the index of the word query the word matched within the sequence.
+            - conditionals that check these variables and return:
+                - the index of the sequence the word matched
+                - the index of the word query the word matched within the sequence
         
             If there are multiple matches for the sequence within the sentence, they will still have the correct 
             matched sequence index and matched word query index. (So for instance, you could have multiple instances of
@@ -207,8 +208,8 @@ class Nestle1904LowfatProvider(TextProvider):
             # let $index_in_sequence_0 := map:get($matching_sequence0, $w/@osisId)
             index_in_sequence_var = f'$index_in_sequence_{sequence_index}'
             index_in_sequence_declaration = f'let {index_in_sequence_var} := map:get({sequence_var}, $w/@osisId)'
-
             index_in_sequences_variables.append(index_in_sequence_declaration)
+
             # This will look like:
             # if (not(empty($index_in_sequence_0))) then 0
             sequence_index_getters.append(f'if (not(empty({index_in_sequence_var}))) then {sequence_index}')
@@ -221,17 +222,17 @@ class Nestle1904LowfatProvider(TextProvider):
         """
         get_matching_sequences = '\n'.join(sequence_matchers)
         # Produces something like:
-        # where matching_sequences0 and matching_sequences1
+        # where (map:size($matching_sequence0) > 0) and (map:size($matching_sequence1) > 0)
         where_matching_sequences_found = f'where {" and ".join(sequence_match_checks)}'
         declare_index_in_sequences_variables = '\n'.join(index_in_sequences_variables)
         # Produces something like:
-        # if ($w = $matching_sequences0) then 0
-        # else if ($w = $matching_sequences1) then 1
+        # if (not(empty($index_in_sequence_0))) then 0
+        # else if (not(empty($index_in_sequence_1))) then 1
         # else -1
         matched_sequence_switch = '\nelse '.join(sequence_index_getters) + '\nelse -1'
         # Produces something like:
-        # if ($w = $matching_sequences0) then index-of(matching_sequences0, $w)[1] - 1
-        # else if ($w = $matching_sequences1) then index-of(matching_sequences1, $w)[1] - 1
+        # if (not(empty($index_in_sequence_0))) then $index_in_sequence_0
+        # else if (not(empty($index_in_sequence_1))) then $index_in_sequence_1
         # else -1
         matched_word_query_switch = '\nelse '.join(word_query_index_getters) + '\nelse -1'
 
@@ -285,10 +286,11 @@ class Nestle1904LowfatProvider(TextProvider):
         return word_matches_for_sequences
 
     """
-    Given query results, matches from the results for two contiguous word queries, and the number of words allowed 
-    between matches for these 2 word queries:
-    - check if at least 1 pair of results has an acceptable number of words between them
-    - mark any results that don't have the second word within an acceptable number of words as not a match after all
+    Given one result from the query, matches from the result for two contiguous word queries, and the number of words 
+    allowed between matches for these 2 word queries:
+    - check if at least 1 pair of matches has an acceptable number of words between them (i.e., the result has a valid
+      match for these queries)
+    - mark any match that doesn't have the second word within an acceptable number of words as not a match after all
     """
     def _check_matches_for_linked_word_queries(self, words_from_result: List[WordResult], word1_match_indexes: List,
                                                word2_match_indexes: List, allowed_words_between: int) -> bool:
@@ -301,7 +303,7 @@ class Nestle1904LowfatProvider(TextProvider):
             if index_is_valid_match:
                 word1_has_valid_match = True
             else:  # not actually a match; mark it as such
-                # TODO: This has a side effect of modifying the WordResult objects in the original results object
+                # TODO: This has a side effect of modifying WordResult objects in the original results object
                 # Come up with a more functional way to update the filtered WordResults that doesn't unexpectedly modify
                 # the original ones
                 words_from_result[word1_match_index].matchedSequence = -1
@@ -347,6 +349,7 @@ class Nestle1904LowfatProvider(TextProvider):
 
     def text_query(self, query: TextQuery) -> QueryResult:
         query_string = self._build_query_string(query)
+        raw_results = None
         try:
             raw_results = self._execute_query(query_string)
         except ProviderError:
