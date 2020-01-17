@@ -1,9 +1,10 @@
-from flask import Flask, abort, jsonify, make_response, request
+from flask import abort, jsonify, make_response, request, Flask
 from flask_cors import CORS
 from typing import Any, Dict, Union
-from TextProvider import TextProvider, ProviderError
 from Nestle1904LowfatProvider import Nestle1904LowfatProvider
+from TextProvider import ProviderError, TextProvider
 from TextQuery import TextQuery
+
 
 app = Flask(__name__)
 CORS(app)

@@ -1,6 +1,6 @@
-import abc
 from QueryResult import QueryResult
 from TextQuery import TextQuery
+import abc
 
 
 class ProviderError(Exception):

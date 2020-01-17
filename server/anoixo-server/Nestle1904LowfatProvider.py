@@ -1,12 +1,12 @@
-from TextProvider import TextProvider, ProviderError
-from TextQuery import TextQuery, WordQuery
-from BaseXClient import BaseXClient
 from collections import defaultdict
 from timeout_decorator import timeout
 from typing import DefaultDict, List
+from BaseXClient import BaseXClient
+from QueryResult import PassageResult, QueryResult, WordResult
+from TextProvider import ProviderError, TextProvider
+from TextQuery import TextQuery, WordQuery
 import json
 import Nestle1904LowfatProvider_Config as Config
-from QueryResult import QueryResult, PassageResult, WordResult
 
 
 # All searchable attributes and their possible values.
