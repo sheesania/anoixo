@@ -351,16 +351,15 @@ class Nestle1904LowfatProvider(TextProvider):
         except ProviderError:
             raise
         except Exception as err:
-            self.error = f'Error executing query: {type(err).__name__}'
+            self.error = f'Error executing XML database query: {type(err).__name__}'
             raise ProviderError(self.error)
 
         try:
             results_json = json.loads(raw_results)
 
             def on_parsing_error(message: str):
-                raise ProviderError(message)
-
-            results = QueryResult(on_parsing_error, json=results_json)
+                raise ProviderError(f'Error parsing XML database response JSON: {message}')
+            results = QueryResult(results_json, on_parsing_error)
             filtered_passages = self._check_allowed_words_between(query, results)
             results.passages = filtered_passages
             return results

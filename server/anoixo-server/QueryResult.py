@@ -1,13 +1,13 @@
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Union
 
 
 class Reference:
-    # Currently only handles strings in Book.Chapter.Verse format
+    # Currently only handles strings in Book.Chapter.Verse format. Throws exceptions otherwise
     def _parse_string_ref(self, ref: str):
         parts = ref.split('.')
         self.book = parts[0]
-        self.chapter = parts[1]
-        self.verse = parts[2]
+        self.chapter = int(parts[1])
+        self.verse = int(parts[2])
 
     # Currently only handles string references
     def __init__(self, json: Any, on_parsing_error: Callable[[str], Any]):
@@ -20,7 +20,10 @@ class Reference:
             on_parsing_error('Reference is not a string')
 
     def __repr__(self):
-        return f'{{book: \'{self.book}\', chapter: {self.chapter}, verse: {self.verse}}}'
+        return f'{self.serialize()}'
+
+    def serialize(self) -> Dict[str, Union[str, int]]:
+        return {'book': self.book, 'chapter': self.chapter, 'verse': self.verse}
 
 
 class WordResult:
@@ -34,15 +37,19 @@ class WordResult:
         if 'matchedWordQuery' not in json:
             on_parsing_error('Word does not contain \'matchedWordQuery\' attribute')
 
+        # TODO: check types of keys to make sure they're all strings, & values to make sure they're all strings or ints?
         self.text = json.pop('text')
         self.matchedSequence = json.pop('matchedSequence')
         self.matchedWordQuery = json.pop('matchedWordQuery')
         self.attributes = json  # any extra attributes in the dictionary
 
     def __repr__(self):
+        return f'{self.serialize()}'
+
+    def serialize(self) -> Dict[str, Union[str, int]]:
         attr_dict = {**self.attributes, 'text': self.text, 'matchedSequence': self.matchedSequence,
                      'matchedWordQuery': self.matchedWordQuery}
-        return f'{attr_dict}'
+        return attr_dict
 
 
 class PassageResult:
@@ -59,7 +66,11 @@ class PassageResult:
         self.words = [WordResult(word, on_parsing_error) for word in json['words']]
 
     def __repr__(self):
-        return f'{{references: {self.references}, words: {self.words}'
+        return f'{self.serialize()}'
+
+    def serialize(self) -> Dict[str, List[Dict]]:
+        return {'references': [reference.serialize() for reference in self.references],
+                'words': [word.serialize() for word in self.words]}
 
 
 class QueryResult:
@@ -69,4 +80,7 @@ class QueryResult:
         self.passages: List[PassageResult] = [PassageResult(passage, on_parsing_error) for passage in json]
 
     def __repr__(self):
-        return f'{self.passages}'
+        return f'{self.serialize()}'
+
+    def serialize(self) -> List[Dict]:
+        return [passage.serialize() for passage in self.passages]

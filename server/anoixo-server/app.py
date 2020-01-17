@@ -32,13 +32,13 @@ def internal_error(error):
                          500)
 
 
-def json_to_text_query(json: Union[Dict[Any, Any], None]) -> TextQuery:
+def _json_to_text_query(json: Union[Dict[Any, Any], None]) -> TextQuery:
     if json is None:
         abort(400, 'Request does not contain a JSON body')
 
-    def on_error(message: str):
+    def on_parsing_error(message: str):
         abort(400, f'Error parsing JSON: {message}')
-    return TextQuery(json, on_error)
+    return TextQuery(json, on_parsing_error)
 
 
 @app.route('/text/<string:text_id>', methods=['POST'])
@@ -49,12 +49,11 @@ def text_query(text_id: str):
     provider = text_providers[text_id]
 
     try:
-        query = json_to_text_query(request.json)
+        if 'reference' in request.json:
+            return jsonify({'text': provider.get_text_for_reference(request.json['reference'])})
+        query = _json_to_text_query(request.json)
         query_result = provider.text_query(query)
-        print(query_result)
-
-        result = provider.get_text_for_reference(request.json['reference'])
-        return jsonify({'text': result})
+        return jsonify(query_result.serialize())
     except ProviderError as err:
         abort(500, err.message)
 
