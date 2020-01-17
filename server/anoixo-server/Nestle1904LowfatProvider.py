@@ -2,12 +2,11 @@ from TextProvider import TextProvider, ProviderError
 from TextQuery import TextQuery, WordQuery
 from BaseXClient import BaseXClient
 from collections import defaultdict
-from pprint import pprint
 from timeout_decorator import timeout
-from typing import DefaultDict, Dict, List
+from typing import DefaultDict, List
 import json
 import Nestle1904LowfatProvider_Config as Config
-from QueryResult import QueryResult
+from QueryResult import QueryResult, PassageResult, WordResult
 
 
 # All searchable attributes and their possible values.
@@ -274,13 +273,14 @@ class Nestle1904LowfatProvider(TextProvider):
     sequence 0: {word query 0: [indexes 1, 4, 19], word query 1: [indexes 3, 30]}
     sequence 1: {word query 0: [indexes 2, 14]}
     """
-    def _get_word_matches_for_sequences(self, words_in_result: List) -> DefaultDict[int, DefaultDict[int, List[int]]]:
+    def _get_word_matches_for_sequences(self, words_in_result: List[WordResult]) -> \
+            DefaultDict[int, DefaultDict[int, List[int]]]:
         word_matches_for_sequences: DefaultDict[int, DefaultDict[int, List[int]]] = \
             defaultdict(lambda: defaultdict(list))
         for word_index, word in enumerate(words_in_result):
-            if word['matchedSequence'] < 0:
+            if word.matchedSequence < 0:
                 continue
-            word_matches_for_sequences[word['matchedSequence']][word['matchedWordQuery']].append(word_index)
+            word_matches_for_sequences[word.matchedSequence][word.matchedWordQuery].append(word_index)
         return word_matches_for_sequences
 
     """
@@ -289,7 +289,7 @@ class Nestle1904LowfatProvider(TextProvider):
     - check if at least 1 pair of results has an acceptable number of words between them
     - mark any results that don't have the second word within an acceptable number of words as not a match after all
     """
-    def _check_matches_for_linked_word_queries(self, words_from_result: List[Dict], word1_match_indexes: List,
+    def _check_matches_for_linked_word_queries(self, words_from_result: List[WordResult], word1_match_indexes: List,
                                                word2_match_indexes: List, allowed_words_between: int) -> bool:
         word1_has_valid_match = False
         for word1_match_index in word1_match_indexes:
@@ -300,8 +300,11 @@ class Nestle1904LowfatProvider(TextProvider):
             if index_is_valid_match:
                 word1_has_valid_match = True
             else:  # not actually a match; mark it as such
-                words_from_result[word1_match_index]['matchedSequence'] = -1
-                words_from_result[word1_match_index]['matchedWordQuery'] = -1
+                # TODO: This has a side effect of modifying the WordResult objects in the original results object
+                # Come up with a more functional way to update the filtered WordResults that doesn't unexpectedly modify
+                # the original ones
+                words_from_result[word1_match_index].matchedSequence = -1
+                words_from_result[word1_match_index].matchedWordQuery = -1
         return word1_has_valid_match
 
     """
@@ -309,10 +312,10 @@ class Nestle1904LowfatProvider(TextProvider):
     - filter out results that don't actually have any valid matches
     - edit words marked as "matched" in the results that don't pass this check so they are no longer marked as matched
     """
-    def _check_allowed_words_between(self, query: TextQuery, results: List) -> List:
-        filtered_results = []
-        for result in results:
-            words: List = result['words']
+    def _check_allowed_words_between(self, query: TextQuery, results: QueryResult) -> List[PassageResult]:
+        filtered_results: List[PassageResult] = []
+        for passage in results.passages:
+            words: List[WordResult] = passage.words
             word_matches_for_sequences = self._get_word_matches_for_sequences(words)
             valid_result = True
 
@@ -337,37 +340,32 @@ class Nestle1904LowfatProvider(TextProvider):
                     break  # if any sequence doesn't have a match in this result, the whole result should be thrown out
 
             if valid_result:
-                filtered_results.append(result)
+                filtered_results.append(passage)
 
         return filtered_results
 
-    def text_query(self, query: TextQuery):  # -> QueryResult
+    def text_query(self, query: TextQuery) -> QueryResult:
         query_string = self._build_query_string(query)
         try:
             raw_results = self._execute_query(query_string)
-            results = json.loads(raw_results)
-
-            def on_parsing_error(message: str):
-                raise ProviderError(message)
-            results_parsed = QueryResult(results, on_parsing_error)
-
-            print(results_parsed)
-            # if not (isinstance(results, List)):
-            #     raise ProviderError('XQuery result is not a list')
-            # print('UNFILTERED RESULTS')
-            # print('==================')
-            # pprint(results)
-            # filtered_results = self._check_allowed_words_between(query, results)
-            # print()
-            # print('FILTERED RESULTS')
-            # print('================')
-            # pprint(filtered_results)
-            # results_with_parsed_references = self._parse_references(filtered_results)
-            # print('PARSED REFS')
-            # print('===========')
-            # pprint(results_with_parsed_references)
         except ProviderError:
             raise
         except Exception as err:
             self.error = f'Error executing query: {type(err).__name__}'
+            raise ProviderError(self.error)
+
+        try:
+            results_json = json.loads(raw_results)
+
+            def on_parsing_error(message: str):
+                raise ProviderError(message)
+
+            results = QueryResult(on_parsing_error, json=results_json)
+            filtered_passages = self._check_allowed_words_between(query, results)
+            results.passages = filtered_passages
+            return results
+        except ProviderError:
+            raise
+        except Exception as err:
+            self.error = f'Error processing query results: {type(err).__name__}'
             raise ProviderError(self.error)

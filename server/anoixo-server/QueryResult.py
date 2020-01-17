@@ -19,6 +19,9 @@ class Reference:
         else:
             on_parsing_error('Reference is not a string')
 
+    def __repr__(self):
+        return f'{{book: \'{self.book}\', chapter: {self.chapter}, verse: {self.verse}}}'
+
 
 class WordResult:
     def __init__(self, json: Any, on_parsing_error: Callable[[str], Any]):
@@ -31,7 +34,15 @@ class WordResult:
         if 'matchedWordQuery' not in json:
             on_parsing_error('Word does not contain \'matchedWordQuery\' attribute')
 
-        self.attributes = json
+        self.text = json.pop('text')
+        self.matchedSequence = json.pop('matchedSequence')
+        self.matchedWordQuery = json.pop('matchedWordQuery')
+        self.attributes = json  # any extra attributes in the dictionary
+
+    def __repr__(self):
+        attr_dict = {**self.attributes, 'text': self.text, 'matchedSequence': self.matchedSequence,
+                     'matchedWordQuery': self.matchedWordQuery}
+        return f'{attr_dict}'
 
 
 class PassageResult:
@@ -47,9 +58,15 @@ class PassageResult:
             on_parsing_error('Result does not have a list of words')
         self.words = [WordResult(word, on_parsing_error) for word in json['words']]
 
+    def __repr__(self):
+        return f'{{references: {self.references}, words: {self.words}'
+
 
 class QueryResult:
     def __init__(self, json: Dict[Any, Any], on_parsing_error: Callable[[str], Any]):
         if not isinstance(json, list):
             on_parsing_error('Results are not a list')
         self.passages: List[PassageResult] = [PassageResult(passage, on_parsing_error) for passage in json]
+
+    def __repr__(self):
+        return f'{self.passages}'

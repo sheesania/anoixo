@@ -50,7 +50,8 @@ def text_query(text_id: str):
 
     try:
         query = json_to_text_query(request.json)
-        provider.text_query(query)
+        query_result = provider.text_query(query)
+        print(query_result)
 
         result = provider.get_text_for_reference(request.json['reference'])
         return jsonify({'text': result})

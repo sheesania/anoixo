@@ -1,4 +1,5 @@
 import abc
+from QueryResult import QueryResult
 from TextQuery import TextQuery
 
 
@@ -21,5 +22,5 @@ class TextProvider(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def text_query(self, query: TextQuery):  # -> Query Result
+    def text_query(self, query: TextQuery) -> QueryResult:
         pass
