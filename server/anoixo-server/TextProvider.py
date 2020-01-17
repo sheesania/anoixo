@@ -1,3 +1,5 @@
+from QueryResult import QueryResult
+from TextQuery import TextQuery
 import abc
 
 
@@ -17,4 +19,8 @@ class TextProvider(abc.ABC):
 
     @abc.abstractmethod
     def get_text_for_reference(self, reference: str) -> str:
+        pass
+
+    @abc.abstractmethod
+    def text_query(self, query: TextQuery) -> QueryResult:
         pass
