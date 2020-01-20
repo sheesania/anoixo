@@ -1,6 +1,7 @@
 import React, {memo} from 'react';
 import {Sequence} from './QueryTypes';
 import WordBuilder from './WordBuilder';
+import './css/SequenceBuilder.css';
 
 type Props = {
     sequence: Sequence;
