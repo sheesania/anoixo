@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.8.3",
     "@types/node": "^12.12.24",
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "react": "^16.12.0",
-    "react-app-polyfill": "^1.0.5",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
     "typescript": "^3.7.4"
