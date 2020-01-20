@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import SearchScope from './SearchScope';
 import {Query} from './QueryTypes';
+import SearchScope from './SearchScope';
+import SequenceBuilder from './SequenceBuilder';
 
 const QueryBuilder: React.FC = () => {
-    const [query, setQuery] = useState<Query>({
+    const [query] = useState<Query>({
         sequences: [
             [
                 {}
@@ -14,6 +15,7 @@ const QueryBuilder: React.FC = () => {
   return (
     <div className='QueryBuilder'>
       <SearchScope/>
+      {query.sequences.map(sequence => <SequenceBuilder sequence={sequence}/>)}
     </div>
   );
 }
