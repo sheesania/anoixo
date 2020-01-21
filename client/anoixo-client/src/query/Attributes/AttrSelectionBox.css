@@ -1,0 +1,9 @@
+.attr-select-box {
+    width: 200px;
+}
+
+.attribute-editor {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}

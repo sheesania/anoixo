@@ -42,7 +42,7 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
   });
 
   return (
-    <Paper className='WordBuilder' elevation={3}>
+    <Paper className='WordBuilder' elevation={3} style={{width: '400px'}}>
       {attributes}
     </Paper>
   );
