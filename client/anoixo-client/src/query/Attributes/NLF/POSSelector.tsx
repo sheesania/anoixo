@@ -4,7 +4,7 @@ import AttrSelectionBox from '../AttrSelectionBox';
 
 const POSSelector: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {
   const handleChange = (event: React.ChangeEvent<{value: unknown}>, child: ReactNode) => {
-    console.log(event);
+    props.updateAttr(props.id, (event.target.value as string));
   };
   const items = [
     {
