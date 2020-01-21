@@ -10,7 +10,7 @@ type Props = {
 const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
   return (
     <div className='SequenceBuilder'>
-        {props.sequence.map(wordQuery => <WordBuilder word={wordQuery}/>)}
+        {props.sequence.map((wordQuery, index) => <WordBuilder word={wordQuery} key={index}/>)}
     </div>
   );
 })

@@ -15,7 +15,7 @@ const QueryBuilder: React.FC = () => {
   return (
     <div className='QueryBuilder'>
       <SearchScope/>
-      {query.sequences.map(sequence => <SequenceBuilder sequence={sequence}/>)}
+      {query.sequences.map((sequence, index) => <SequenceBuilder sequence={sequence} key={index}/>)}
     </div>
   );
 }

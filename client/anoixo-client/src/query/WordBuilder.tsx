@@ -12,13 +12,13 @@ type Props = {
 };
 
 const WordBuilder: React.FC<Props> = memo((props: Props) => {
-  const attributes = NLFAttributeComponentMap.map((attrToComponent) => {
+  const attributes = NLFAttributeComponentMap.map((attrToComponent, index) => {
     let attrValue = undefined;
     if (props.word.attributes && attrToComponent.attrId in props.word.attributes) {
       attrValue = props.word.attributes[attrToComponent.attrId];
     }
     const AttrComponent = attrToComponent.component;
-    return <AttrComponent id={attrToComponent.attrId} value={attrValue}/>
+    return <AttrComponent id={attrToComponent.attrId} value={attrValue} key={index}/>
   });
 
   return (
