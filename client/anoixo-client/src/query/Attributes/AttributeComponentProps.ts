@@ -1,3 +1,6 @@
+/**
+ * Props type for components for editing word query attributes.
+ */
 type AttributeComponentProps = {
     /** The key for the attribute in the word query's `attributes` dictionary */
     id: string;

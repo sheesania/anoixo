@@ -6,15 +6,27 @@ import AttributeEditor from './AttributeEditor';
 import './AttrSelectionBox.css';
 
 type Props = {
-    label: string;
-    currentValue: string;
-    items: {
-        label: string;
-        value: string;
-    }[];
-    handleChange: (event: React.ChangeEvent<{value: unknown}>, child: ReactNode) => void;
+  /** Label text for the select box */
+  label: string;
+  /** Current value of the select box */
+  currentValue: string;
+  /** Items to put into the select box. An 'Any' item is added for you */
+  items: {
+      label: string;
+      value: string;
+  }[];
+  /** Callback for when an item is selected */
+  handleChange: (event: React.ChangeEvent<{value: unknown}>, child: ReactNode) => void;
 }
 
+/** 
+ * An attribute editor that uses a select box for picking the value. Just pass it some props and it is ready to go
+ * into a WordBuilder card.
+ * Example:
+ * <AttrSelectionBox label='Part of Speech' currentValue={currentValue} 
+ *    items={[{label: 'Noun', value: 'noun'}, {label: 'Verbal', value: 'verbal'}]} 
+ *    handleChange={handleChange}/>
+ */
 const AttrSelectionBox: React.FC<Props> = memo((props: Props) => {
   const uid = 'attr-select-' + useUID();
   return (
