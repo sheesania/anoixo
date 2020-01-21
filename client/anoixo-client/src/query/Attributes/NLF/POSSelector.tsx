@@ -1,11 +1,25 @@
-import React, {memo} from 'react';
+import React, {memo, ReactNode} from 'react';
 import AttributeComponentProps from '../AttributeComponentProps';
+import AttrSelectionBox from '../AttrSelectionBox';
 
 const POSSelector: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {
+  const handleChange = (event: React.ChangeEvent<{value: unknown}>, child: ReactNode) => {
+    console.log(event);
+  };
+  const items = [
+    {
+      label: 'Verbal',
+      value: 'verb',
+    },
+    {
+      label: 'Noun',
+      value: 'noun',
+    }
+  ]
+
   return (
-    <div className='POSSelector'>
-        Part of Speech. Current value? {props.value}
-    </div>
+    <AttrSelectionBox label='Part of Speech' currentValue={props.value || ''} items={items} 
+      handleChange={handleChange}/>
   );
 })
 

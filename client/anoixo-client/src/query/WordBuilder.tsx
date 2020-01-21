@@ -23,7 +23,6 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
 
   return (
     <Paper className='WordBuilder' elevation={3}>
-        look at my word: {JSON.stringify(props.word)}
         {attributes}
     </Paper>
   );
