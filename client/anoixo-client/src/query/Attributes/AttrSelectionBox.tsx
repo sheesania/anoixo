@@ -2,7 +2,7 @@ import React, {memo, ReactNode} from 'react';
 import {useUID} from 'react-uid';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import AttrLabel from './AttrLabel';
+import AttributeEditor from './AttributeEditor';
 import './AttrSelectionBox.css';
 
 type Props = {
@@ -16,17 +16,20 @@ type Props = {
 }
 
 const AttrSelectionBox: React.FC<Props> = memo((props: Props) => {
-  const uid = useUID();
+  const uid = 'attr-select-' + useUID();
   return (
-    <div className='attribute-editor'>
-      <AttrLabel id={uid} text={props.label}/>
+    <AttributeEditor labelText={props.label} labelProps={{id: uid}}>
       <Select className='attr-select-box' value={props.currentValue} onChange={props.handleChange} labelId={uid} 
-      displayEmpty>
-        <MenuItem value=''><em>Any</em></MenuItem>
-        {props.items.map((item, index) => <MenuItem value={item.value} key={index}>{item.label}</MenuItem>)}
+        displayEmpty>
+        <MenuItem value=''><span className='any-element'>Any</span></MenuItem>
+        {props.items.map((item, index) => 
+          <MenuItem value={item.value} key={index}>
+            <span className={item.value === props.currentValue ? 'selected-item' : ''}>{item.label}</span>
+          </MenuItem>
+        )}
       </Select>
-    </div>
+    </AttributeEditor>
   );
-})
+});
 
 export default AttrSelectionBox;
