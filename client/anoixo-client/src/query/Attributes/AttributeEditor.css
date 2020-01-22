@@ -1,0 +1,18 @@
+.attribute-editor {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.attribute-input {
+    width: 60%;
+}
+
+.attribute-any-item {
+    color: gray;
+    font-style: italic;
+}
+
+.attribute-selected-item {
+    font-weight: bold;
+}
