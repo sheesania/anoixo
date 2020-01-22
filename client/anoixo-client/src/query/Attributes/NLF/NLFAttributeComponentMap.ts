@@ -1,5 +1,6 @@
 import AttributeToComponentMap from '../AttributeToComponentMap'
 import PartOfSpeechSelector from './PartOfSpeechSelector';
+import LexicalFormSelector from './LexicalFormSelector';
 import CaseSelector from './CaseSelector';
 import PersonSelector from './PersonSelector';
 import NumberSelector from './NumberSelector';
@@ -12,6 +13,10 @@ const NLFAttributeComponentMap: AttributeToComponentMap = [
     {
         attrId: 'class',
         component: PartOfSpeechSelector,
+    },
+    {
+        attrId: 'lemma',
+        component: LexicalFormSelector,
     },
     {
         attrId: 'case',
