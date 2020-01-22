@@ -3,7 +3,6 @@ import {useUID} from 'react-uid';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import AttributeEditor from './AttributeEditor';
-import './AttrSelectionBox.css';
 
 type Props = {
   /** Label text for the select box */
@@ -36,12 +35,12 @@ const AttrSelectionBox: React.FC<Props> = memo((props: Props) => {
 
   return (
     <AttributeEditor labelText={props.label} labelProps={{id: uid}}>
-      <Select className='attr-select-box' value={props.currentValue} onChange={onChange} labelId={uid} 
+      <Select className='attribute-input' value={props.currentValue} onChange={onChange} labelId={uid} 
         displayEmpty>
-        <MenuItem value=''><span className='any-element'>Any</span></MenuItem>
+        <MenuItem value=''><span className='attribute-any-item'>Any</span></MenuItem>
         {props.items.map((item, index) => 
           <MenuItem value={item.value} key={index}>
-            <span className={item.value === props.currentValue ? 'selected-item' : ''}>{item.label}</span>
+            <span className={item.value === props.currentValue ? 'attribute-selected-item' : ''}>{item.label}</span>
           </MenuItem>
         )}
       </Select>
