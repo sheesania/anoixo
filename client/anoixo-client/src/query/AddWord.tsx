@@ -15,7 +15,7 @@ const useOverriddenButtonStyles = makeStyles({
     flexShrink: 0,
     margin: '0.5rem',
     padding: '1.2rem',
-    width: '20rem',
+    width: '18rem',
 
     /* Dashed border. Using a background image instead of `border-style: dashed` since what it exactly looks like is
        implementation-dependent. */
