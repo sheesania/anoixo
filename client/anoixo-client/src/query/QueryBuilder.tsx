@@ -24,7 +24,7 @@ const QueryBuilder: React.FC = () => {
       ...query,
       sequences: updatedSequences
     });
-  }, [query]);
+  }, [query, setQuery]);
 
   return (
     <div className='QueryBuilder'>
