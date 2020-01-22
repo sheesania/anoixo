@@ -1,6 +1,7 @@
 import React, {memo, useCallback} from 'react';
 import {Sequence} from './QueryTypes';
 import WordBuilder from './WordBuilder';
+import AddWord from './AddWord';
 import './css/SequenceBuilder.css';
 
 type Props = {
@@ -26,6 +27,7 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
     <div className='SequenceBuilder'>
         {sequence.map((wordQuery, index) => <WordBuilder word={wordQuery} wordIndex={index} 
           updateWord={updateWord} key={index}/>)}
+        <AddWord/>
     </div>
   );
 })
