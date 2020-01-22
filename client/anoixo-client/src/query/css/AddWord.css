@@ -1,8 +1,8 @@
 .AddWord {
     flex-shrink: 0;
-    margin: 5px;
-    width: 325px;
-    padding: 15px;
+    margin: 0.5rem;
+    padding: 1.2rem;
+    width: 20rem;
     cursor: pointer;
 
     /* Dashed border. Using a background image instead of `border-style: dashed` since what it exactly looks like is
