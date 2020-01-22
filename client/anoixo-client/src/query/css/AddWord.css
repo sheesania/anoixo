@@ -1,28 +1,12 @@
-.AddWord {
-    flex-shrink: 0;
-    margin: 0.5rem;
-    padding: 1.2rem;
-    width: 20rem;
-    cursor: pointer;
-
-    /* Dashed border. Using a background image instead of `border-style: dashed` since what it exactly looks like is
-       implementation-dependent. */
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23333' stroke-width='2' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-    background-clip: padding-box;
-    border-radius: 4px;
-    border: 2px solid transparent; /* necessary to avoid contents jumping around on hover */
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 .AddWord:hover {
     background-image: none;
     border: 2px solid;
 }
 
 .add-word-icon {
-    color: white;
+    color: #77cc64;
+}
+
+.AddWord:hover .add-word-icon {
+    color: black;
 }
