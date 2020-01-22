@@ -1,11 +1,46 @@
 import AttributeToComponentMap from '../AttributeToComponentMap'
-import POSSelector from './POSSelector';
+import PartOfSpeechSelector from './PartOfSpeechSelector';
+import CaseSelector from './CaseSelector';
+import PersonSelector from './PersonSelector';
+import NumberSelector from './NumberSelector';
+import GenderSelector from './GenderSelector';
+import TenseSelector from './TenseSelector';
+import VoiceSelector from './VoiceSelector';
+import MoodSelector from './MoodSelector';
 
 const NLFAttributeComponentMap: AttributeToComponentMap = [
     {
         attrId: 'class',
-        component: POSSelector
-    }
+        component: PartOfSpeechSelector,
+    },
+    {
+        attrId: 'case',
+        component: CaseSelector,
+    },
+    {
+        attrId: 'person',
+        component: PersonSelector,
+    },
+    {
+        attrId: 'number',
+        component: NumberSelector,
+    },
+    {
+        attrId: 'gender',
+        component: GenderSelector,
+    },
+    {
+        attrId: 'tense',
+        component: TenseSelector,
+    },
+    {
+        attrId: 'voice',
+        component: VoiceSelector,
+    },
+    {
+        attrId: 'mood',
+        component: MoodSelector,
+    },
 ];
 
 export default NLFAttributeComponentMap;
