@@ -1,11 +1,13 @@
-import React, {memo} from 'react';
+import React, {memo, useCallback} from 'react';
 import AttributeComponentProps from '../AttributeComponentProps';
 import AttrSelectionBox from '../AttrSelectionBox';
 
 const PartOfSpeechSelector: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {
-  const handleChange = (newValue: string) => {
-    props.updateAttr(props.id, newValue);
-  };
+  const {updateAttr, id} = props;
+  const handleChange = useCallback((newValue: string) => {
+    updateAttr(id, newValue);
+  }, [updateAttr, id]);
+
   const label = 'Part of Speech';
   const items = [
     {
