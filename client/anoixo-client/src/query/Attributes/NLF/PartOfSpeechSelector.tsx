@@ -3,8 +3,8 @@ import AttributeComponentProps from '../AttributeComponentProps';
 import AttrSelectionBox from '../AttrSelectionBox';
 
 const PartOfSpeechSelector: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {
-  const handleChange = (event: React.ChangeEvent<{value: unknown}>) => {
-    props.updateAttr(props.id, (event.target.value as string));
+  const handleChange = (newValue: string) => {
+    props.updateAttr(props.id, newValue);
   };
   const label = 'Part of Speech';
   const items = [

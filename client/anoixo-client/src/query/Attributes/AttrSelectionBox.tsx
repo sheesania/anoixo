@@ -1,4 +1,4 @@
-import React, {memo, ReactNode} from 'react';
+import React, {memo, useCallback} from 'react';
 import {useUID} from 'react-uid';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -16,7 +16,7 @@ type Props = {
       value: string;
   }[];
   /** Callback for when an item is selected */
-  handleChange: (event: React.ChangeEvent<{value: unknown}>, child: ReactNode) => void;
+  handleChange: (newValue: string) => void;
 }
 
 /** 
@@ -29,9 +29,14 @@ type Props = {
  */
 const AttrSelectionBox: React.FC<Props> = memo((props: Props) => {
   const uid = 'attr-select-' + useUID();
+  const {handleChange} = props;
+  const onChange = useCallback((event: React.ChangeEvent<{value: unknown}>) => {
+    handleChange(event.target.value as string);
+  }, [handleChange]);
+
   return (
     <AttributeEditor labelText={props.label} labelProps={{id: uid}}>
-      <Select className='attr-select-box' value={props.currentValue} onChange={props.handleChange} labelId={uid} 
+      <Select className='attr-select-box' value={props.currentValue} onChange={onChange} labelId={uid} 
         displayEmpty>
         <MenuItem value=''><span className='any-element'>Any</span></MenuItem>
         {props.items.map((item, index) => 
