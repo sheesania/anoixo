@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import './css/AddWord.css';
 
 type Props = {
+  addWord: () => void;
 };
 
 const useOverriddenButtonStyles = makeStyles({
@@ -28,13 +29,15 @@ const AddWord: React.FC<Props> = memo((props: Props) => {
   const uid = 'add-word-' + useUID();
   const overriddenButtonStyle = useOverriddenButtonStyles();
   const overriddenTypographyStyle = useOverriddenTypographyStyles();
+
   return (
-    <div className='AddWord'>
+    <div className='AddWord' onClick={props.addWord}>
       <Typography classes={{subtitle1: overriddenTypographyStyle.subtitle1}} variant='subtitle1' component='label' 
         align='center' htmlFor={uid}>
           followed by<br/>a word...
       </Typography>
-      <Fab id={uid} classes={{root: overriddenButtonStyle.root}} size='small' disableRipple>
+      {/* This button also has an onClick for accessibility reasons */}
+      <Fab id={uid} onClick={props.addWord} classes={{root: overriddenButtonStyle.root}} size='small' disableRipple>
         <AddIcon className='add-word-icon'/>
       </Fab>
     </div>
