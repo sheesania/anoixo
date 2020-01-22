@@ -1,6 +1,7 @@
 import React, {memo, useCallback} from 'react';
 import {WordQuery} from './QueryTypes';
-import {Paper} from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import './css/WordBuilder.css';
 
 // In the future, this could be grabbing the component map for the current provider (Greek NT, Hebrew OT, Septuagint, 
@@ -42,7 +43,10 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
   });
 
   return (
-    <Paper className='WordBuilder' elevation={3} style={{width: '400px'}}>
+    <Paper className='WordBuilder' elevation={3}>
+      <Typography variant='h5' component='h2' gutterBottom>
+        <span className='word-card-title-highlighted'>Word</span> <span className='word-card-title-subtitle'>with</span>
+      </Typography>
       {attributes}
     </Paper>
   );

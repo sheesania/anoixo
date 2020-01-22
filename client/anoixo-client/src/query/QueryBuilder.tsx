@@ -7,7 +7,7 @@ const QueryBuilder: React.FC = () => {
   const [query, setQuery] = useState<Query>({
       sequences: [
           [
-              {}
+              {},
           ]
       ]
   });
@@ -20,6 +20,7 @@ const QueryBuilder: React.FC = () => {
         return sequence;
       }
     });
+    console.log(updatedSequences);
     setQuery({
       ...query,
       sequences: updatedSequences
