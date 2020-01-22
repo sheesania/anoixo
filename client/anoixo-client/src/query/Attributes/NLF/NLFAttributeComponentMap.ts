@@ -1,7 +1,7 @@
 import AttributeToComponentMap from '../AttributeToComponentMap'
 import PartOfSpeechSelector from './PartOfSpeechSelector';
-import LexicalFormSelector from './LexicalFormSelector';
-import InflectedFormSelector from './InflectedFormSelector';
+import LexicalFormField from './LexicalFormField';
+import InflectedFormField from './InflectedFormField';
 import CaseSelector from './CaseSelector';
 import PersonSelector from './PersonSelector';
 import NumberSelector from './NumberSelector';
@@ -17,11 +17,11 @@ const NLFAttributeComponentMap: AttributeToComponentMap = [
     },
     {
         attrId: 'lemma',
-        component: LexicalFormSelector,
+        component: LexicalFormField,
     },
     {
         attrId: 'normalized',
-        component: InflectedFormSelector,
+        component: InflectedFormField,
     },
     {
         attrId: 'case',

@@ -2,9 +2,9 @@ import React, {memo, ChangeEvent, useCallback} from 'react';
 import AttributeComponentProps from '../AttributeComponentProps';
 import AttributeEditor from '../AttributeEditor';
 import TextField from '@material-ui/core/TextField';
-import './InflectedFormSelector.css';
+import './InflectedFormField.css';
 
-const InflectedFormSelector: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {
+const InflectedFormField: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {
   const {updateAttr, id} = props;
   const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     updateAttr(id, event.target.value);
@@ -20,4 +20,4 @@ const InflectedFormSelector: React.FC<AttributeComponentProps> = memo((props: At
   );
 });
 
-export default InflectedFormSelector;
+export default InflectedFormField;
