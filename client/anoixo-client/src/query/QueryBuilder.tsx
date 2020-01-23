@@ -1,16 +1,15 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {Query, Sequence} from './QueryTypes';
 import SearchScope from './SearchScope';
 import SequenceBuilder from './SequenceBuilder';
 
-const QueryBuilder: React.FC = () => {
-  const [query, setQuery] = useState<Query>({
-      sequences: [
-          [
-              {}
-          ]
-      ]
-  });
+type Props = {
+  query: Query;
+  updateQuery: (newQuery: Query) => void;
+}
+
+const QueryBuilder: React.FC<Props> = (props: Props) => {
+  const {query, updateQuery} = props;
 
   const updateSequence = useCallback((updateIndex: number, updatedSequence: Sequence) => {
     const updatedSequences = query.sequences.map((sequence, index) => {
@@ -20,11 +19,11 @@ const QueryBuilder: React.FC = () => {
         return sequence;
       }
     });
-    setQuery({
+    updateQuery({
       ...query,
       sequences: updatedSequences
     });
-  }, [query, setQuery]);
+  }, [query, updateQuery]);
 
   return (
     <div className='QueryBuilder'>
