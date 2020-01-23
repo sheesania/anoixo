@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Query} from '../query/QueryTypes';
-import Button from '@material-ui/core/Button';
+import BackForwardButton from '../common/BackForwardButton';
 import Drawer from '@material-ui/core/Drawer';
+import './css/Results.css';
 
 type Props = {
     query: Query;
@@ -25,13 +26,15 @@ const Results: React.FC<Props> = (props: Props) => {
     }, [isOpen]);
 
     return (
-        <Drawer className='Results' open={isOpen} anchor='right'>
-            {results ? (
-                <div>{results}</div>
-            ) : (
-                <div>Loading...</div>
-            )}
-            <Button onClick={closeSelf}>&lt;&lt;Back to Search</Button>
+        <Drawer open={isOpen} anchor='right'>
+            <div className='results-content'>
+                {results ? (
+                    <div>{results}</div>
+                ) : (
+                    <div>Loading...</div>
+                )}
+                <BackForwardButton type='back' onClick={closeSelf}/>
+            </div>
         </Drawer>
     );
 }
