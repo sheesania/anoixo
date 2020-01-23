@@ -28,7 +28,7 @@ const App: React.FC = () => {
   return (
     <div className='App'>
       <QueryBuilder query={query} updateQuery={updateQuery} openResults={openResults}/>
-      {showResults && <Results query={query} closeResults={closeResults}/>}
+      <Results query={query} isOpen={showResults} closeSelf={closeResults}/>
     </div>
   );
 }
