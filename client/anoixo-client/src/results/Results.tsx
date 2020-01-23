@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Query} from '../query/QueryTypes';
+import Loading from './Loading';
 import BackForwardButton from '../common/BackForwardButton';
 import Drawer from '@material-ui/core/Drawer';
 import './css/Results.css';
@@ -29,11 +30,13 @@ const Results: React.FC<Props> = (props: Props) => {
         <Drawer open={isOpen} anchor='right'>
             <div className='results-content'>
                 {results ? (
-                    <div>{results}</div>
+                    <div>
+                        {results}
+                        <BackForwardButton type='back' onClick={closeSelf}/>
+                    </div>
                 ) : (
-                    <div>Loading...</div>
+                    <Loading closeSelf={closeSelf}/>
                 )}
-                <BackForwardButton type='back' onClick={closeSelf}/>
             </div>
         </Drawer>
     );
