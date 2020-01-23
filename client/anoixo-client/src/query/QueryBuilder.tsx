@@ -2,10 +2,12 @@ import React, {useCallback} from 'react';
 import {Query, Sequence} from './QueryTypes';
 import SearchScope from './SearchScope';
 import SequenceBuilder from './SequenceBuilder';
+import Button from '@material-ui/core/Button';
 
 type Props = {
   query: Query;
   updateQuery: (newQuery: Query) => void;
+  openResults: () => void;
 }
 
 const QueryBuilder: React.FC<Props> = (props: Props) => {
@@ -30,6 +32,7 @@ const QueryBuilder: React.FC<Props> = (props: Props) => {
       <SearchScope/>
       {query.sequences.map((sequence, index) => <SequenceBuilder sequence={sequence} sequenceIndex={index} 
         updateSequence={updateSequence} key={index}/>)}
+      <Button onClick={props.openResults}>Search >></Button>
     </div>
   );
 }
