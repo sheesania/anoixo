@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Query} from '../query/QueryTypes';
+import {ErrorResult, SuccessResult, parseErrorResult, parseSuccessResult} from './ResultTypes';
 import Loading from './Loading';
 import BackForwardButton from '../common/BackForwardButton';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,17 +18,33 @@ type Props = {
 
 const Results: React.FC<Props> = (props: Props) => {
     const {query, isOpen, closeSelf} = props;
-    const [results, setResults] = useState<string|undefined>(undefined);
-    const [error, setError] = useState<string|undefined>(undefined);
+    const [results, setResults] = useState<SuccessResult|undefined>(undefined);
+    const [error, setError] = useState<ErrorResult|undefined>(undefined);
 
     const handleRequestSuccess = (getJson: Promise<any>) => {
         getJson.then((json: any) => {
-            setResults(JSON.stringify(json));
+            try {
+                const parsedResult = parseSuccessResult(json);
+                setResults(parsedResult);
+            } catch (e) {
+                setError({
+                    error: 'JSON parsing error',
+                    description: 'There was a problem parsing the response from the server',
+                });
+            }
         });
     }
     const handleRequestError = (getJson: Promise<any>) => {
         getJson.then((json: any) => {
-            setError(JSON.stringify(json));
+            try {
+                const parsedError = parseErrorResult(json);
+                setError(parsedError);
+            } catch (e) {
+                setError({
+                    error: 'JSON parsing error',
+                    description: 'There was a problem parsing the error received from the server',
+                });
+            }
         });
     };
 
@@ -56,9 +73,9 @@ const Results: React.FC<Props> = (props: Props) => {
 
     let display;
     if (error) {
-        display = <div>{error} <BackForwardButton type='back' onClick={closeSelf}/></div>;
+        display = <div>{JSON.stringify(error)} <BackForwardButton type='back' onClick={closeSelf}/></div>;
     } else if (results) {
-        display = <div>{results} <BackForwardButton type='back' onClick={closeSelf}/></div>;
+        display = <div>{JSON.stringify(results)} <BackForwardButton type='back' onClick={closeSelf}/></div>;
     } else {
         display = <Loading closeSelf={closeSelf}/>;
     }
