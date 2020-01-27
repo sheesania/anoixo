@@ -32,7 +32,7 @@ const QueryBuilder: React.FC<Props> = (props: Props) => {
       <SearchScope/>
       {query.sequences.map((sequence, index) => <SequenceBuilder sequence={sequence} sequenceIndex={index} 
         updateSequence={updateSequence} key={index}/>)}
-      <BackForwardButton type='search' onClick={props.openResults}/>
+      <BackForwardButton type='search' onClick={props.openResults} customStyling={{marginTop: '2rem'}}/>
     </div>
   );
 }
