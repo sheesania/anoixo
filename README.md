@@ -1,5 +1,5 @@
 # Anoixo: Grammatical Bible Search
-Anoixo (a-NOIKS-oh [ə'nɔikso]) is a web app for finding morphological and syntactic constructions in the Bible in its original languages.
+[Anoixo](#why-anoixo) (a-NOIKS-oh [ə'nɔikso]) is a web app for finding morphological and syntactic constructions in the Bible in its original languages.
 
 Currently under development at Taylor University.
 
@@ -69,3 +69,6 @@ npm start
 ```
 
 By default, it expects to find the API server at `http://localhost:5000/`.
+
+## Why "Anoixo"?
+ἀνοίξω means "I will open" in Koine Greek. The root ἀνοίγω appears in verses like Matthew 7:7 "Ask and it will be given to you, seek and you will find, knock and it will be opened [ἀνοιγήσεται] for you."
