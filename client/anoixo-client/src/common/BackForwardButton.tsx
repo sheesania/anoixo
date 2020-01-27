@@ -7,6 +7,7 @@ import {withStyles} from '@material-ui/styles';
 type Props = {
     onClick: () => void;
     type: 'search' | 'back';
+    customStyling?: React.CSSProperties;
 }
 
 const BackForwardButton: React.FC<Props> = memo((props: Props) => {
@@ -17,7 +18,7 @@ const BackForwardButton: React.FC<Props> = memo((props: Props) => {
       '&:hover': {
         backgroundColor: '#4c8240',
       },
-      marginTop: '2rem',
+      ...props.customStyling
     },
   }))(Button);
 

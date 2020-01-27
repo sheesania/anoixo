@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Query} from '../query/QueryTypes';
 import {ErrorResult, SuccessResult, parseErrorResult, parseSuccessResult} from './ResultTypes';
-import Loading from './Loading';
 import BackForwardButton from '../common/BackForwardButton';
+import Loading from './Loading';
+import ResultsListing from './ResultsListing';
 import Drawer from '@material-ui/core/Drawer';
 import './css/Results.css';
 
@@ -75,13 +76,13 @@ const Results: React.FC<Props> = (props: Props) => {
     if (error) {
         display = <div>{JSON.stringify(error)} <BackForwardButton type='back' onClick={closeSelf}/></div>;
     } else if (results) {
-        display = <div>{JSON.stringify(results)} <BackForwardButton type='back' onClick={closeSelf}/></div>;
+        display = <ResultsListing results={results} closeResults={closeSelf}/>;
     } else {
         display = <Loading closeSelf={closeSelf}/>;
     }
 
     return (
-        <Drawer open={isOpen} anchor='right'>
+        <Drawer open={isOpen} anchor='right' PaperProps={{classes: {root: 'results-paper'}}}> 
             <div className='results-content'>
                 {display}
             </div>
