@@ -77,8 +77,7 @@ const ResultsListing: React.FC<Props> = memo((props: Props) => {
           <Typography variant='h4' component='h2'>
             Results
           </Typography>
-          <BackForwardButton type='back' onClick={props.closeResults} 
-              customStyling={{marginLeft: '1.2rem'}}/>
+          <BackForwardButton type='back' onClick={props.closeResults} customStyling={{marginLeft: '1.2rem'}}/>
         </div>
         {passageCards}
         <BackForwardButton type='back' onClick={props.closeResults} 
