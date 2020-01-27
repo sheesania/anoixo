@@ -82,7 +82,7 @@ const Results: React.FC<Props> = (props: Props) => {
     }
 
     return (
-        <Drawer open={isOpen} anchor='right'>
+        <Drawer open={isOpen} anchor='right' PaperProps={{classes: {root: 'results-paper'}}}> 
             <div className='results-content'>
                 {display}
             </div>

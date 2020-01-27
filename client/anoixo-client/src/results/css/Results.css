@@ -1,4 +1,9 @@
 .results-content {
-    width: 98vw;
+    width: 100%;
+    height: 100%;
+}
+
+.results-paper {
     height: 100vh;
+    width: 98vw;
 }
