@@ -31,6 +31,10 @@ const makeReferenceString = (references: ReferenceResult[]): string => {
 };
 
 const makeTextElements = (words: WordResult[]): (string | JSX.Element)[] => {
+  //This triggers a React warning since the array elements don't have unique 'key' attributes, which help with optimized
+  //re-rendering if array elements are added/removed/updated. However, these array elements will never be individually
+  //changed (only the array as a whole when different results are displayed), so the warning is not relevant.
+  //Unfortunately there's no way to tell React to ignore this issue here.
   const wordElements = words.map((word) => {
     if (word.matchedSequence > -1) {
       return <span className='matched-word'>{word.text}</span>;
