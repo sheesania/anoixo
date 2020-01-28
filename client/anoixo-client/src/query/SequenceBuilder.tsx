@@ -1,7 +1,8 @@
 import React, {memo, useCallback} from 'react';
 import {Sequence} from './QueryTypes';
-import WordBuilder from './WordBuilder';
 import AddWord from './AddWord';
+import WordBuilder from './WordBuilder';
+import WordLink from './WordLink';
 import './css/SequenceBuilder.css';
 
 type Props = {
@@ -32,11 +33,23 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
     updateSequence(sequenceIndex, updatedWords);
   }, [sequence, sequenceIndex, updateSequence]);
 
+  const wordsAndArrows = [];
+  for (let i = 0; i < sequence.length - 1; i++) {
+    wordsAndArrows.push(
+      <WordBuilder word={sequence[i]} wordIndex={i} updateWord={updateWord} key={`word${i}`}/>,
+      <WordLink type='active' key={`arrow${i}`} id={i}/>
+    );
+  }
+  const lastIndex = sequence.length - 1;
+  wordsAndArrows.push(
+    <WordBuilder word={sequence[lastIndex]} wordIndex={lastIndex} updateWord={updateWord} key={`word${lastIndex}`}/>,
+    <WordLink type='inactive' key={`arrow${lastIndex}`} id={lastIndex}/>,
+    <AddWord addWord={addWord} key={'addWord'}/>,
+  );
+
   return (
     <div className='SequenceBuilder'>
-        {sequence.map((wordQuery, index) => <WordBuilder word={wordQuery} wordIndex={index} 
-          updateWord={updateWord} key={index}/>)}
-        <AddWord addWord={addWord}/>
+        {wordsAndArrows}
     </div>
   );
 })
