@@ -11,7 +11,7 @@ const Loading: React.FC<Props> = memo((props: Props) => {
   return (
       <div className='loading-screen'>
           <CircularProgress size='8rem' thickness={2} style={{color: '#4c8240'}}/>
-          <BackForwardButton type='back' onClick={props.closeSelf}/>
+          <BackForwardButton type='back' onClick={props.closeSelf} customStyling={{marginTop: '2rem'}}/>
       </div>
   );
 });
