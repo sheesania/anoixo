@@ -1,5 +1,4 @@
 import React, {memo} from 'react';
-import Typography from '@material-ui/core/Typography';
 
 type Props = {
     type: 'active' | 'inactive';
