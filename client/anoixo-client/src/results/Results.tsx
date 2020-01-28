@@ -69,6 +69,12 @@ const Results: React.FC<Props> = (props: Props) => {
             } else {
                 handleRequestError(getJson);
             }
+        })
+        .catch((error: Error) => {
+            setError({
+                error: `Error sending request: ${error.name}`,
+                description: error.message,
+            });
         });
     }, [isOpen, query]);
 
