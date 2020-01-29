@@ -3,7 +3,8 @@
 
 Currently under development at Taylor University.
 
-[Original proposal with background, rationale, and an overview of existing morphological/syntactic search tools](https://docs.google.com/document/d/1tC8CPp7WmkOH8jjgBRM_YxbxWEMFS7oJpzKfHDsqlTA/edit?usp=sharing)
+- [Original project proposal with background, rationale, and a survey of existing morphological/syntactic search tools](https://docs.google.com/document/d/1tC8CPp7WmkOH8jjgBRM_YxbxWEMFS7oJpzKfHDsqlTA/edit?usp=sharing)
+- [A list of use cases for this tool](https://docs.google.com/document/d/1QOQpY0kGr6Km8lhTpPEhFMSxMB0C4uTeNH45Kl_2SKg/edit?usp=sharing)
 
 ## Setup for development
 ### Database
