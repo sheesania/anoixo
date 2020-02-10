@@ -49,7 +49,7 @@ const AddWord: React.FC<Props> = memo((props: Props) => {
         onClick={props.addWord} disableRipple>
         <Typography classes={{subtitle1: overriddenTypographyStyle.subtitle1}} variant='subtitle1' component='label' 
           align='center' htmlFor={uid}>
-            followed by<br/>a word...
+            Add a<br/>following word
         </Typography>
         <AddCircleIcon className='add-word-icon' fontSize='large'/>
       </ButtonBase>
