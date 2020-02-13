@@ -1,0 +1,95 @@
+- name: ensure ubuntu packages
+  hosts: staging
+  tags: apt
+  become: yes
+  tasks:
+    - name: add key for node PPA
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+
+    - name: configure node PPA
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_12.x bionic main
+        filename: nodesource
+        state: present
+
+    - name: install apt packages
+      apt:
+        pkg: "{{ item }}"
+        update_cache: yes
+      loop:
+        - git
+        - nodejs
+        - basex
+        - python3-venv
+
+- name: create account
+  hosts: staging
+  tags: accounts
+  become: yes
+  tasks:
+    - name: create anoixo user
+      user:
+        name: "{{ anoixo_username }}"
+        password: "{{ anoixo_password | password_hash('sha512') }}"
+        shell: /bin/bash
+
+- name: clone repository
+  hosts: staging
+  tags: git, update
+  become: yes
+  become_user: "{{ anoixo_username }}"
+  vars_files:
+    - public_vars.yaml
+  tasks:
+    - name: clone application from GitHub
+      git:
+        repo: "{{ repo }}"
+        dest: "{{ source_abs_dir }}"
+        version: master
+
+- name: prepare python
+  hosts: staging
+  tags: python, update
+  become: yes
+  become_user: "{{ anoixo_username }}"
+  vars_files:
+    - public_vars.yaml
+  tasks:
+    - name: create and populate python venv
+      pip:
+        virtualenv: "{{ api_abs_dir }}/venv"
+        virtualenv_command: "{{ python3 }} -m venv venv"
+        requirements: "{{ api_abs_dir }}/requirements.txt"
+
+- name: setup Nestle Lowfat Treebank database
+  hosts: staging
+  tags: db
+  become: yes
+  become_user: "{{ anoixo_username }}"
+  tasks:
+    - name: clone treebanks from GitHub
+      git:
+        repo: "https://github.com/biblicalhumanities/greek-new-testament"
+        dest: "{{ data_abs_dir }}/nlf/repo"
+        version: master
+    - name: create basex database
+      command: "basex -c 'SET LANGUAGE el; CREATE DB nestle1904lowfat {{ data_abs_dir }}/nlf/repo/syntax-trees/nestle1904-lowfat/xml/nestle1904lowfat.xml'"
+
+- name: build client app
+  hosts: staging
+  tags: ui, update
+  become: yes
+  become_user: "{{ anoixo_username }}"
+  vars_files:
+    - public_vars.yaml
+  tasks:
+    - name: install node modules for ui
+      npm:
+        path: "{{ client_abs_dir }}"
+
+    - name: build production ui
+      command:
+        chdir: "{{ client_abs_dir }}"
+        cmd: npm run build
