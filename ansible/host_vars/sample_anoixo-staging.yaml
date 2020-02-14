@@ -5,7 +5,12 @@ ansible_ssh_private_key_file: id_rsa
 
 anoixo_username: anoixo
 anoixo_password: password
+basex_username: basex
+basex_password: password
+basex_server_username: anoixo
+basex_server_password: password
 
 source_abs_dir: /home/anoixo/anoixo
-data_abs_dir: /home/anoixo/data
+logs_abs_dir: /home/anoixo/logs
+basex_data_abs_dir: /home/basex/data
 python3: /usr/bin/python3

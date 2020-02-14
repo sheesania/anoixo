@@ -23,6 +23,7 @@
         - nodejs
         - basex
         - python3-venv
+        - supervisor
 
 - name: create accounts
   hosts: staging
@@ -139,3 +140,27 @@
       command:
         chdir: "{{ client_abs_dir }}"
         cmd: npm run build
+
+- name: provision supervisor
+  hosts: staging
+  tags: supervisor
+  become: yes
+  vars_files:
+    - public_vars.yaml
+  tasks:
+    - name: instantiate supervisor template
+      template:
+        src: templates/supervisor.conf
+        dest: "{{ supervisor_conf_abs_dir }}/anoixo.conf"
+        mode: 0444
+
+    - name: ensure log directory exists
+      file:
+        path: "{{ logs_abs_dir }}"
+        state: directory
+        mode: 0755
+
+    - name: start server
+      supervisorctl:
+        name: anoixo
+        state: restarted
