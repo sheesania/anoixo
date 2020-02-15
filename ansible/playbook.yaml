@@ -26,6 +26,28 @@
         - python3-venv
         - supervisor
 
+- name: setup firewall
+  hosts: staging
+  tags: firewall
+  become: yes
+  tasks:
+    - name: deny all ports by default (disabling firewall to not lock ourselves out)
+      ufw:
+        state: disabled
+        direction: incoming
+        default: deny
+    - name: allow openssh
+      ufw:
+        rule: allow
+        name: OpenSSH
+    - name: allow nginx
+      ufw:
+        rule: allow
+        name: 'Nginx Full'
+    - name: enable firewall
+      ufw:
+        state: enabled
+
 - name: create accounts
   hosts: staging
   tags: accounts
