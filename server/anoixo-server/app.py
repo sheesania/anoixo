@@ -42,7 +42,7 @@ def _json_to_text_query(json: Union[Dict[Any, Any], None]) -> TextQuery:
     return TextQuery(json, on_parsing_error)
 
 
-@app.route('/text/<string:text_id>', methods=['POST'])
+@app.route('/api/text/<string:text_id>', methods=['POST'])
 def text_query(text_id: str):
     if text_id not in text_providers:
         abort(404, f'Text provider with id \'{text_id}\' was not found. ' 
