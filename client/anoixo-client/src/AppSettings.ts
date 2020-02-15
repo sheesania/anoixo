@@ -3,5 +3,5 @@ export type ServerSettings = {
 };
 
 export const NLFServerSettings: ServerSettings = {
-    textServerUrl: 'http://localhost:5000/text/nlf',
+    textServerUrl: 'http://localhost:5000/api/text/nlf',
 }
