@@ -41,12 +41,29 @@
         password: "{{ basex_password | password_hash('sha512') }}"
         shell: /bin/bash
 
+- name: setup basexserver service
+  hosts: staging
+  tags: db
+  become: yes
+  tasks:
+    - name: install systemd unit file
+      template: 
+        src: templates/basexserver.service
+        dest: /etc/systemd/system/basexserver.service
+    - name: have service start on boot, and start it
+      service:
+        name: basexserver
+        enabled: yes
+        state: started
+
 - name: create basex database user
   hosts: staging
   tags: db
   become: yes
   become_user: "{{ basex_username }}"
   tasks:
+    - name: update admin password
+      command: "basex -c 'ALTER PASSWORD admin {{ basex_server_admin_password }}'"
     - name: create basex server user
       command: "basex -c 'CREATE USER {{ basex_server_username }} {{ basex_server_password }}'"
 
@@ -62,24 +79,9 @@
         dest: "{{ basex_data_abs_dir }}/nlf/repo"
         version: master
     - name: create basex database
-      command: "basex -c 'SET LANGUAGE el; CREATE DB nestle1904lowfat {{ basex_data_abs_dir }}/nlf/repo/syntax-trees/nestle1904-lowfat/xml/nestle1904lowfat.xml'"
+      command: "basexclient -Uadmin -P{{ basex_server_admin_password }} -c 'SET LANGUAGE el; CREATE DB nestle1904lowfat {{ basex_data_abs_dir }}/nlf/repo/syntax-trees/nestle1904-lowfat/xml/nestle1904lowfat.xml'"
     - name: grant anoixo basex user permission to read the database
-      command: "basex -c 'GRANT READ ON nestle1904lowfat TO {{ basex_server_username }}'"
-
-- name: setup basexserver service
-  hosts: staging
-  tags: db
-  become: yes
-  tasks:
-    - name: install systemd unit file
-      template: 
-        src: templates/basexserver.service
-        dest: /etc/systemd/system/basexserver.service
-    - name: have service start on boot, and start it
-      service:
-        name: basexserver
-        enabled: yes
-        state: started
+      command: "basexclient -Uadmin -P{{ basex_server_admin_password }} -c 'GRANT READ ON nestle1904lowfat TO {{ basex_server_username }}'"
 
 - name: clone repository
   hosts: staging
