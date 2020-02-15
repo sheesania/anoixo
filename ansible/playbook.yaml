@@ -22,6 +22,7 @@
         - git
         - nodejs
         - basex
+        - nginx
         - python3-venv
         - supervisor
 
@@ -165,4 +166,33 @@
     - name: start server
       supervisorctl:
         name: anoixo
+        state: restarted
+
+- name: provision nginx
+  hosts: staging
+  tags: nginx
+  become: yes
+  vars_files:
+    - public_vars.yaml
+  tasks:
+    - name: disable nginx default configuration
+      file:
+        path: "{{ nginx_enabled_abs_dir }}/default"
+        state: absent
+
+    - name: copy nginx config file
+      template:
+        src: "templates/nginx-simple.conf"
+        dest: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        mode: 0444
+
+    - name: enable nginx configuration
+      file:
+        src: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
+        dest: "{{ nginx_enabled_abs_dir }}/{{ nginx_conf_file }}"
+        state: link
+
+    - name: restart nginx
+      service:
+        name: nginx
         state: restarted
