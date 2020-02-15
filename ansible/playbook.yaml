@@ -72,14 +72,14 @@
     - name: install systemd unit file
       template: 
         src: templates/basexserver.service
-        dest: /etc/systemd/system/basexserver.service
+        dest: "{{ systemd_abs_dir }}/basexserver.service"
     - name: have service start on boot, and start it
       service:
         name: basexserver
         enabled: yes
         state: started
 
-- name: create basex database user
+- name: create basex server user
   hosts: staging
   tags: db
   become: yes
@@ -90,7 +90,7 @@
     - name: create basex server user
       command: "basex -c 'CREATE USER {{ basex_server_username }} {{ basex_server_password }}'"
 
-- name: setup Nestle Lowfat Treebank database
+- name: setup Nestle Lowfat Treebank basex database
   hosts: staging
   tags: db
   become: yes
@@ -121,7 +121,25 @@
         version: master
         force: yes
 
-- name: prepare python
+- name: instantiate private config
+  hosts: staging
+  tags: config, update
+  become: yes
+  become_user: "{{ anoixo_username }}"
+  vars_files:
+    - public_vars.yaml
+  tasks:
+    - name: create Nestle Lowfat Treebank provider config file for API
+      template:
+        src: templates/Nestle1904LowfatProvider_Config.py
+        dest: "{{ api_abs_dir }}/Nestle1904LowfatProvider_Config.py"
+        mode: 0400
+    - name: create server settings for client app
+      template:
+        src: templates/AppSettings.ts
+        dest: "{{ client_abs_dir }}/src/AppSettings.ts"
+
+- name: prepare python backend
   hosts: staging
   tags: python, update
   become: yes
@@ -135,24 +153,6 @@
         virtualenv_command: "{{ python3 }} -m venv venv"
         requirements: "{{ api_abs_dir }}/requirements.txt"
 
-- name: instantiate private config
-  hosts: staging
-  tags: config, update
-  become: yes
-  vars_files:
-    - public_vars.yaml
-  become_user: "{{ anoixo_username }}"
-  tasks:
-    - name: create Nestle Lowfat Treebank provider config file for API
-      template:
-        src: templates/Nestle1904LowfatProvider_Config.py
-        dest: "{{ api_abs_dir }}/Nestle1904LowfatProvider_Config.py"
-        mode: 0400
-    - name: create server settings for client app
-      template:
-        src: templates/AppSettings.ts
-        dest: "{{ client_abs_dir }}/src/AppSettings.ts"
-
 - name: build client app
   hosts: staging
   tags: ui, update
@@ -161,16 +161,16 @@
   vars_files:
     - public_vars.yaml
   tasks:
-    - name: install node modules for ui
+    - name: install node modules for client app
       npm:
         path: "{{ client_abs_dir }}"
 
-    - name: build production ui
+    - name: build client app
       command:
         chdir: "{{ client_abs_dir }}"
         cmd: npm run build
 
-- name: provision supervisor
+- name: provision supervisor to run python backend
   hosts: staging
   tags: supervisor
   become: yes
@@ -189,12 +189,12 @@
         state: directory
         mode: 0755
 
-    - name: start server
+    - name: start backend
       supervisorctl:
         name: anoixo
         state: restarted
 
-- name: provision nginx
+- name: provision nginx to serve frontend and backend
   hosts: staging
   tags: nginx
   become: yes

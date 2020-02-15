@@ -4,6 +4,8 @@ client_abs_dir: "{{ source_abs_dir }}/client/anoixo-client"
 
 venv_abs_dir: "{{ api_abs_dir }}/venv"
 
+systemd_abs_dir: "/etc/systemd/system"
+
 supervisor_abs_dir: /etc/supervisor
 supervisor_conf_abs_dir: "{{ supervisor_abs_dir }}/conf.d"
 
