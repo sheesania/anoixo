@@ -1,5 +1,6 @@
 # Update these with the right values, then rename to anoixo-staging.yaml
 ansible_host: 127.0.0.1
+server_name: "{{ ansible_host }}"
 ansible_user: ansible
 ansible_ssh_private_key_file: id_rsa
 
@@ -7,6 +8,8 @@ anoixo_username: anoixo
 anoixo_password: password
 basex_username: basex
 basex_password: password
+
+basex_server_admin_password: password
 basex_server_username: anoixo
 basex_server_password: password
 
