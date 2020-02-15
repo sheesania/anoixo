@@ -126,6 +126,10 @@
         src: templates/Nestle1904LowfatProvider_Config.py
         dest: "{{ api_abs_dir }}/Nestle1904LowfatProvider_Config.py"
         mode: 0400
+    - name: create server settings for client app
+      template:
+        src: templates/AppSettings.ts
+        dest: "{{ client_abs_dir }}/src/AppSettings.ts"
 
 - name: build client app
   hosts: staging
