@@ -18,9 +18,8 @@ Download the Nestle 1904 Lowfat treebank (for the Greek New Testament) and load 
 
 ```
 git clone https://github.com/biblicalhumanities/greek-new-testament
-cp greek-new-testament/syntax-trees/nestle1904-lowfat/xml/nestle1904lowfat.xml nestle1904lowfat.xml
+cd greek-new-testament/syntax-trees/nestle1904-lowfat/xml
 basex -c "SET LANGUAGE el; CREATE DB nestle1904lowfat nestle1904lowfat.xml"
-rm -r greek-new-testament
 ```
 
 Start the BaseX server.
@@ -69,7 +68,26 @@ Now start the development server.
 npm start
 ```
 
-By default, it expects to find the API server at `http://localhost:5000/`.
+By default, it expects to find the API server at `http://localhost:5000/`. You can edit `src/AppSettings.ts` in the client folder if you need to change this configuration.
+
+## Deployment
+Anoixo supports automatic deployment using [Ansible](https://www.ansible.com/). The included playbook has been tested on an Ubuntu 18.04 virtual machine.
+
+To run the automatic deployment, clone the repository and head to the `ansible` folder. Under `host_vars`, open `sample_anoixo-staging.yaml` and edit it with the information for your host and what passwords you would like to use. (If you want to use key-based login like in the sample, you'll also need to put a private key `id_rsa` that's authorized for logging into your remote host in the `ansible` directory.) Then rename the file to `anoixo-staging.yaml`.
+
+Back in the top-level `ansible` directory, run the playbook:
+
+```
+ansible-playbook -i hosts.yaml playbook.yaml -K
+```
+
+It should prompt you for the sudo password for the user you are logging into the host as, then run the playbook. After it's finished, you should be able to browse to your remote host in a web browser and see Anoixo up and running!
+
+If you'd like to update your deployment to the current version of the master branch, just run the plays tagged `update`:
+
+```
+ansible-playbook -i hosts.yaml playbook.yaml --tags "update" -K
+```
 
 ## Why "Anoixo"?
 ἀνοίξω means "I will open" in Koine Greek. The root ἀνοίγω appears in verses like Matthew 7:7 "Ask and it will be given to you, seek and you will find, knock and it will be opened [ἀνοιγήσεται] for you."
