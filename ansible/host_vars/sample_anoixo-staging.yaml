@@ -1,0 +1,26 @@
+# Update these with the values you want, then rename to anoixo-staging.yaml
+
+# Information about how to log in to your remote host
+ansible_host: 127.0.0.1
+server_name: "{{ ansible_host }}"
+ansible_user: ansible
+ansible_ssh_private_key_file: id_rsa
+
+# Desired usernames and passwords for the Unix users Ansible will create
+anoixo_username: anoixo
+anoixo_password: password
+basex_username: basex
+basex_password: password
+
+# Desired usernames and passwords for the BaseX users Ansible will create
+basex_server_admin_password: password
+basex_server_username: anoixo
+basex_server_password: password
+
+# Desired directories for where Ansible will put the repo, logs, etc
+source_abs_dir: /home/anoixo/anoixo
+logs_abs_dir: /home/anoixo/logs
+basex_data_abs_dir: /home/basex/data
+
+# Where Python 3 is installed on your remote host
+python3: /usr/bin/python3

@@ -1,0 +1,13 @@
+[Unit]
+Description=BaseX database server
+
+[Service]
+User={{ basex_username }}
+Group={{ basex_username }}
+WorkingDirectory=/home/{{ basex_username }}
+ProtectSystem=full
+ExecStart=/usr/bin/basexserver
+ExecStop=/usr/bin/basexserver stop
+
+[Install]
+WantedBy=multi-user.target

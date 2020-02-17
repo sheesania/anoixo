@@ -1,0 +1,15 @@
+repo: https://github.com/sheesania/anoixo
+api_abs_dir: "{{ source_abs_dir }}/server/anoixo-server"
+client_abs_dir: "{{ source_abs_dir }}/client/anoixo-client"
+
+venv_abs_dir: "{{ api_abs_dir }}/venv"
+
+systemd_abs_dir: "/etc/systemd/system"
+
+supervisor_abs_dir: /etc/supervisor
+supervisor_conf_abs_dir: "{{ supervisor_abs_dir }}/conf.d"
+
+nginx_base_abs_dir: "/etc/nginx"
+nginx_available_abs_dir: "{{ nginx_base_abs_dir}}/sites-available"
+nginx_enabled_abs_dir: "{{ nginx_base_abs_dir}}/sites-enabled"
+nginx_conf_file: "anoixo.conf"
