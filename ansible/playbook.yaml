@@ -68,6 +68,8 @@
   hosts: staging
   tags: db
   become: yes
+  vars_files:
+    - public_vars.yaml
   tasks:
     - name: install systemd unit file
       template: 
@@ -77,7 +79,7 @@
       service:
         name: basexserver
         enabled: yes
-        state: started
+        state: restarted
 
 - name: create basex server user
   hosts: staging
@@ -189,7 +191,12 @@
         state: directory
         mode: 0755
 
-    - name: start backend
+- name: restart backend
+  hosts: staging
+  tags: supervisor, update
+  become: yes
+  tasks:
+    - name: restart backend supervisor job
       supervisorctl:
         name: anoixo
         state: restarted
