@@ -1,10 +1,10 @@
 .lexical-form-selector input {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .lexical-form-selector input::placeholder {
-    color: gray;
-    opacity: 1;
-    font-style: italic;
-    font-weight: normal;
+  color: gray;
+  opacity: 1;
+  font-style: italic;
+  font-weight: normal;
 }

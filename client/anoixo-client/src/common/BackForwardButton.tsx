@@ -1,14 +1,14 @@
-import React, {memo} from 'react';
+import React, { memo } from 'react';
 import Button from '@material-ui/core/Button';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import {withStyles} from '@material-ui/styles';
+import { withStyles } from '@material-ui/styles';
 
 type Props = {
-    onClick: () => void;
-    type: 'search' | 'back';
-    customStyling?: React.CSSProperties;
-}
+  onClick: () => void;
+  type: 'search' | 'back';
+  customStyling?: React.CSSProperties;
+};
 
 const BackForwardButton: React.FC<Props> = memo((props: Props) => {
   const CustomButton = withStyles(() => ({
@@ -18,21 +18,22 @@ const BackForwardButton: React.FC<Props> = memo((props: Props) => {
       '&:hover': {
         backgroundColor: '#4c8240',
       },
-      ...props.customStyling
+      ...props.customStyling,
     },
   }))(Button);
 
   let icon, text;
   if (props.type === 'search') {
-      icon = {endIcon: <ArrowForwardIcon/>};
-      text = 'Search';
-  } else {  //type is 'back'
-      icon = {startIcon: <ArrowBackIcon/>};
-      text = 'Back to Search';
+    icon = { endIcon: <ArrowForwardIcon /> };
+    text = 'Search';
+  } else {
+    //type is 'back'
+    icon = { startIcon: <ArrowBackIcon /> };
+    text = 'Back to Search';
   }
   return (
-    <CustomButton onClick={props.onClick} size='large' {...icon}>
-        {text}
+    <CustomButton onClick={props.onClick} size="large" {...icon}>
+      {text}
     </CustomButton>
   );
 });

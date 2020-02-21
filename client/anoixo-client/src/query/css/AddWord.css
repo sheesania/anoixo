@@ -1,12 +1,12 @@
 .AddWord:hover {
-    background-image: none;
-    border: 2px solid;
+  background-image: none;
+  border: 2px solid;
 }
 
 .add-word-icon {
-    color: #77cc64;
+  color: #77cc64;
 }
 
 .AddWord:hover .add-word-icon {
-    color: black;
+  color: black;
 }

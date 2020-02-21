@@ -1,61 +1,70 @@
-import React, {memo, useCallback} from 'react';
+import React, { memo, useCallback } from 'react';
 import AttributeComponentProps from '../AttributeComponentProps';
 import AttrSelectionBox from '../AttrSelectionBox';
 
-const PartOfSpeechSelector: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {
-  const {updateAttr, id} = props;
-  const handleChange = useCallback((newValue: string) => {
-    updateAttr(id, newValue);
-  }, [updateAttr, id]);
+const PartOfSpeechSelector: React.FC<AttributeComponentProps> = memo(
+  (props: AttributeComponentProps) => {
+    const { updateAttr, id } = props;
+    const handleChange = useCallback(
+      (newValue: string) => {
+        updateAttr(id, newValue);
+      },
+      [updateAttr, id]
+    );
 
-  const label = 'Part of Speech';
-  const items = [
-    {
-      label: 'Adjective',
-      value: 'adj',
-    },
-    {
-      label: 'Adverb',
-      value: 'adv',
-    },
-    {
-      label: 'Article/Determiner',
-      value: 'det',
-    },
-    {
-      label: 'Conjunction',
-      value: 'conj',
-    },
-    {
-      label: 'Interjection',
-      value: 'intj',
-    },
-    {
-      label: 'Noun',
-      value: 'noun',
-    },
-    {
-      label: 'Particle',
-      value: 'ptcl',
-    },
-    {
-      label: 'Preposition',
-      value: 'prep',
-    },
-    {
-      label: 'Pronoun',
-      value: 'pron',
-    },
-    {
-      label: 'Verbal',
-      value: 'verb',
-    },
-  ];
+    const label = 'Part of Speech';
+    const items = [
+      {
+        label: 'Adjective',
+        value: 'adj',
+      },
+      {
+        label: 'Adverb',
+        value: 'adv',
+      },
+      {
+        label: 'Article/Determiner',
+        value: 'det',
+      },
+      {
+        label: 'Conjunction',
+        value: 'conj',
+      },
+      {
+        label: 'Interjection',
+        value: 'intj',
+      },
+      {
+        label: 'Noun',
+        value: 'noun',
+      },
+      {
+        label: 'Particle',
+        value: 'ptcl',
+      },
+      {
+        label: 'Preposition',
+        value: 'prep',
+      },
+      {
+        label: 'Pronoun',
+        value: 'pron',
+      },
+      {
+        label: 'Verbal',
+        value: 'verb',
+      },
+    ];
 
-  return (
-    <AttrSelectionBox label={label} currentValue={props.value || ''} items={items} 
-      handleChange={handleChange}/>
-  );
-});
+    return (
+      <AttrSelectionBox
+        label={label}
+        currentValue={props.value || ''}
+        items={items}
+        handleChange={handleChange}
+      />
+    );
+  }
+);
 
 export default PartOfSpeechSelector;

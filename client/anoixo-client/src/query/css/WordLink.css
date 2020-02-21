@@ -1,9 +1,9 @@
 .word-link {
-    align-self: stretch;
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    align-items: center; 
+  align-self: stretch;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

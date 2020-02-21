@@ -1,16 +1,16 @@
 export type Link = {
-    allowedWordsBetween: number;
-}
+  allowedWordsBetween: number;
+};
 
 export type WordQuery = {
-    attributes?: {
-        [name: string]: string;
-    }
-    link?: Link;
-}
+  attributes?: {
+    [name: string]: string;
+  };
+  link?: Link;
+};
 
 export type Sequence = WordQuery[];
 
 export type Query = {
-    sequences: Sequence[];
-}
+  sequences: Sequence[];
+};
