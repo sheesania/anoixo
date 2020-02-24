@@ -3,7 +3,7 @@ from TextQuery import TextQuery
 import abc
 
 
-class ProviderError(Exception):
+class TextProviderError(Exception):
     def __init__(self, message):
         self.message = message
 

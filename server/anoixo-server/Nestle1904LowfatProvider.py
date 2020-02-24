@@ -3,7 +3,7 @@ from timeout_decorator import timeout
 from typing import DefaultDict, List
 from BaseXClient import BaseXClient
 from QueryResult import PassageResult, QueryResult, WordResult
-from TextProvider import ProviderError, TextProvider
+from TextProvider import TextProviderError, TextProvider
 from TextQuery import TextQuery, WordQuery
 import json
 import Nestle1904LowfatProvider_Config as Config
@@ -97,18 +97,18 @@ class Nestle1904LowfatProvider(TextProvider):
     @timeout(2, use_signals=False)  # timeout after 2 seconds; use_signals to be thread-safe
     def _execute_query(self, query_string: str) -> str:
         if not self.session:
-            raise ProviderError(self.error)
+            raise TextProviderError(self.error)
         return self.session.query(query_string).execute()
 
     def get_text_for_reference(self, reference: str) -> str:
         query = f'//sentence[descendant::milestone[@id="{reference}"]]/p/text()'
         try:
             return self._execute_query(query)
-        except ProviderError:
+        except TextProviderError:
             raise
         except Exception as err:
             self.error = f'Error getting reference \'{reference}\': {type(err).__name__}'
-            raise ProviderError(self.error)
+            raise TextProviderError(self.error)
 
     """
     Builds an XQuery string to begin finding matches for the given TextQuery.
@@ -352,23 +352,23 @@ class Nestle1904LowfatProvider(TextProvider):
         raw_results = None
         try:
             raw_results = self._execute_query(query_string)
-        except ProviderError:
+        except TextProviderError:
             raise
         except Exception as err:
             self.error = f'Error executing XML database query: {type(err).__name__}'
-            raise ProviderError(self.error)
+            raise TextProviderError(self.error)
 
         try:
             results_json = json.loads(raw_results)
 
             def on_parsing_error(message: str):
-                raise ProviderError(f'Error parsing XML database response JSON: {message}')
+                raise TextProviderError(f'Error parsing XML database response JSON: {message}')
             results = QueryResult(results_json, on_parsing_error)
             filtered_passages = self._check_allowed_words_between(query, results)
             results.passages = filtered_passages
             return results
-        except ProviderError:
+        except TextProviderError:
             raise
         except Exception as err:
             self.error = f'Error processing query results: {type(err).__name__}'
-            raise ProviderError(self.error)
+            raise TextProviderError(self.error)
