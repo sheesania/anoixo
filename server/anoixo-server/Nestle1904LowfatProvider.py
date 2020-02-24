@@ -94,7 +94,7 @@ class Nestle1904LowfatProvider(TextProvider):
     def get_source_name(self) -> str:
         return 'Nestle 1904 Lowfat Treebank'
 
-    @timeout(2, use_signals=False)  # timeout after 2 seconds; use_signals to be thread-safe
+    @timeout(5, use_signals=False)  # timeout after 5 seconds; use_signals to be thread-safe
     def _execute_query(self, query_string: str) -> str:
         if not self.session:
             raise TextProviderError(self.error)
