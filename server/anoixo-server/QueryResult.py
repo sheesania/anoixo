@@ -12,6 +12,7 @@ class Reference:
     # Currently only handles string references
     def __init__(self, json: Any, on_parsing_error: Callable[[str], Any]):
         if isinstance(json, str):
+            self.string_ref = json
             try:
                 self._parse_string_ref(json)
             except Exception as err:
