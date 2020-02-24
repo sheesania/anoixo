@@ -173,6 +173,7 @@ components:
               matchedWordQuery: -1
               partOfSpeech: Noun
               case: Nominative
+        - translation: 'Jesus wept.'
     
     PassageResult:
       title: PassageResult
@@ -197,9 +198,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WordResult'
+        translation:
+          title: Translation
+          description: A translation of the passages that was matched.
+          type: string
+          example: 'Jesus wept'
       required:
         - references
         - words
+        - translation
     
     Reference:
       title: Reference
