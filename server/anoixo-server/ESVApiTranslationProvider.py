@@ -1,6 +1,7 @@
 import aiohttp
 import asyncio
-from typing import List
+import ESVApiTranslationProvider_Secret as Config
+from typing import Dict, List
 from QueryResult import QueryResult, Reference
 from TranslationProvider import TranslationProvider, TranslationProviderError
 
@@ -14,6 +15,16 @@ class ESVApiTranslationProvider(TranslationProvider):
     """
     STARTING_REQUEST_LINE_SIZE = 225
 
+    DEFAULT_REQUEST_PARAMS = {
+        'include-passage-references': 'false',
+        'include-verse-numbers': 'false',
+        'include-first-verse-numbers': 'false',
+        'include-footnotes': 'false',
+        'include-headings': 'false',
+        'include-short-copyright': 'false',
+        'indent-paragraphs': '0',
+    }
+
     def _get_verse_query(self, references: List[Reference]) -> str:
         if not references:
             raise TranslationProviderError('Result has no references')
@@ -22,14 +33,16 @@ class ESVApiTranslationProvider(TranslationProvider):
         else:
             return f'{references[0].string_ref}-{references[-1].string_ref}'
 
-    async def _send_query(self, session: aiohttp.ClientSession, chunk_verse_queries: List[str]):
+    async def _send_query(self, session: aiohttp.ClientSession, chunk_verse_queries: List[str]) -> Dict:
         query = ';'.join(chunk_verse_queries)
         print(query)
-        resp = await session.get('http://httpbin.org/get')
+        resp = await session.get('https://api.esv.org/v3/passage/text',
+                                 params={'q': query, **self.DEFAULT_REQUEST_PARAMS})
         return await resp.json()
 
-    async def _request_translations(self, query_result: QueryResult) -> None:
-        async with aiohttp.ClientSession() as session:
+    async def _request_translations(self, query_result: QueryResult) -> Dict:
+        async with aiohttp.ClientSession(
+                headers={'Authorization': Config.esv_api_key}) as session:
             result_index = 0
             verses_in_chunk_counter = 0
             query_string_length = self.STARTING_REQUEST_LINE_SIZE
@@ -57,7 +70,8 @@ class ESVApiTranslationProvider(TranslationProvider):
                 requests.append(self._send_query(session, chunk_verse_queries))
 
             results = await asyncio.gather(*requests)
-            print(results)
+            return results
 
     def add_translations(self, query_result: QueryResult) -> None:
-        asyncio.run(self._request_translations(query_result))
+        translations = asyncio.run(self._request_translations(query_result))
+        print(translations)
