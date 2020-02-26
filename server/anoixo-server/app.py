@@ -1,11 +1,11 @@
 from flask import abort, jsonify, make_response, request, Flask
 from flask_cors import CORS
 from typing import Any, Dict, Union
-from ESVApiTranslationProvider import ESVApiTranslationProvider
-from Nestle1904LowfatProvider import Nestle1904LowfatProvider
-from TextProvider import TextProviderError, TextProvider
+from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
+from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
+from text_providers.TextProvider import TextProviderError, TextProvider
 from TextQuery import TextQuery
-from TranslationProvider import TranslationProvider, TranslationProviderError
+from translation_providers.TranslationProvider import TranslationProvider, TranslationProviderError
 
 
 app = Flask(__name__)

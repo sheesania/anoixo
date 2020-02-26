@@ -1,9 +1,9 @@
 import aiohttp
 import asyncio
-import ESVApiTranslationProvider_Secret as Config
+from translation_providers import ESVApiTranslationProvider_Secret as Config
 from typing import Dict, List
 from QueryResult import QueryResult, Reference
-from TranslationProvider import TranslationProvider, TranslationProviderError
+from translation_providers.TranslationProvider import TranslationProvider, TranslationProviderError
 
 
 class TranslationsForResultIndexes:

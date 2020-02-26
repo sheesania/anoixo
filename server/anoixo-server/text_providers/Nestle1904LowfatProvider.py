@@ -3,11 +3,10 @@ from timeout_decorator import timeout
 from typing import DefaultDict, List
 from BaseXClient import BaseXClient
 from QueryResult import PassageResult, QueryResult, WordResult
-from TextProvider import TextProviderError, TextProvider
+from text_providers.TextProvider import TextProviderError, TextProvider
 from TextQuery import TextQuery, WordQuery
 import json
-import Nestle1904LowfatProvider_Config as Config
-
+from text_providers import Nestle1904LowfatProvider_Config as Config
 
 # All searchable attributes and their possible values.
 available_attributes = {
