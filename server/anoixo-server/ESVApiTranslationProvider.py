@@ -50,14 +50,22 @@ class ESVApiTranslationProvider(TranslationProvider):
                           chunk_start_index: int) -> TranslationsForResultIndexes:
         query = ';'.join(chunk_verse_queries)
         print(query)
-        resp = await session.get('https://api.esv.org/v3/passage/text',
-                                 params={'q': query, **self.DEFAULT_REQUEST_PARAMS})
-        json = await resp.json()
+        try:
+            resp = await session.get('https://api.esv.org/v3/passage/text',
+                                     params={'q': query, **self.DEFAULT_REQUEST_PARAMS})
+            json = await resp.json()
+        except aiohttp.ContentTypeError:
+            raise TranslationProviderError('ESV API did not return JSON')
+        except aiohttp.ClientResponseError as err:
+            if err.status == 502:
+                raise TranslationProviderError('ESV API quota exceeded')
+            else:
+                raise TranslationProviderError(f'Error response from ESV API: {err.status} {err.message}')
         return TranslationsForResultIndexes(json, chunk_start_index)
 
     async def _request_translations(self, query_result: QueryResult) -> List[TranslationsForResultIndexes]:
         async with aiohttp.ClientSession(
-                headers={'Authorization': Config.esv_api_key}) as session:
+                headers={'Authorization': Config.esv_api_key}, raise_for_status=True) as session:
             result_index = 0
             verses_in_chunk_counter = 0
             query_string_length = self.STARTING_REQUEST_LINE_SIZE
