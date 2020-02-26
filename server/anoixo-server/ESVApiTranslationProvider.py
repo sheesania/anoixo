@@ -15,9 +15,6 @@ class TranslationsForResultIndexes:
         self.translations: List[str] = response['passages']
         self.result_start_index = result_start_index
 
-    def __repr__(self):
-        return f'Translations starting at index {self.result_start_index}: {{{self.translations}}}'
-
 
 class ESVApiTranslationProvider(TranslationProvider):
 
@@ -49,7 +46,6 @@ class ESVApiTranslationProvider(TranslationProvider):
     async def _send_query(self, session: aiohttp.ClientSession, chunk_verse_queries: List[str],
                           chunk_start_index: int) -> TranslationsForResultIndexes:
         query = ';'.join(chunk_verse_queries)
-        print(query)
         try:
             resp = await session.get('https://api.esv.org/v3/passage/text',
                                      params={'q': query, **self.DEFAULT_REQUEST_PARAMS})
@@ -107,5 +103,4 @@ class ESVApiTranslationProvider(TranslationProvider):
 
     def add_translations(self, query_result: QueryResult) -> None:
         translations = asyncio.run(self._request_translations(query_result))
-        print(translations)
         self._add_translations_to_result(query_result, translations)
