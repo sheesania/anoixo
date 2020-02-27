@@ -78,7 +78,7 @@ class PassageResult:
 
 
 class QueryResult:
-    def __init__(self, json: Dict[Any, Any], on_parsing_error: Callable[[str], Any]):
+    def __init__(self, json: Any, on_parsing_error: Callable[[str], Any]):
         if not isinstance(json, list):
             on_parsing_error('Results are not a list')
         self.passages: List[PassageResult] = [PassageResult(passage, on_parsing_error) for passage in json]
