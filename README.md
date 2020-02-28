@@ -31,27 +31,41 @@ basexserver
 By default, it will listen on `localhost:1984` with username `admin` and password `admin`. See the [BaseX documentation for more server options](http://docs.basex.org/wiki/Command-Line_Options#Server).
 
 ### Server
-Clone the repository.
+The Anoixo server requires Python 3.8.0+ (for asyncio-related functionality), which may not be the latest version in your Linux distribution's default repository. You can check your currently installed version with `python3 -V`. On Ubuntu, you can install Python 3.8 alongside the current default python3 with `sudo apt install python3.8`, then access it at `/usr/bin/python3.8`.
+
+Once you have Python 3.8 installed, clone the repository.
 
 ```
 git clone https://github.com/sheesania/anoixo.git
 ```
 
-Set up a Python virtual environment and install the requirements.
+Head to the server folder.
 
 ```
 cd anoixo/server/anoixo-server
-virtualenv venv
+```
+
+Now set up a virtual environment. If your `python3` is 3.8.0 or later, you can just run `python3 -m venv venv`. Otherwise, use a Python 3.8.0+ binary to run this command. For example:
+
+```
+/usr/bin/python3.8 -m venv venv
+```
+
+Then install the requirements.
+
+```
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Edit the BaseX configuration in `Nestle1904LowfatProvider_Config.py` to match how you set up your server.
+Edit the BaseX configuration in `text_providers/Nestle1904LowfatProvider_Config.py` to match how you set up your server.
+
+Rename `translation_providers/ESVApiTranslationProvider_Secret_sample.py` to just `ESVApiTranslationProvider_Secret.py` and edit it with your [ESV API](https://api.esv.org/) key.
 
 Now run the development server!
 
 ```
-python3 app.py
+venv/bin/python app.py
 ```
 
 If you want to run the tests:
@@ -95,7 +109,7 @@ ansible-playbook -i hosts.yaml playbook.yaml -K
 
 It should prompt you for the sudo password for the user you are logging into the host as, then run the playbook. After it's finished, you should be able to browse to your remote host in a web browser and see Anoixo up and running!
 
-If you'd like to update your deployment to the current version of the master branch, just run the plays tagged `update`:
+If you'd like to update your deployment to the current version of the master branch, just run the plays tagged `update`. Warning - this will not take into account any changes made to other parts of the playbook!
 
 ```
 ansible-playbook -i hosts.yaml playbook.yaml --tags "update" -K
