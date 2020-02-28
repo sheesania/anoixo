@@ -14,6 +14,7 @@ export type ReferenceResult = {
 export type PassageResult = {
   references: ReferenceResult[];
   words: WordResult[];
+  translation: string;
 };
 
 export type SuccessResult = PassageResult[];
@@ -56,7 +57,7 @@ export const parseReferenceResult = (json: any): ReferenceResult => {
 };
 
 export const parsePassageResult = (json: any): PassageResult => {
-  if (!(json && Array.isArray(json.references) && Array.isArray(json.words))) {
+  if (!(json && Array.isArray(json.references) && Array.isArray(json.words) && typeof json.translation === 'string')) {
     throw new TypeError();
   }
 
@@ -65,6 +66,7 @@ export const parsePassageResult = (json: any): PassageResult => {
       parseReferenceResult(reference)
     ),
     words: json.words.map((word: any) => parseWordResult(word)),
+    translation: json.translation,
   };
 };
 
