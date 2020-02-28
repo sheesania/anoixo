@@ -23,7 +23,8 @@
         - nodejs
         - basex
         - nginx
-        - python3-venv
+        - python3.8
+        - python3.8-venv
         - supervisor
 
 - name: setup firewall
@@ -134,7 +135,12 @@
     - name: create Nestle Lowfat Treebank provider config file for API
       template:
         src: templates/Nestle1904LowfatProvider_Config.py
-        dest: "{{ api_abs_dir }}/Nestle1904LowfatProvider_Config.py"
+        dest: "{{ api_abs_dir }}/text_providers/Nestle1904LowfatProvider_Config.py"
+        mode: 0400
+    - name: create ESV API provider config file for API
+      template:
+        src: templates/ESVApiTranslationProvider_Secret.py
+        dest: "{{ api_abs_dir }}/translation_providers/ESVApiTranslationProvider_Secret.py"
         mode: 0400
     - name: create server settings for client app
       template:
@@ -151,7 +157,7 @@
   tasks:
     - name: create and populate python venv
       pip:
-        virtualenv: "{{ api_abs_dir }}/venv"
+        virtualenv: "{{ venv_abs_dir }}"
         virtualenv_command: "{{ python3 }} -m venv venv"
         requirements: "{{ api_abs_dir }}/requirements.txt"
 

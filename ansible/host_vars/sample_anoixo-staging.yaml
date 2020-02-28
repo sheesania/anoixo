@@ -17,10 +17,10 @@ basex_server_admin_password: password
 basex_server_username: anoixo
 basex_server_password: password
 
+# Your ESV API key from https://api.esv.org/
+esv_api_key: 'Token ffffffffffffffffffffffffffffffffffffffff'
+
 # Desired directories for where Ansible will put the repo, logs, etc
 source_abs_dir: /home/anoixo/anoixo
 logs_abs_dir: /home/anoixo/logs
 basex_data_abs_dir: /home/basex/data
-
-# Where Python 3 is installed on your remote host
-python3: /usr/bin/python3
