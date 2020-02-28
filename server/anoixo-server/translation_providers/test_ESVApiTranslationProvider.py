@@ -53,6 +53,48 @@ def test_gets_translations_for_few_results(mocker, esv_provider: ESVApiTranslati
     assert result.passages[1].translation == 'text of Matt.1.1-Matt.1.2'
 
 
+def test_requests_proper_endpoint(mocker, esv_provider: ESVApiTranslationProvider):
+    result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
+    mock_get = mock_response(mocker, lambda: {'passages': ['text']})
+    esv_provider.add_translations(result)
+    assert mock_get.call_args.args[0] == 'https://api.esv.org/v3/passage/text'
+
+
+def test_properly_formats_verse_query_string(mocker, esv_provider: ESVApiTranslationProvider):
+    result = query_result_for_json([
+        {
+            'references': ['Mark.1.1'],
+            'words': []
+        },
+        {
+            'references': ['Matt.1.1', 'Matt.1.2'],
+            'words': []
+        },
+        {
+            'references': ['John.1.1', 'John.1.2', 'John.1.3'],
+            'words': []
+        }
+    ])
+    mock_get = mock_response(mocker, lambda: {'passages': ['text' for _ in range(3)]})
+    esv_provider.add_translations(result)
+    get_params = mock_get.call_args.kwargs['params']
+    assert get_params['q'] == 'Mark.1.1;Matt.1.1-Matt.1.2;John.1.1-John.1.3'
+
+
+def test_includes_proper_request_params(mocker, esv_provider: ESVApiTranslationProvider):
+    result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
+    mock_get = mock_response(mocker, lambda: {'passages': ['text']})
+    esv_provider.add_translations(result)
+    get_params = mock_get.call_args.kwargs['params']
+    assert get_params['include-passage-references'] == 'false'
+    assert get_params['include-verse-numbers'] == 'false'
+    assert get_params['include-first-verse-numbers'] == 'false'
+    assert get_params['include-footnotes'] == 'false'
+    assert get_params['include-headings'] == 'false'
+    assert get_params['include-short-copyright'] == 'false'
+    assert get_params['indent-paragraphs'] == '0'
+
+
 def test_chunks_translation_api_requests(mocker, esv_provider: ESVApiTranslationProvider):
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []} for _ in range(900)])
     mock_get = mock_response(mocker, lambda: {
