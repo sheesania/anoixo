@@ -3,6 +3,14 @@
   padding: 0.8rem;
 }
 
+.passage-card-text-container {
+  display: flex;
+}
+
+.passage-card-text-element {
+  width: 48%;
+}
+
 .matched-word {
   background-color: lightblue;
 }

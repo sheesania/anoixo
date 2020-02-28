@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { PassageResult, ReferenceResult, WordResult } from './ResultTypes';
 import Paper from '@material-ui/core/Paper';
+import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import './css/PassageCard.css';
 
@@ -56,6 +57,11 @@ const makeTextElements = (words: WordResult[]): (string | JSX.Element)[] => {
   return joinedText;
 };
 
+const dividerStyle = {
+  marginLeft: '2%',
+  marginRight: '2%',
+}
+
 const PassageCard: React.FC<Props> = memo((props: Props) => {
   const reference = makeReferenceString(props.passage.references);
   const text = makeTextElements(props.passage.words);
@@ -64,7 +70,11 @@ const PassageCard: React.FC<Props> = memo((props: Props) => {
       <Typography variant="h6" component="h3">
         {reference}
       </Typography>
-      <Typography variant="body1">{text}</Typography>
+      <div className="passage-card-text-container">
+        <Typography className="passage-card-text-element" variant="body1">{text}</Typography>
+        <Divider style={dividerStyle} orientation="vertical" flexItem/>
+        <Typography className="passage-card-text-element" variant="body1">{props.passage.translation}</Typography>
+      </div>
     </Paper>
   );
 });
