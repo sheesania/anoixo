@@ -91,7 +91,7 @@ def test_includes_proper_request_params(mocker, esv_provider: ESVApiTranslationP
     assert get_params['include-first-verse-numbers'] == 'false'
     assert get_params['include-footnotes'] == 'false'
     assert get_params['include-headings'] == 'false'
-    assert get_params['include-short-copyright'] == 'false'
+    assert get_params['include-short-copyright'] == 'true'
     assert get_params['indent-paragraphs'] == '0'
 
 

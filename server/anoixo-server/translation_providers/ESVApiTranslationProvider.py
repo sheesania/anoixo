@@ -31,7 +31,7 @@ class ESVApiTranslationProvider(TranslationProvider):
         'include-first-verse-numbers': 'false',
         'include-footnotes': 'false',
         'include-headings': 'false',
-        'include-short-copyright': 'false',
+        'include-short-copyright': 'true',
         'indent-paragraphs': '0',
     }
 
