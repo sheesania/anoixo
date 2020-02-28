@@ -31,7 +31,7 @@ def esv_provider():
     return ESVApiTranslationProvider()
 
 
-def test_get_translations_for_few_results(mocker, esv_provider: ESVApiTranslationProvider):
+def test_gets_translations_for_few_results(mocker, esv_provider: ESVApiTranslationProvider):
     result = query_result_for_json([
         {
             'references': ['Mark.1.1'],
@@ -53,7 +53,7 @@ def test_get_translations_for_few_results(mocker, esv_provider: ESVApiTranslatio
     assert result.passages[1].translation == 'text of Matt.1.1-Matt.1.2'
 
 
-def test_chunk_translation_api_requests(mocker, esv_provider: ESVApiTranslationProvider):
+def test_chunks_translation_api_requests(mocker, esv_provider: ESVApiTranslationProvider):
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []} for _ in range(900)])
     mock_get = mock_response(mocker, lambda: {
         'passages': ['text of John.1.1' for _ in range(300)]
