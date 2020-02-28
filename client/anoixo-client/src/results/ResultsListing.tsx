@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { SuccessResult } from './ResultTypes';
 import BackForwardButton from '../common/BackForwardButton';
+import CopyrightNotice from './CopyrightNotice';
 import PassageCard from './PassageCard';
 import Typography from '@material-ui/core/Typography';
 import './css/ResultsListing.css';
@@ -24,6 +25,7 @@ const ResultsListing: React.FC<Props> = memo((props: Props) => {
           onClick={props.closeResults}
           customStyling={{ marginLeft: '1.2rem' }}
         />
+        <CopyrightNotice />
       </div>
       {passageCards}
       <BackForwardButton
