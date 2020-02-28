@@ -1,19 +1,17 @@
-import aiohttp
 import pytest
+from unittest.mock import AsyncMock
 from typing import Dict, List
 from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
 from QueryResult import QueryResult
 
 
-def mock_response(monkeypatch, response: Dict):
+def mock_response(mocker, response: Dict):
     class MockResponse:
         async def json(self):
             return response
-
-    async def mock_get(*args, **kwargs):
-        return MockResponse()
-
-    monkeypatch.setattr(aiohttp.ClientSession, 'get', mock_get)
+    mock_get = mocker.patch('aiohttp.ClientSession.get', new_callable=AsyncMock)
+    mock_get.return_value = MockResponse()
+    return mock_get
 
 
 def query_result_for_json(json: List) -> QueryResult:
@@ -25,7 +23,7 @@ def esv_provider():
     return ESVApiTranslationProvider()
 
 
-def test_get_translations_for_few_results(monkeypatch, esv_provider: ESVApiTranslationProvider):
+def test_get_translations_for_few_results(mocker, esv_provider: ESVApiTranslationProvider):
     result = query_result_for_json([
         {
             'references': ['Mark.1.1'],
@@ -36,7 +34,7 @@ def test_get_translations_for_few_results(monkeypatch, esv_provider: ESVApiTrans
             'words': []
         }
     ])
-    mock_response(monkeypatch, {
+    mock_response(mocker, {
         'passages': [
             'text of Mark.1.1',
             'text of Matt.1.1-Matt.1.2',
