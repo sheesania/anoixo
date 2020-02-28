@@ -1,0 +1,1 @@
+esv_api_key = '{{ esv_api_key }}'
