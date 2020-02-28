@@ -70,5 +70,35 @@ def test_handles_content_type_error(mocker, esv_provider: ESVApiTranslationProvi
     mock_response(mocker, raise_mock_exception)
 
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
-    with pytest.raises(TranslationProviderError):
+    with pytest.raises(TranslationProviderError) as excinfo:
         esv_provider.add_translations(result)
+    assert excinfo.value.message == 'ESV API did not return JSON'
+
+
+def test_handles_quota_exceeded(mocker, esv_provider: ESVApiTranslationProvider):
+    mock_exception = make_mock_exception(mocker, 'aiohttp.ClientResponseError')
+    mock_exception.status = 502
+
+    def raise_mock_exception():
+        raise mock_exception
+    mock_response(mocker, raise_mock_exception)
+
+    result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
+    with pytest.raises(TranslationProviderError) as excinfo:
+        esv_provider.add_translations(result)
+    assert excinfo.value.message == 'ESV API quota exceeded'
+
+
+def test_handles_other_api_exceptions(mocker, esv_provider: ESVApiTranslationProvider):
+    mock_exception = make_mock_exception(mocker, 'aiohttp.ClientResponseError')
+    mock_exception.status = 500
+    mock_exception.message = 'Internal Server Error'
+
+    def raise_mock_exception():
+        raise mock_exception
+    mock_response(mocker, raise_mock_exception)
+
+    result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
+    with pytest.raises(TranslationProviderError) as excinfo:
+        esv_provider.add_translations(result)
+    assert excinfo.value.message == 'Error response from ESV API: 500 Internal Server Error'
