@@ -54,6 +54,12 @@ Now run the development server!
 python3 app.py
 ```
 
+If you want to run the tests:
+
+```
+venv/bin/python -m pytest
+```
+
 ### Client
 Change to the client directory and install its dependencies.
 
@@ -69,6 +75,12 @@ npm start
 ```
 
 By default, it expects to find the API server at `http://localhost:5000/`. You can edit `src/AppSettings.ts` in the client folder if you need to change this configuration.
+
+If you want to run the tests:
+
+```
+npm test
+```
 
 ## Deployment
 Anoixo supports automatic deployment using [Ansible](https://www.ansible.com/). The included playbook has been tested on an Ubuntu 18.04 virtual machine.
