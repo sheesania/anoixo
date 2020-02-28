@@ -12,6 +12,7 @@ class Reference:
     # Currently only handles string references
     def __init__(self, json: Any, on_parsing_error: Callable[[str], Any]):
         if isinstance(json, str):
+            self.string_ref = json
             try:
                 self._parse_string_ref(json)
             except Exception as err:
@@ -65,16 +66,19 @@ class PassageResult:
             on_parsing_error('Result does not have a list of words')
         self.words = [WordResult(word, on_parsing_error) for word in json['words']]
 
+        self.translation = ''
+
     def __repr__(self):
         return f'{self.serialize()}'
 
     def serialize(self) -> Dict[str, List[Dict]]:
         return {'references': [reference.serialize() for reference in self.references],
-                'words': [word.serialize() for word in self.words]}
+                'words': [word.serialize() for word in self.words],
+                'translation': self.translation}
 
 
 class QueryResult:
-    def __init__(self, json: Dict[Any, Any], on_parsing_error: Callable[[str], Any]):
+    def __init__(self, json: Any, on_parsing_error: Callable[[str], Any]):
         if not isinstance(json, list):
             on_parsing_error('Results are not a list')
         self.passages: List[PassageResult] = [PassageResult(passage, on_parsing_error) for passage in json]

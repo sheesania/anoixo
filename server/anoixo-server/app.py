@@ -1,9 +1,11 @@
 from flask import abort, jsonify, make_response, request, Flask
 from flask_cors import CORS
 from typing import Any, Dict, Union
-from Nestle1904LowfatProvider import Nestle1904LowfatProvider
-from TextProvider import ProviderError, TextProvider
+from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
+from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
+from text_providers.TextProvider import TextProviderError, TextProvider
 from TextQuery import TextQuery
+from translation_providers.TranslationProvider import TranslationProvider, TranslationProviderError
 
 
 app = Flask(__name__)
@@ -11,6 +13,9 @@ CORS(app)
 
 text_providers: Dict[str, TextProvider] = {
     'nlf': Nestle1904LowfatProvider()
+}
+translation_providers: Dict[str, TranslationProvider] = {
+    'esv': ESVApiTranslationProvider()
 }
 
 
@@ -47,15 +52,19 @@ def text_query(text_id: str):
     if text_id not in text_providers:
         abort(404, f'Text provider with id \'{text_id}\' was not found. ' 
                    f'Available texts: {" ".join(text_providers.keys())}')
-    provider = text_providers[text_id]
+    text_provider = text_providers[text_id]
+
+    # In the future, a particular translation could be requested in the query
+    translation_provider = translation_providers['esv']
 
     try:
         if 'reference' in request.json:
-            return jsonify({'text': provider.get_text_for_reference(request.json['reference'])})
+            return jsonify({'text': text_provider.get_text_for_reference(request.json['reference'])})
         query = _json_to_text_query(request.json)
-        query_result = provider.text_query(query)
+        query_result = text_provider.text_query(query)
+        translation_provider.add_translations(query_result)
         return jsonify(query_result.serialize())
-    except ProviderError as err:
+    except (TextProviderError, TranslationProviderError) as err:
         abort(500, err.message)
 
 
