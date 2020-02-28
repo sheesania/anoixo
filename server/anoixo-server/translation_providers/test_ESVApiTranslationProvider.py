@@ -95,13 +95,46 @@ def test_includes_proper_request_params(mocker, esv_provider: ESVApiTranslationP
     assert get_params['indent-paragraphs'] == '0'
 
 
-def test_chunks_translation_api_requests(mocker, esv_provider: ESVApiTranslationProvider):
+def test_chunks_translation_api_requests_by_verse_number(mocker, esv_provider: ESVApiTranslationProvider):
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []} for _ in range(900)])
     mock_get = mock_response(mocker, lambda: {
         'passages': ['text of John.1.1' for _ in range(300)]
     })
     esv_provider.add_translations(result)
     assert mock_get.call_count == 3
+
+
+def test_chunks_translation_api_request_by_query_string_length(mocker, esv_provider: ESVApiTranslationProvider):
+    long_reference = ''.join(['a' for _ in range(3861)]) + '.1.1'
+    result = query_result_for_json([
+        {
+            'references': [long_reference],
+            'words': [],
+        },
+        {
+            'references': [long_reference],
+            'words': [],
+        },
+    ])
+    mock_get = mock_response(mocker, lambda: {'passages': ['text']})
+    esv_provider.add_translations(result)
+    assert mock_get.call_count == 2
+
+
+def test_handles_wrongly_formatted_query_result(mocker, esv_provider: ESVApiTranslationProvider):
+    result = query_result_for_json([{'references': [], 'words': []}])
+    mock_response(mocker, lambda: None)
+    with pytest.raises(TranslationProviderError) as excinfo:
+        esv_provider.add_translations(result)
+    assert excinfo.value.message == 'Result has no references'
+
+
+def test_handles_wrongly_formatted_response(mocker, esv_provider: ESVApiTranslationProvider):
+    result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
+    mock_response(mocker, lambda: {'wrong': 'keys'})
+    with pytest.raises(TranslationProviderError) as excinfo:
+        esv_provider.add_translations(result)
+    assert excinfo.value.message == 'Invalid response from ESV API'
 
 
 def test_handles_content_type_error(mocker, esv_provider: ESVApiTranslationProvider):
