@@ -7,9 +7,10 @@ type Props = {
 
 const Arrow: React.FC<Props> = memo((props: Props) => {
   const color = props.type === 'active' ? 'black' : 'lightgray';
+  const lineLength = props.type === 'active' ? 140 : 90;
 
   return (
-    <svg id={props.id} width="98px" height="40px">
+    <svg id={props.id} width={`${lineLength+8}px`} height="40px">
       <defs>
         <marker
           id={`arrowhead${props.id}`}
@@ -26,14 +27,14 @@ const Arrow: React.FC<Props> = memo((props: Props) => {
             strokeWidth="8"
             strokeLinecap="round"
             fill="none"
-            stroke-linejoin="round"
+            strokeLinejoin="round"
           />
         </marker>
       </defs>
       <line
         x1={8}
         y1={20}
-        x2={90}
+        x2={lineLength}
         y2={20}
         stroke={color}
         strokeWidth={8}
