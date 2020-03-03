@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 
 type Props = {
   allowedWordsBetween: number | undefined;
+  updateAllowedWordsBetween: (newAllowedWordsBetween: number | undefined) => void;
 };
 
 const divStyle = {
@@ -30,6 +31,15 @@ const inputStyle = {
 const WordsBetween: React.FC<Props> = memo((props: Props) => {
   const uid = 'words-between-' + useUID();
 
+  const onTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newAllowedWordsBetween = parseInt(event.target.value, 10);
+    if (Number.isNaN(newAllowedWordsBetween)) {
+      props.updateAllowedWordsBetween(undefined);
+    } else {
+      props.updateAllowedWordsBetween(newAllowedWordsBetween);
+    }
+  };
+
   return (
     <div style={divStyle}>
       <Checkbox id={uid} />
@@ -39,7 +49,9 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
           style={fieldDivStyle}
           value={props.allowedWordsBetween || 0}
           variant='outlined'
-          inputProps={{ style: inputStyle, size: 2 }} />
+          inputProps={{ style: inputStyle, size: 2 }}
+          onChange={onTextFieldChange}
+        />
         <br />
         words in between 
       </Typography>

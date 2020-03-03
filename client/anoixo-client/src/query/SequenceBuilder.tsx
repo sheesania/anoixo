@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from 'react';
-import { Sequence } from './QueryTypes';
+import { Link, Sequence } from './QueryTypes';
 import AddWord from './AddWord';
 import WordBuilder from './WordBuilder';
 import WordLink from './WordLink';
@@ -28,6 +28,25 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
     [sequence, sequenceIndex, updateSequence]
   );
 
+  const updateLink = useCallback(
+    (wordIndex: number, updatedLink: Link | undefined) => {
+      const updatedWords = sequence.map((word, index) => {
+        if (index !== wordIndex) {
+          return word;
+        }
+        const updatedWord = { ...word };
+        if (updatedLink) {
+          updatedWord.link = updatedLink;
+        } else {
+          delete updatedWord.link;
+        }
+        return updatedWord;
+      });
+      updateSequence(sequenceIndex, updatedWords);
+    },
+    [sequence, sequenceIndex, updateSequence]
+  );
+
   const addWord = useCallback(() => {
     const updatedWords = [...sequence, {}];
     updateSequence(sequenceIndex, updatedWords);
@@ -42,7 +61,13 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
         updateWord={updateWord}
         key={`word${i}`}
       />,
-      <WordLink link={sequence[i].link} type="active" key={`arrow${i}`} id={i} />
+      <WordLink
+        link={sequence[i].link}
+        wordIndex={i}
+        type="active"
+        key={`arrow${i}`}
+        updateLink={updateLink}
+      />
     );
   }
   const lastIndex = sequence.length - 1;
@@ -53,7 +78,13 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
       updateWord={updateWord}
       key={`word${lastIndex}`}
     />,
-    <WordLink link={sequence[lastIndex].link} type="inactive" key={`arrow${lastIndex}`} id={lastIndex} />,
+    <WordLink
+      link={sequence[lastIndex].link}
+      wordIndex={lastIndex}
+      type="inactive"
+      key={`arrow${lastIndex}`}
+      updateLink={updateLink}
+    />,
     <AddWord addWord={addWord} key={'addWord'} />
   );
 

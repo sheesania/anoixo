@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Link } from './QueryTypes';
 import Arrow from './Arrow';
 import WordsBetween from './WordsBetween';
@@ -7,23 +7,41 @@ import './css/WordLink.css';
 
 type Props = {
   link: Link | undefined;
+  wordIndex: number;
   type: 'active' | 'inactive';
-  id: number;
+  updateLink: (wordIndex: number, updatedLink: Link | undefined) => void;
 };
 
 const WordLink: React.FC<Props> = memo((props: Props) => {
-  const id = `arrow${props.id}`;
+  const { link, wordIndex, type, updateLink } = props;
+  const id = `arrow${wordIndex}`;
+
+  const updateAllowedWordsBetween = useCallback(
+    (newAllowedWordsBetween: number | undefined) => {
+      let updatedLink: Link | undefined;
+      if (newAllowedWordsBetween || newAllowedWordsBetween === 0) {
+        updatedLink = { allowedWordsBetween: newAllowedWordsBetween };
+      } else {
+        updatedLink = undefined;
+      }
+      updateLink(wordIndex, updatedLink);
+    },
+    [wordIndex, updateLink]
+  );
 
   return (
     <div className="word-link">
-      {props.type === 'active' && (
+      {type === 'active' && (
         <Typography variant="subtitle1" component="label" htmlFor={id}>
           followed by a
         </Typography>
       )}
-      <Arrow type={props.type} id={id} />
-      {props.type === 'active' &&
-        <WordsBetween allowedWordsBetween={props.link ? props.link.allowedWordsBetween : undefined} />}
+      <Arrow type={type} id={id} />
+      {type === 'active' &&
+        <WordsBetween
+          allowedWordsBetween={link ? link.allowedWordsBetween : undefined}
+          updateAllowedWordsBetween={updateAllowedWordsBetween}
+        />}
     </div>
   );
 });
