@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
 type Props = {
+  allowedWordsBetween: number | undefined;
 };
 
 const divStyle = {
@@ -28,6 +29,7 @@ const inputStyle = {
 
 const WordsBetween: React.FC<Props> = memo((props: Props) => {
   const uid = 'words-between-' + useUID();
+
   return (
     <div style={divStyle}>
       <Checkbox id={uid} />
@@ -35,7 +37,7 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
         up to 
         <TextField
           style={fieldDivStyle}
-          defaultValue={0}
+          value={props.allowedWordsBetween || 0}
           variant='outlined'
           inputProps={{ style: inputStyle, size: 2 }} />
         <br />

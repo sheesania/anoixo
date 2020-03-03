@@ -42,7 +42,7 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
         updateWord={updateWord}
         key={`word${i}`}
       />,
-      <WordLink type="active" key={`arrow${i}`} id={i} />
+      <WordLink link={sequence[i].link} type="active" key={`arrow${i}`} id={i} />
     );
   }
   const lastIndex = sequence.length - 1;
@@ -53,7 +53,7 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
       updateWord={updateWord}
       key={`word${lastIndex}`}
     />,
-    <WordLink type="inactive" key={`arrow${lastIndex}`} id={lastIndex} />,
+    <WordLink link={sequence[lastIndex].link} type="inactive" key={`arrow${lastIndex}`} id={lastIndex} />,
     <AddWord addWord={addWord} key={'addWord'} />
   );
 

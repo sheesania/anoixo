@@ -1,10 +1,12 @@
 import React, { memo } from 'react';
+import { Link } from './QueryTypes';
 import Arrow from './Arrow';
 import WordsBetween from './WordsBetween';
 import Typography from '@material-ui/core/Typography';
 import './css/WordLink.css';
 
 type Props = {
+  link: Link | undefined;
   type: 'active' | 'inactive';
   id: number;
 };
@@ -20,7 +22,8 @@ const WordLink: React.FC<Props> = memo((props: Props) => {
         </Typography>
       )}
       <Arrow type={props.type} id={id} />
-      {props.type === 'active' && <WordsBetween />}
+      {props.type === 'active' &&
+        <WordsBetween allowedWordsBetween={props.link ? props.link.allowedWordsBetween : undefined} />}
     </div>
   );
 });
