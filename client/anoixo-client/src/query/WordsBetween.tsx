@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useUID } from 'react-uid';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
@@ -29,25 +29,37 @@ const inputStyle = {
 }
 
 const WordsBetween: React.FC<Props> = memo((props: Props) => {
+  const { allowedWordsBetween, updateAllowedWordsBetween } = props;
   const uid = 'words-between-' + useUID();
+  const [checked, setChecked] = useState((allowedWordsBetween || allowedWordsBetween === 0) ? true : false);
+  const [textFieldValue, setTextFieldValue] = useState(allowedWordsBetween || 0);
+  
+  useEffect(() => {
+    let newAllowedWordsBetween = undefined;
+    if (checked) {
+      newAllowedWordsBetween = textFieldValue;
+    }
+    if (newAllowedWordsBetween !== allowedWordsBetween) {
+      updateAllowedWordsBetween(newAllowedWordsBetween);
+    }
+  }, [checked, textFieldValue, allowedWordsBetween, updateAllowedWordsBetween]);
+
+  const onCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
 
   const onTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newAllowedWordsBetween = parseInt(event.target.value, 10);
-    if (Number.isNaN(newAllowedWordsBetween)) {
-      props.updateAllowedWordsBetween(undefined);
-    } else {
-      props.updateAllowedWordsBetween(newAllowedWordsBetween);
-    }
+    setTextFieldValue(parseInt(event.target.value, 10));
   };
 
   return (
     <div style={divStyle}>
-      <Checkbox id={uid} />
+      <Checkbox id={uid} checked={checked} onChange={onCheckboxChange} />
       <Typography style={labelStyle} variant='subtitle1' component='label' htmlFor={uid}>
         up to 
         <TextField
           style={fieldDivStyle}
-          value={props.allowedWordsBetween || 0}
+          value={textFieldValue}
           variant='outlined'
           inputProps={{ style: inputStyle, size: 2 }}
           onChange={onTextFieldChange}
