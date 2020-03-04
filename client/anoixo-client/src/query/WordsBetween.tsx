@@ -61,11 +61,11 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
         up to 
         <TextField
           style={fieldDivStyle}
-          value={textFieldValue}
-          error={error}
           variant='outlined'
           inputProps={{ style: inputStyle, size: 2 }}
+          value={textFieldValue}
           onChange={(event) => setTextFieldValue(event.target.value)}
+          error={error}
           helperText={error ? 'Not a number' : undefined}
         />
         <br />
