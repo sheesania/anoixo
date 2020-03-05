@@ -137,7 +137,7 @@ class Nestle1904LowfatProvider(TextProvider):
               for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
               for $word1 in $sentence//w[@lemma='Ἰησοῦς' and @case='genitive']
               for $word2 in $sentence//w[@lemma='Χριστός' and @case='genitive']
-              where $word0 << $word1 and $word1 << $word2
+              where ($word0/@n < $word1/@n) and ($word1/@n < $word2/@n)
               return map {$word0/@osisId: 0, $word1/@osisId: 1, $word2/@osisId: 2}
             """
             sequence_var = f'$matching_sequence{sequence_index}'
@@ -165,10 +165,11 @@ class Nestle1904LowfatProvider(TextProvider):
             for_matching_words = ' '.join(word_matchers)
 
             # Build a conditional to only keep matched words that are in order. Will look something like:
-            # where $word0 << $word1 and $word1 << $word2
+            # where ($word0/@n < $word1/@n) and ($word1/@n < $word2/@n)
             word_variable_pairs = \
                 [word_match_variables[index:index + 2] for index in range(0, len(word_match_variables) - 1)]
-            words_in_order_checks = [' << '.join(pair) for pair in word_variable_pairs]
+            words_in_order_checks = \
+                [f'({pair[0]}/@n < {pair[1]}/@n)' for pair in word_variable_pairs]
             # There will not be anything in words_in_order_checks if there was just 1 word query in the sequence
             where_words_in_order = \
                 f'where {" and ".join(words_in_order_checks)}' if words_in_order_checks else ''
