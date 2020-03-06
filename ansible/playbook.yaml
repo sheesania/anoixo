@@ -104,10 +104,12 @@
         repo: "https://github.com/biblicalhumanities/greek-new-testament"
         dest: "{{ basex_data_abs_dir }}/nlf/repo"
         version: master
-    - name: create basex database
-      command: "basexclient -Uadmin -P{{ basex_server_admin_password }} -c 'SET LANGUAGE el; CREATE DB nestle1904lowfat {{ basex_data_abs_dir }}/nlf/repo/syntax-trees/nestle1904-lowfat/xml/nestle1904lowfat.xml'"
-    - name: grant anoixo basex user permission to read the database
-      command: "basexclient -Uadmin -P{{ basex_server_admin_password }} -c 'GRANT READ ON nestle1904lowfat TO {{ basex_server_username }}'"
+    - name: copy basex setup script
+      template:
+        src: templates/basex_setup.bxs
+        dest: "{{ basex_data_abs_dir }}/basex_setup.bxs"
+    - name: run basex setup script
+      command: "basexclient -Uadmin -P{{ basex_server_admin_password }} {{ basex_data_abs_dir }}/basex_setup.bxs"
 
 - name: clone repository
   hosts: staging
