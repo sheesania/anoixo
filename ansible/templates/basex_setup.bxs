@@ -1,0 +1,16 @@
+<commands>
+  <set option='language'>el</set>
+  <create-db name='nestle1904lowfat'>
+    {{ basex_data_abs_dir }}/nlf/repo/syntax-trees/nestle1904-lowfat/xml/nestle1904lowfat.xml
+  </create-db>
+  <open name='nestle1904lowfat'/>
+  <xquery>
+    for $word at $pos in
+      for $ordered_word in //w
+      order by $ordered_word/@n
+      return $ordered_word
+    return insert node attribute {'position'}{$pos} into $word
+  </xquery>
+  <close/>
+  <grant name='{{ basex_server_username }}' permission='read' pattern='nestle1904lowfat'/>
+</commands>
