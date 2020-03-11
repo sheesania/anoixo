@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import WordLink from './WordLink';
+import WordLink from '../WordLink';
 
 describe('WordLink component', () => {
   describe('allowed words between', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import WordsBetween from './WordsBetween';
+import WordsBetween from '../WordsBetween';
 
 describe('WordsBetween component', () => {
   it('has a checkbox', () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import withMarkup from '../test/helpers/withMarkup';
-import PassageCard from './PassageCard';
+import withMarkup from '../../test/helpers/withMarkup';
+import PassageCard from '../PassageCard';
 
 describe('PassageCard component', () => {
   it('renders the passage reference, text, and translation', () => {
