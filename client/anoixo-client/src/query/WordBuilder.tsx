@@ -1,5 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import { WordQuery } from './QueryTypes';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import './css/WordBuilder.css';
@@ -57,6 +59,9 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
       <Typography variant="h5" component="h2" gutterBottom>
         <span className="word-card-title-highlighted">Word</span>{' '}
         <span className="word-card-title-subtitle">with</span>
+        <IconButton aria-label="delete">
+          <CloseIcon style={{color: 'crimson'}} />
+        </IconButton>
       </Typography>
       {attributes}
     </Paper>
