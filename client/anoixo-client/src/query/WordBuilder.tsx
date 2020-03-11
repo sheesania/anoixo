@@ -56,13 +56,15 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
 
   return (
     <Paper className="WordBuilder" elevation={3}>
-      <Typography variant="h5" component="h2" gutterBottom>
-        <span className="word-card-title-highlighted">Word</span>{' '}
-        <span className="word-card-title-subtitle">with</span>
+      <div className='word-card-header'>
+        <Typography variant="h5" component="h2">
+          <span className="word-card-title-highlighted">Word</span>{' '}
+          <span className="word-card-title-subtitle">with</span>
+        </Typography>
         <IconButton aria-label="delete">
           <CloseIcon style={{color: 'crimson'}} />
         </IconButton>
-      </Typography>
+      </div>
       {attributes}
     </Paper>
   );
