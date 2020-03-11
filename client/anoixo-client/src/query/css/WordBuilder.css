@@ -12,6 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: calc(24px + 1.5rem); /* should be the same as the height of the delete button */
 }
 
 .word-card-title-highlighted {

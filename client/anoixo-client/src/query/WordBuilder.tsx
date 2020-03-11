@@ -13,12 +13,13 @@ import NLFAttributeComponentMap from './Attributes/NLF/NLFAttributeComponentMap'
 type Props = {
   word: WordQuery;
   wordIndex: number;
+  showDeleteButton: boolean;
   updateWord: (updateIndex: number, updatedWord: WordQuery) => void;
   deleteWord: (wordIndex: number) => void;
 };
 
 const WordBuilder: React.FC<Props> = memo((props: Props) => {
-  const { word, wordIndex, updateWord, deleteWord } = props;
+  const { word, wordIndex, showDeleteButton, updateWord, deleteWord } = props;
 
   const updateAttr = useCallback(
     (updateAttrId: string, updateValue: string) => {
@@ -62,9 +63,11 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
           <span className="word-card-title-highlighted">Word</span>{' '}
           <span className="word-card-title-subtitle">with</span>
         </Typography>
-        <IconButton aria-label="Delete" onClick={() => deleteWord(wordIndex)}>
-          <CloseIcon style={{color: 'crimson'}} />
-        </IconButton>
+        {showDeleteButton &&
+          <IconButton aria-label="Delete" onClick={() => deleteWord(wordIndex)}>
+            <CloseIcon style={{color: 'crimson'}} />
+          </IconButton>
+        }
       </div>
       {attributes}
     </Paper>
