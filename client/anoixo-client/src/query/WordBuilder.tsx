@@ -62,7 +62,7 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
           <span className="word-card-title-highlighted">Word</span>{' '}
           <span className="word-card-title-subtitle">with</span>
         </Typography>
-        <IconButton aria-label="delete" onClick={() => deleteWord(wordIndex)}>
+        <IconButton aria-label="Delete" onClick={() => deleteWord(wordIndex)}>
           <CloseIcon style={{color: 'crimson'}} />
         </IconButton>
       </div>
