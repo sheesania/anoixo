@@ -62,7 +62,11 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
         <TextField
           style={fieldDivStyle}
           variant='outlined'
-          inputProps={{ style: inputStyle, size: 2 }}
+          inputProps={{
+            style: inputStyle,
+            size: 2,
+            'aria-label': 'Number of words to allow in between'
+          }}
           value={textFieldValue}
           onChange={(event) => setTextFieldValue(event.target.value)}
           error={error}
