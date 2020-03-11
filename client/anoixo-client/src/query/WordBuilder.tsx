@@ -1,5 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import { WordQuery } from './QueryTypes';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import './css/WordBuilder.css';
@@ -11,11 +13,13 @@ import NLFAttributeComponentMap from './Attributes/NLF/NLFAttributeComponentMap'
 type Props = {
   word: WordQuery;
   wordIndex: number;
+  showDeleteButton: boolean;
   updateWord: (updateIndex: number, updatedWord: WordQuery) => void;
+  deleteWord: (wordIndex: number) => void;
 };
 
 const WordBuilder: React.FC<Props> = memo((props: Props) => {
-  const { word, wordIndex, updateWord } = props;
+  const { word, wordIndex, showDeleteButton, updateWord, deleteWord } = props;
 
   const updateAttr = useCallback(
     (updateAttrId: string, updateValue: string) => {
@@ -54,10 +58,17 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
 
   return (
     <Paper className="WordBuilder" elevation={3}>
-      <Typography variant="h5" component="h2" gutterBottom>
-        <span className="word-card-title-highlighted">Word</span>{' '}
-        <span className="word-card-title-subtitle">with</span>
-      </Typography>
+      <div className='word-card-header'>
+        <Typography variant="h5" component="h2">
+          <span className="word-card-title-highlighted">Word</span>{' '}
+          <span className="word-card-title-subtitle">with</span>
+        </Typography>
+        {showDeleteButton &&
+          <IconButton aria-label="Delete" onClick={() => deleteWord(wordIndex)}>
+            <CloseIcon style={{color: 'crimson'}} />
+          </IconButton>
+        }
+      </div>
       {attributes}
     </Paper>
   );

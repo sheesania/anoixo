@@ -52,13 +52,21 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
     updateSequence(sequenceIndex, updatedWords);
   }, [sequence, sequenceIndex, updateSequence]);
 
+  const deleteWord = useCallback((wordIndex: number) => {
+    const updatedWords = sequence.filter((_, index) => index !== wordIndex);
+    updateSequence(sequenceIndex, updatedWords);
+  }, [sequence, sequenceIndex, updateSequence]);
+
   const wordsAndArrows = [];
+  const showDeleteButton = sequence.length > 1;
   for (let i = 0; i < sequence.length - 1; i++) {
     wordsAndArrows.push(
       <WordBuilder
         word={sequence[i]}
         wordIndex={i}
+        showDeleteButton={showDeleteButton}
         updateWord={updateWord}
+        deleteWord={deleteWord}
         key={`word${i}`}
       />,
       <WordLink
@@ -75,7 +83,9 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
     <WordBuilder
       word={sequence[lastIndex]}
       wordIndex={lastIndex}
+      showDeleteButton={showDeleteButton}
       updateWord={updateWord}
+      deleteWord={deleteWord}
       key={`word${lastIndex}`}
     />,
     <WordLink
