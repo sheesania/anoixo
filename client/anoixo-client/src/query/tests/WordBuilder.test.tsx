@@ -4,11 +4,26 @@ import WordBuilder from '../WordBuilder';
 
 describe('WordBuilder component', () => {
   describe('delete button', () => {
-    it('exists', () => {
+    it('is not displayed when showDeleteButton is false', () => {
+      const { queryByLabelText } = render(
+        <WordBuilder
+          word={{}}
+          wordIndex={0}
+          showDeleteButton={false}
+          updateWord={() => {}}
+          deleteWord={() => {}}
+        />
+      );
+      const deleteButton = queryByLabelText('Delete');
+      expect(deleteButton).toBeNull();
+    });
+
+    it('is displayed when showDeleteButton is true', () => {
       const { getByLabelText } = render(
         <WordBuilder
           word={{}}
           wordIndex={0}
+          showDeleteButton={true}
           updateWord={() => {}}
           deleteWord={() => {}}
         />
@@ -23,6 +38,7 @@ describe('WordBuilder component', () => {
         <WordBuilder
           word={{}}
           wordIndex={0}
+          showDeleteButton={true}
           updateWord={() => {}}
           deleteWord={deleteWord}
         />

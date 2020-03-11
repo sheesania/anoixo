@@ -4,6 +4,30 @@ import SequenceBuilder from '../SequenceBuilder';
 
 describe('SequenceBuilder component', () => {
   describe('word builder components', () => {
+    it('does not show delete buttons when there is only one word in the sequence', () => {
+      const { queryByLabelText } = render(
+        <SequenceBuilder
+          sequence={[{}]}
+          sequenceIndex={0}
+          updateSequence={() => {}}
+        />
+      );
+      const deleteButton = queryByLabelText('Delete');
+      expect(deleteButton).toBeNull();
+    });
+
+    it('shows delete buttons for all word cards when there are multiple words in the sequence', () => {
+      const { getAllByLabelText } = render(
+        <SequenceBuilder
+          sequence={[{}, {}]}
+          sequenceIndex={0}
+          updateSequence={() => {}}
+        />
+      );
+      const deleteButtons = getAllByLabelText('Delete');
+      expect(deleteButtons.length).toBe(2);
+    });
+
     it('deletes the word when the delete button is clicked', () => {
       const updateSequence = jest.fn();
       const { getAllByLabelText } = render(
