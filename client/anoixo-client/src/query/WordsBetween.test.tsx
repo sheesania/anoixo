@@ -87,24 +87,83 @@ describe('WordsBetween component', () => {
 
   describe('updates', () => {
     it('updates allowedWordsBetween when the checkbox is checked', () => {
-
-    });
-
-    it('updates allowedWordsBetween when the text field is changed and the checkbox is already checked', () => {
-
+      const updatedAllowedWordsBetween = jest.fn();
+      const { getByLabelText } = render(
+        <WordsBetween
+          allowedWordsBetween={undefined}
+          updateAllowedWordsBetween={updatedAllowedWordsBetween}
+        />
+      );
+      const checkbox = getByLabelText(/up to.*words in between/);
+      fireEvent.click(checkbox);
+      expect(updatedAllowedWordsBetween).toHaveBeenCalledWith(0);
     });
 
     it('updates allowedWordsBetween when the checkbox is unchecked', () => {
+      const updatedAllowedWordsBetween = jest.fn();
+      const { getByLabelText } = render(
+        <WordsBetween
+          allowedWordsBetween={2}
+          updateAllowedWordsBetween={updatedAllowedWordsBetween}
+        />
+      );
+      const checkbox = getByLabelText(/up to.*words in between/);
+      fireEvent.click(checkbox);
+      expect(updatedAllowedWordsBetween).toHaveBeenCalledWith(undefined);
+    });
 
+    it('updates allowedWordsBetween when the text field is changed and the checkbox is already checked', () => {
+      const updatedAllowedWordsBetween = jest.fn();
+      const { getByLabelText } = render(
+        <WordsBetween
+          allowedWordsBetween={2}
+          updateAllowedWordsBetween={updatedAllowedWordsBetween}
+        />
+      );
+      const textField = getByLabelText('Number of words to allow in between');
+      fireEvent.change(textField, { target: { value: '3' } });
+      expect(updatedAllowedWordsBetween).toHaveBeenCalledWith(3);
+    });
+
+    it('does not update allowedWordsBetween when the text field is changed and the checkbox is unchecked', () => {
+      const updatedAllowedWordsBetween = jest.fn();
+      const { getByLabelText } = render(
+        <WordsBetween
+          allowedWordsBetween={undefined}
+          updateAllowedWordsBetween={updatedAllowedWordsBetween}
+        />
+      );
+      const textField = getByLabelText('Number of words to allow in between');
+      fireEvent.change(textField, { target: { value: '3' } });
+      expect(updatedAllowedWordsBetween).not.toHaveBeenCalled();
     });
 
     it('does not update allowedWordsBetween when the text field value is invalid and the checkbox is checked', () => {
-
+      const updatedAllowedWordsBetween = jest.fn();
+      const { getByLabelText } = render(
+        <WordsBetween
+          allowedWordsBetween={2}
+          updateAllowedWordsBetween={updatedAllowedWordsBetween}
+        />
+      );
+      const textField = getByLabelText('Number of words to allow in between');
+      fireEvent.change(textField, { target: { value: 'invalid' } });
+      expect(updatedAllowedWordsBetween).not.toHaveBeenCalled();
     });
 
     it('updates allowedWordsBetween even if the text field value is invalid when the checkbox is unchecked', () => {
-
+      const updatedAllowedWordsBetween = jest.fn();
+      const { getByLabelText } = render(
+        <WordsBetween
+          allowedWordsBetween={2}
+          updateAllowedWordsBetween={updatedAllowedWordsBetween}
+        />
+      );
+      const textField = getByLabelText('Number of words to allow in between');
+      const checkbox = getByLabelText(/up to.*words in between/);
+      fireEvent.change(textField, { target: { value: 'invalid' } });
+      fireEvent.click(checkbox);
+      expect(updatedAllowedWordsBetween).toHaveBeenCalledWith(undefined);
     });
-
   });
 });
