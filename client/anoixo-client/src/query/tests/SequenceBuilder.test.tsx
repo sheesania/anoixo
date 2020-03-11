@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import SequenceBuilder from './SequenceBuilder';
+import SequenceBuilder from '../SequenceBuilder';
 
 describe('SequenceBuilder component', () => {
   describe('word link components', () => {

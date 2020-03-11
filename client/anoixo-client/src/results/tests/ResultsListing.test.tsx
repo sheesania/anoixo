@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import withMarkup from '../test/helpers/withMarkup';
-import ResultsListing from './ResultsListing';
+import withMarkup from '../../test/helpers/withMarkup';
+import ResultsListing from '../ResultsListing';
 
 describe('ResultsListing component', () => {
   it('renders the required copyright notice', () => {

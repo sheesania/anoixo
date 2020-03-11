@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import AddWord from './AddWord';
+import AddWord from '../AddWord';
 
 describe('AddWord component', () => {
   it('has a button for adding following words', () => {
