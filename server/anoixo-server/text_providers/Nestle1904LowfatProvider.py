@@ -1,10 +1,9 @@
-from collections import defaultdict
 from timeout_decorator import timeout
-from typing import DefaultDict, List
+from typing import List, Union
 from BaseXClient import BaseXClient
-from QueryResult import PassageResult, QueryResult, WordResult
+from QueryResult import QueryResult
 from text_providers.TextProvider import TextProviderError, TextProvider
-from TextQuery import TextQuery, WordQuery
+from TextQuery import TextQuery
 import json
 from text_providers import Nestle1904LowfatProvider_Config as Config
 
@@ -110,11 +109,8 @@ class Nestle1904LowfatProvider(TextProvider):
             raise TextProviderError(self.error)
 
     """
-    Builds an XQuery string to begin finding matches for the given TextQuery.
-    This XQuery query WILL NOT handle all the parameters in the TextQuery! The results will still need to be checked to 
-    make sure word queries that only allow a certain number of words between matches have an acceptable number of words, 
-    handle multiple matches in the same sentence, etc.
-    
+    Builds an XQuery string to find matches for the given TextQuery.
+
     TODO: Split this function up into smaller pieces. Sorry for how long this is. At least it's mostly comments.
     """
     def _build_query_string(self, query: TextQuery) -> str:
@@ -137,22 +133,42 @@ class Nestle1904LowfatProvider(TextProvider):
               for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
               for $word1 in $sentence//w[@lemma='Ἰησοῦς' and @case='genitive']
               for $word2 in $sentence//w[@lemma='Χριστός' and @case='genitive']
-              where $word0 << $word1 and $word1 << $word2
+              let $pos0 := xs:integer($word0/@position)
+              let $pos1 := xs:integer($word1/@position)
+              let $pos2 := xs:integer($word2/@position)
+              where ($pos0 < $pos1) and ($pos1 < $pos2) and ($pos1 - $pos0 <= 1) and ($pos2 - pos1 <= 1)
               return map {$word0/@osisId: 0, $word1/@osisId: 1, $word2/@osisId: 2}
             """
             sequence_var = f'$matching_sequence{sequence_index}'
 
             word_match_variables: List[str] = []  # names for the variables containing words matched by each word query
+            position_variables: List[str] = []  # names for the variables containing the position of each matched word
+            position_variable_declarations: List[str] = []  # declarations of those position variables
             word_matchers: List[str] = []  # loops for getting matches for each word query
+            # how many words are allowed between a given word query and the next word query, if there is any restriction
+            words_between_filters: List[Union[int, None]] = []
             # dictionary entries mapping the word's ID to its matched word query index
             word_ids_to_indexes: List[str] = []
             for word_query_index, word_query in enumerate(sequence.word_queries):
                 word_variable = f'$word{word_query_index}'
                 word_match_variables.append(word_variable)
 
+                # Create a variable for this word's position/order, and a declaration of it. The declaration will look
+                # something like:
+                # let $pos0 := xs:integer($word0/@position)
+                pos_var = f'$pos{word_query_index}'
+                position_variables.append(pos_var)
+                position_variable_declarations.append(f'let {pos_var} := xs:integer({word_variable}/@position)')
+
                 # A filter string for only matching words with the given attributes. Will look something like:
                 # `@lemma='κύριος' and @case='genitive'`
                 attribute_filters = " and ".join([f"@{key}='{val}'" for key, val in word_query.attributes.items()])
+
+                # Collect information about words between restrictions for each word query
+                if word_query.link_to_next_word:
+                    words_between_filters.append(word_query.link_to_next_word.allowed_words_between)
+                else:
+                    words_between_filters.append(None)
 
                 # A loop for grabbing matches for this word query. Will look something like:
                 # for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
@@ -163,15 +179,23 @@ class Nestle1904LowfatProvider(TextProvider):
                 word_ids_to_indexes.append(f'{word_variable}/@osisId: {word_query_index}')
 
             for_matching_words = ' '.join(word_matchers)
+            let_position_variables = '\n'.join(position_variable_declarations)
 
-            # Build a conditional to only keep matched words that are in order. Will look something like:
-            # where $word0 << $word1 and $word1 << $word2
-            word_variable_pairs = \
-                [word_match_variables[index:index + 2] for index in range(0, len(word_match_variables) - 1)]
-            words_in_order_checks = [' << '.join(pair) for pair in word_variable_pairs]
-            # There will not be anything in words_in_order_checks if there was just 1 word query in the sequence
+            # Build conditionals to only keep matched words that are in order and follow any restrictions on allowed
+            # words between matches. Will look something like:
+            # where ($pos0 < $pos1) and ($pos1 < $pos2) and ($pos1 - $pos0 <= 1) and ($pos2 - pos1 <= 1)
+            position_variable_pairs = \
+                [position_variables[index:index + 2] for index in range(0, len(position_variables) - 1)]
+            word_order_checks = [f'({pos1} < {pos2})' for (pos1, pos2) in position_variable_pairs]
+            for filter_word_query_index, allowed_words_between in enumerate(words_between_filters):
+                if allowed_words_between is None:
+                    continue
+                (word_position, following_word_position) = position_variable_pairs[filter_word_query_index]
+                word_order_checks.append(
+                    f'({following_word_position} - {word_position} <= {allowed_words_between + 1})')
+            # There will not be anything in word_order_checks if there was just 1 word query in the sequence
             where_words_in_order = \
-                f'where {" and ".join(words_in_order_checks)}' if words_in_order_checks else ''
+                f'where {" and ".join(word_order_checks)}' if word_order_checks else ''
 
             # Build the dictionary mapping word IDs to their matched word query indexes. Looks like:
             # map {$word0/@osisId: 0, $word1/@osisId: 1}
@@ -180,6 +204,7 @@ class Nestle1904LowfatProvider(TextProvider):
             sequence_matcher = f"""
                 let {sequence_var} := map:merge(
                     {for_matching_words}
+                    {let_position_variables}
                     {where_words_in_order}
                     return {word_id_to_index_map}
                 )
@@ -255,7 +280,7 @@ class Nestle1904LowfatProvider(TextProvider):
               "words":  array {{
                 for $w in $sentence//w
                 {declare_index_in_sequences_variables}
-                order by $w/@n 
+                order by $w/@position 
                 return map {{
                   "text": local:punctuated($w),
                   "matchedSequence": {matched_sequence_switch},
@@ -266,85 +291,6 @@ class Nestle1904LowfatProvider(TextProvider):
           }}
         )
         """
-
-    """
-    Returns a dictionary with each sequence index pointing to a mapping of its word query indexes to indexes of matches 
-    for that word query in this result
-    Example:
-    sequence 0: {word query 0: [indexes 1, 4, 19], word query 1: [indexes 3, 30]}
-    sequence 1: {word query 0: [indexes 2, 14]}
-    """
-    def _get_word_matches_for_sequences(self, words_in_result: List[WordResult]) -> \
-            DefaultDict[int, DefaultDict[int, List[int]]]:
-        word_matches_for_sequences: DefaultDict[int, DefaultDict[int, List[int]]] = \
-            defaultdict(lambda: defaultdict(list))
-        for word_index, word in enumerate(words_in_result):
-            if word.matchedSequence < 0:
-                continue
-            word_matches_for_sequences[word.matchedSequence][word.matchedWordQuery].append(word_index)
-        return word_matches_for_sequences
-
-    """
-    Given one result from the query, matches from the result for two contiguous word queries, and the number of words 
-    allowed between matches for these 2 word queries:
-    - check if at least 1 pair of matches has an acceptable number of words between them (i.e., the result has a valid
-      match for these queries)
-    - mark any match that doesn't have the second word within an acceptable number of words as not a match after all
-    """
-    def _check_matches_for_linked_word_queries(self, words_from_result: List[WordResult], word1_match_indexes: List,
-                                               word2_match_indexes: List, allowed_words_between: int) -> bool:
-        word1_has_valid_match = False
-        for word1_match_index in word1_match_indexes:
-            index_is_valid_match = False
-            for word2_match_index in word2_match_indexes:
-                if word2_match_index - word1_match_index - 1 <= allowed_words_between:
-                    index_is_valid_match = True
-            if index_is_valid_match:
-                word1_has_valid_match = True
-            else:  # not actually a match; mark it as such
-                # TODO: This has a side effect of modifying WordResult objects in the original results object
-                # Come up with a more functional way to update the filtered WordResults that doesn't unexpectedly modify
-                # the original ones
-                words_from_result[word1_match_index].matchedSequence = -1
-                words_from_result[word1_match_index].matchedWordQuery = -1
-        return word1_has_valid_match
-
-    """
-    Uses the link.allowed_words_between parameters in the TextQuery to:
-    - filter out results that don't actually have any valid matches
-    - edit words marked as "matched" in the results that don't pass this check so they are no longer marked as matched
-    """
-    def _check_allowed_words_between(self, query: TextQuery, results: QueryResult) -> List[PassageResult]:
-        filtered_results: List[PassageResult] = []
-        for passage in results.passages:
-            words: List[WordResult] = passage.words
-            word_matches_for_sequences = self._get_word_matches_for_sequences(words)
-            valid_result = True
-
-            for sequence_index, sequence in enumerate(query.sequences):
-                sequence_word_matches = word_matches_for_sequences[sequence_index]
-                # get every contiguous pair of word queries; each might have a link parameter applying to them
-                word_query_pairs: List[List[WordQuery]] = \
-                    [sequence.word_queries[index:index + 2] for index in range(0, len(sequence.word_queries) - 1)]
-                for word1_query_index, (word1, word2) in enumerate(word_query_pairs):
-                    if not word1.link_to_next_word:  # no parameters specified on the link between these words
-                        continue
-                    allowed_words_between = word1.link_to_next_word.allowed_words_between
-                    word1_matches = sequence_word_matches[word1_query_index]
-                    word2_matches = sequence_word_matches[word1_query_index + 1]
-                    word1_has_valid_match = \
-                        self._check_matches_for_linked_word_queries(words, word1_matches, word2_matches,
-                                                                    allowed_words_between)
-                    if not word1_has_valid_match:
-                        valid_result = False
-                        break
-                if not valid_result:
-                    break  # if any sequence doesn't have a match in this result, the whole result should be thrown out
-
-            if valid_result:
-                filtered_results.append(passage)
-
-        return filtered_results
 
     def text_query(self, query: TextQuery) -> QueryResult:
         query_string = self._build_query_string(query)
@@ -363,8 +309,6 @@ class Nestle1904LowfatProvider(TextProvider):
             def on_parsing_error(message: str):
                 raise TextProviderError(f'Error parsing XML database response JSON: {message}')
             results = QueryResult(results_json, on_parsing_error)
-            filtered_passages = self._check_allowed_words_between(query, results)
-            results.passages = filtered_passages
             return results
         except TextProviderError:
             raise

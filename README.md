@@ -14,15 +14,41 @@ Install the BaseX XML database.
 sudo apt-get install basex
 ```
 
-Download the Nestle 1904 Lowfat treebank (for the Greek New Testament) and load it into BaseX.
+Download the Nestle 1904 Lowfat treebank (for the Greek New Testament).
 
 ```
 git clone https://github.com/biblicalhumanities/greek-new-testament
-cd greek-new-testament/syntax-trees/nestle1904-lowfat/xml
-basex -c "SET LANGUAGE el; CREATE DB nestle1904lowfat nestle1904lowfat.xml"
 ```
 
-Start the BaseX server.
+Next you'll load it into BaseX. Create a file called `setup.bxs` (you can name it anything really, but make sure it ends
+with `.bxs`) in the same directory and paste in this code:
+
+```
+<commands>
+  <set option='language'>el</set>
+  <create-db name='nestle1904lowfat'>
+    greek-new-testament/syntax-trees/nestle1904-lowfat/xml/nestle1904lowfat.xml
+  </create-db>
+  <open name='nestle1904lowfat'/>
+  <xquery>
+    for $word at $pos in
+      for $ordered_word in //w
+      order by $ordered_word/@n
+      return $ordered_word
+    return insert node attribute {'position'}{$pos} into $word
+  </xquery>
+  <close/>
+</commands>
+```
+
+This code will create a BaseX database called `nestle1904lowfat` and insert position markers, which are needed for
+queries that restrict the number of words allowed between search terms. Run it with:
+
+```
+basex setup.bxs
+```
+
+Now start the BaseX server!
 
 ```
 basexserver
