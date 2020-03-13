@@ -22,9 +22,9 @@ type AttributeToComponentMap = Array<{
   /** the component for editing the attribute value */
   component: React.FC<AttributeComponentProps>;
   /**
-   * A matching function for whether this attribute is irrelevant based on the value of other attributes.
-   * For example, a 'tense' attribute component should be disabled if 'noun' is selected for part of speech.
+   * A matching function for whether this attribute is relevant based on the value of other attributes.
+   * For example, a 'tense' attribute component might only be enabled if 'verb' is selected for part of speech.
    */
-  shouldBeDisabled: (allAttributes: AttributesQuery | undefined) => boolean;
+  shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => boolean;
 }>;
 export default AttributeToComponentMap;

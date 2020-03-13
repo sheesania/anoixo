@@ -14,52 +14,52 @@ const NLFAttributeComponentMap: AttributeToComponentMap = [
   {
     attrId: 'class',
     component: PartOfSpeechSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'lemma',
     component: LexicalFormField,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'normalized',
     component: InflectedFormField,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'case',
     component: CaseSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'person',
     component: PersonSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'number',
     component: NumberSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'gender',
     component: GenderSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'tense',
     component: TenseSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'voice',
     component: VoiceSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
   {
     attrId: 'mood',
     component: MoodSelector,
-    shouldBeDisabled: () => false,
+    shouldBeEnabled: () => true,
   },
 ];
 
