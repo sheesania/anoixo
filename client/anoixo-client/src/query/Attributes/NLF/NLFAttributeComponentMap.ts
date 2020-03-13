@@ -1,4 +1,5 @@
 import AttributeToComponentMap from '../AttributeToComponentMap';
+import { AttributesQuery } from '../../QueryTypes';
 import PartOfSpeechSelector from './PartOfSpeechSelector';
 import LexicalFormField from './LexicalFormField';
 import InflectedFormField from './InflectedFormField';
@@ -29,37 +30,70 @@ const NLFAttributeComponentMap: AttributeToComponentMap = [
   {
     attrId: 'case',
     component: CaseSelector,
-    shouldBeEnabled: () => true,
+    shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
+      return !allAttributes || !allAttributes['class'] ||
+        allAttributes['class'] === 'adj' ||
+        allAttributes['class'] === 'det' ||
+        allAttributes['class'] === 'noun' ||
+        allAttributes['class'] === 'pron' ||
+        allAttributes['class'] === 'verb';
+    },
   },
   {
     attrId: 'person',
     component: PersonSelector,
-    shouldBeEnabled: () => true,
+    shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
+      return !allAttributes || !allAttributes['class'] ||
+        allAttributes['class'] === 'verb';
+    },
   },
   {
     attrId: 'number',
     component: NumberSelector,
-    shouldBeEnabled: () => true,
+    shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
+      return !allAttributes || !allAttributes['class'] ||
+        allAttributes['class'] === 'adj' ||
+        allAttributes['class'] === 'det' ||
+        allAttributes['class'] === 'noun' ||
+        allAttributes['class'] === 'pron' ||
+        allAttributes['class'] === 'verb';
+    },
   },
   {
     attrId: 'gender',
     component: GenderSelector,
-    shouldBeEnabled: () => true,
+    shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
+      return !allAttributes || !allAttributes['class'] ||
+        allAttributes['class'] === 'adj' ||
+        allAttributes['class'] === 'det' ||
+        allAttributes['class'] === 'noun' ||
+        allAttributes['class'] === 'pron' ||
+        allAttributes['class'] === 'verb';
+    },
   },
   {
     attrId: 'tense',
     component: TenseSelector,
-    shouldBeEnabled: () => true,
+    shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
+      return !allAttributes || !allAttributes['class'] ||
+        allAttributes['class'] === 'verb';
+    },
   },
   {
     attrId: 'voice',
     component: VoiceSelector,
-    shouldBeEnabled: () => true,
+    shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
+      return !allAttributes || !allAttributes['class'] ||
+        allAttributes['class'] === 'verb';
+    },
   },
   {
     attrId: 'mood',
     component: MoodSelector,
-    shouldBeEnabled: () => true,
+    shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
+      return !allAttributes || !allAttributes['class'] ||
+        allAttributes['class'] === 'verb';
+    },
   },
 ];
 
