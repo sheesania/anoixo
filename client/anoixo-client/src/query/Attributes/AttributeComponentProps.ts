@@ -8,6 +8,8 @@ type AttributeComponentProps = {
   value?: string;
   /** A callback for updating the attribute's value in state */
   updateAttr: (updateAttrId: string, updateValue: string) => void;
+  /** Whether the attribute editor should be disabled or not */
+  disabled: boolean;
 };
 
 export default AttributeComponentProps;
