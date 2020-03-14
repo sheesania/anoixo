@@ -19,7 +19,7 @@ const LexicalFormField: React.FC<AttributeComponentProps> = memo(
     const label = 'Lexical Form';
 
     return (
-      <AttributeEditor labelText={label} labelProps={{ htmlFor: uid }}>
+      <AttributeEditor labelText={label} labelProps={{ htmlFor: uid }} enabled={props.enabled}>
         <TextField
           id={uid}
           className="attribute-input lexical-form-selector"

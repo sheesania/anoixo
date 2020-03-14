@@ -1,5 +1,6 @@
 import React from 'react';
 import AttributeComponentProps from './AttributeComponentProps';
+import { AttributesQuery } from '../QueryTypes';
 
 /**
  * This is a type for matching the available attributes on word queries for a provider (e.g. Greek NT, Hebrew OT,
@@ -16,7 +17,14 @@ import AttributeComponentProps from './AttributeComponentProps';
  * the future if TypeScript ever supports Maps (or if there's another good option for an ordered dictionary).
  */
 type AttributeToComponentMap = Array<{
+  /** the key for this attribute in the query */
   attrId: string;
+  /** the component for editing the attribute value */
   component: React.FC<AttributeComponentProps>;
+  /**
+   * A matching function for whether this attribute is relevant based on the value of other attributes.
+   * For example, a 'tense' attribute component might only be enabled if 'verb' is selected for part of speech.
+   */
+  shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => boolean;
 }>;
 export default AttributeToComponentMap;

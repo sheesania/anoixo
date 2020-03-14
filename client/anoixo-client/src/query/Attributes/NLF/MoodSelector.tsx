@@ -45,6 +45,7 @@ const MoodSelector: React.FC<AttributeComponentProps> = memo(
         label={label}
         currentValue={props.value || ''}
         items={items}
+        enabled={props.enabled}
         handleChange={handleChange}
       />
     );

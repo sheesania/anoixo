@@ -19,7 +19,7 @@ const InflectedFormField: React.FC<AttributeComponentProps> = memo(
     const label = 'Inflected Form';
 
     return (
-      <AttributeEditor labelText={label} labelProps={{ htmlFor: uid }}>
+      <AttributeEditor labelText={label} labelProps={{ htmlFor: uid }} enabled={props.enabled}>
         <TextField
           id={uid}
           className="attribute-input inflected-form-selector"

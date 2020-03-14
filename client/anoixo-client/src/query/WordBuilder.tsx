@@ -46,11 +46,13 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
       attrValue = word.attributes[attrToComponent.attrId];
     }
     const AttrComponent = attrToComponent.component;
+    const enabled = attrToComponent.shouldBeEnabled(word.attributes);
     return (
       <AttrComponent
         id={attrToComponent.attrId}
         value={attrValue}
         updateAttr={updateAttr}
+        enabled={enabled}
         key={index}
       />
     );

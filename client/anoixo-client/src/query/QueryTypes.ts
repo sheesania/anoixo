@@ -2,10 +2,12 @@ export type Link = {
   allowedWordsBetween: number;
 };
 
+export type AttributesQuery = {
+  [name: string]: string;
+}
+
 export type WordQuery = {
-  attributes?: {
-    [name: string]: string;
-  };
+  attributes?: AttributesQuery;
   link?: Link;
 };
 

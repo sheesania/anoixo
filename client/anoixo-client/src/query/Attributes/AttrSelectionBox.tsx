@@ -14,6 +14,8 @@ type Props = {
     label: string;
     value: string;
   }[];
+  /** Should this attribute editor be enabled? */
+  enabled: boolean;
   /** Callback for when an item is selected */
   handleChange: (newValue: string) => void;
 };
@@ -37,16 +39,19 @@ const AttrSelectionBox: React.FC<Props> = memo((props: Props) => {
   );
 
   return (
-    <AttributeEditor labelText={props.label} labelProps={{ id: uid }}>
+    <AttributeEditor labelText={props.label} labelProps={{ id: uid }} enabled={props.enabled}>
       <Select
         className="attribute-input"
         value={props.currentValue}
         onChange={onChange}
         labelId={uid}
         displayEmpty
+        disabled={!props.enabled}
       >
         <MenuItem value="">
-          <span className="attribute-any-item">Any</span>
+          <span className={props.enabled ? 'attribute-any-item' : 'attribute-any-item attribute-label-disabled'}>
+            Any
+          </span>
         </MenuItem>
         {props.items.map((item, index) => (
           <MenuItem value={item.value} key={index}>
