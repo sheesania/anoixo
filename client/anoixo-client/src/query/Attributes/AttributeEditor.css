@@ -16,3 +16,7 @@
 .attribute-selected-item {
   font-weight: bold;
 }
+
+.attribute-label-disabled {
+  color: lightgray;
+}
