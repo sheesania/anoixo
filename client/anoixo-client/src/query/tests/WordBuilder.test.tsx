@@ -52,17 +52,32 @@ describe('WordBuilder component', () => {
 
   describe('attribute editors', () => {
     it('disables irrelevant attributes when a part of speech is selected', async () => {
-      const { getByLabelText, getByText } = render(
+      const updateWord = jest.fn();
+      const { getByLabelText, getByText, rerender } = render(
         <WordBuilder
           word={{}}
           wordIndex={0}
           showDeleteButton={false}
-          updateWord={() => {}}
-          deleteWord={() => {}}
+          updateWord={updateWord}
+          deleteWord={() => { }}
         />
       );
       const selectItem = getSelectItemFunction(getByLabelText, getByText);
       await selectItem('Part of Speech', 'Noun');
+      const newWord = updateWord.mock.calls[0][1];
+      rerender(
+        <WordBuilder
+          word={newWord}
+          wordIndex={0}
+          showDeleteButton={false}
+          updateWord={updateWord}
+          deleteWord={() => { }}
+        />
+      );
+      const personSelector = getByLabelText('Person');
+      expect(personSelector).toHaveClass('Mui-disabled');
+      const caseSelector = getByLabelText('Case');
+      expect(caseSelector).not.toHaveClass('Mui-disabled');
     });
   });
 });
