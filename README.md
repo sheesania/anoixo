@@ -127,6 +127,8 @@ Anoixo supports automatic deployment using [Ansible](https://www.ansible.com/). 
 
 To run the automatic deployment, clone the repository and head to the `ansible` folder. Under `host_vars`, open `sample_anoixo-staging.yaml` and edit it with the information for your host and what passwords you would like to use. (If you want to use key-based login like in the sample, you'll also need to put a private key `id_rsa` that's authorized for logging into your remote host in the `ansible` directory.) Then rename the file to `anoixo-staging.yaml`.
 
+If you also want to deploy to a production server, then create a `anoixo-prod.yaml` as well based on `sample_anoixo-prod.yaml`. Otherwise, edit `hosts.yaml` in the top-level `ansible` directory and remove or comment out the `production` group.
+
 Back in the top-level `ansible` directory, run the playbook:
 
 ```

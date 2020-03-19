@@ -1,5 +1,5 @@
 - name: ensure ubuntu packages
-  hosts: staging
+  hosts: staging, production
   tags: apt
   become: yes
   tasks:
@@ -24,11 +24,12 @@
         - basex
         - nginx
         - python3.8
+        - python3-venv
         - python3.8-venv
         - supervisor
 
 - name: setup firewall
-  hosts: staging
+  hosts: staging, production
   tags: firewall
   become: yes
   tasks:
@@ -50,7 +51,7 @@
         state: enabled
 
 - name: create accounts
-  hosts: staging
+  hosts: staging, production
   tags: accounts
   become: yes
   tasks:
@@ -66,7 +67,7 @@
         shell: /bin/bash
 
 - name: setup basexserver service
-  hosts: staging
+  hosts: staging, production
   tags: db
   become: yes
   vars_files:
@@ -83,7 +84,7 @@
         state: restarted
 
 - name: create basex server user
-  hosts: staging
+  hosts: staging, production
   tags: db
   become: yes
   become_user: "{{ basex_username }}"
@@ -94,7 +95,7 @@
       command: "basex -c 'CREATE USER {{ basex_server_username }} {{ basex_server_password }}'"
 
 - name: setup Nestle Lowfat Treebank basex database
-  hosts: staging
+  hosts: staging, production
   tags: db
   become: yes
   become_user: "{{ basex_username }}"
@@ -109,10 +110,10 @@
         src: templates/basex_setup.bxs
         dest: "{{ basex_data_abs_dir }}/basex_setup.bxs"
     - name: run basex setup script
-      command: "basexclient -Uadmin -P{{ basex_server_admin_password }} {{ basex_data_abs_dir }}/basex_setup.bxs"
+      command: "basex {{ basex_data_abs_dir }}/basex_setup.bxs"
 
 - name: clone repository
-  hosts: staging
+  hosts: staging, production
   tags: git, update
   become: yes
   become_user: "{{ anoixo_username }}"
@@ -127,7 +128,7 @@
         force: yes
 
 - name: instantiate private config
-  hosts: staging
+  hosts: staging, production
   tags: config, update
   become: yes
   become_user: "{{ anoixo_username }}"
@@ -150,7 +151,7 @@
         dest: "{{ client_abs_dir }}/src/AppSettings.ts"
 
 - name: prepare python backend
-  hosts: staging
+  hosts: staging, production
   tags: python, update
   become: yes
   become_user: "{{ anoixo_username }}"
@@ -164,7 +165,7 @@
         requirements: "{{ api_abs_dir }}/requirements.txt"
 
 - name: build client app
-  hosts: staging
+  hosts: staging, production
   tags: ui, update
   become: yes
   become_user: "{{ anoixo_username }}"
@@ -181,7 +182,7 @@
         cmd: npm run build
 
 - name: provision supervisor to run python backend
-  hosts: staging
+  hosts: staging, production
   tags: supervisor
   become: yes
   vars_files:
@@ -200,7 +201,7 @@
         mode: 0755
 
 - name: restart backend
-  hosts: staging
+  hosts: staging, production
   tags: supervisor, update
   become: yes
   tasks:
@@ -209,8 +210,22 @@
         name: anoixo
         state: restarted
 
+- name: setup password authentication
+  hosts: production
+  tags: nginx
+  become: yes
+  tasks:
+    - name: setup passlib for Ansible htpasswd module
+      apt:
+        name: python-passlib
+    - name: create htpasswd file
+      htpasswd:
+        path: "{{ htpasswd_path }}"
+        name: "{{ app_auth_username }}"
+        password: "{{ app_auth_password }}"
+
 - name: provision nginx to serve frontend and backend
-  hosts: staging
+  hosts: staging, production
   tags: nginx
   become: yes
   vars_files:
@@ -223,7 +238,7 @@
 
     - name: copy nginx config file
       template:
-        src: "templates/nginx-simple.conf"
+        src: "templates/{{ nginx_conf_template }}"
         dest: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
         mode: 0444
 
