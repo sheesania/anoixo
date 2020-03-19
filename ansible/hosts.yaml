@@ -1,3 +1,11 @@
 staging:
   hosts:
     anoixo-staging:
+  vars:
+    nginx_conf_template: nginx-staging.conf
+
+production:
+  hosts:
+    anoixo-prod:
+  vars:
+    nginx_conf_template: nginx-prod.conf

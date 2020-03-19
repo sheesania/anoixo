@@ -1,5 +1,4 @@
 host_vars/*
 !host_vars/sample_anoixo-staging.yaml
 
-id_rsa
-id_rsa.pub
+id_rsa*
