@@ -1,0 +1,27 @@
+# Update with the values you want, then rename to anoixo-prod.yaml
+# Most of these values are the same as in sample_anoixo-staging.yaml
+
+ansible_host: anoixo.example.com
+server_name: "{{ ansible_host }}"
+ansible_user: ansible
+ansible_ssh_private_key_file: id_rsa_prod
+
+anoixo_username: anoixo
+anoixo_password: password
+basex_username: basex
+basex_password: password
+
+basex_server_admin_password: password
+basex_server_username: anoixo
+basex_server_password: password
+
+esv_api_key: 'Token ffffffffffffffffffffffffffffffffffffffff'
+
+# The username and password to put the app behind (a temporary security measure)
+htpasswd_path: /etc/nginx/.htpasswd
+app_auth_username: username
+app_auth_password: password
+
+source_abs_dir: /home/anoixo/anoixo
+logs_abs_dir: /home/anoixo/logs
+basex_data_abs_dir: /home/basex/data
