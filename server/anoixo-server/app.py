@@ -1,3 +1,4 @@
+import time
 from flask import abort, jsonify, make_response, request, Flask
 from flask_cors import CORS
 from typing import Any, Dict, Union
@@ -36,6 +37,15 @@ def internal_error(error):
     return make_response(jsonify({'error': 'Internal server error',
                                   'description': error.description}),
                          500)
+
+
+@app.after_request
+def log_request(response):
+    source_address = request.headers.get('X-Real-Ip', request.remote_addr)
+    print(f'[{time.asctime()}] {source_address} {request.method} {request.path} {response.status_code}', flush=True)
+    print(f'\tRequest: {request.json}', flush=True)
+    print(f'\tResponse: {response.json}', flush=True)
+    return response
 
 
 def _json_to_text_query(json: Union[Dict[Any, Any], None]) -> TextQuery:
