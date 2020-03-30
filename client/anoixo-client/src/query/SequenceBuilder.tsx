@@ -54,6 +54,13 @@ const SequenceBuilder: React.FC<Props> = memo((props: Props) => {
 
   const deleteWord = useCallback((wordIndex: number) => {
     const updatedWords = sequence.filter((_, index) => index !== wordIndex);
+    /* if the deleted word was at the end of the sequence, make sure the preceding word doesn't have a
+       link. updatedWords.length should never be < 1 if this callback is called corrrectly, but let's
+       not break if it's called incorrectly */
+    if ((wordIndex === updatedWords.length) && (updatedWords.length > 0)) {
+      const previousWord = updatedWords[wordIndex - 1];
+      delete previousWord.link;
+    }
     updateSequence(sequenceIndex, updatedWords);
   }, [sequence, sequenceIndex, updateSequence]);
 

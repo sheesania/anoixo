@@ -46,6 +46,46 @@ describe('SequenceBuilder component', () => {
         { attributes: { 'class': 'verb' } }
       ]);
     });
+
+    it('removes any link on the previous word when the last word is deleted', () => {
+      const updateSequence = jest.fn();
+      const { getAllByLabelText } = render(
+        <SequenceBuilder
+          sequence={[
+            { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0} },
+            { attributes: { 'class': 'noun' } }
+          ]}
+          sequenceIndex={0}
+          updateSequence={updateSequence}
+        />
+      );
+      const deleteButton = getAllByLabelText('Delete')[1];
+      fireEvent.click(deleteButton);
+      expect(updateSequence).toHaveBeenCalledWith(0, [
+        { attributes: { 'class': 'verb' } }
+      ]);
+    });
+
+    it('does not remove links on previous words when a non-last word is deleted', () => {
+      const updateSequence = jest.fn();
+      const { getAllByLabelText } = render(
+        <SequenceBuilder
+          sequence={[
+            { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0} },
+            { attributes: { 'class': 'noun' } },
+            { attributes: { 'class': 'conj'} }
+          ]}
+          sequenceIndex={0}
+          updateSequence={updateSequence}
+        />
+      );
+      const deleteButton = getAllByLabelText('Delete')[1];
+      fireEvent.click(deleteButton);
+      expect(updateSequence).toHaveBeenCalledWith(0, [
+        { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0} },
+        { attributes: { 'class': 'conj'} }
+      ]);
+    });
   });
 
   describe('word link components', () => {
