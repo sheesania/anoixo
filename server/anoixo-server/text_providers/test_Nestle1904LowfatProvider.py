@@ -42,6 +42,26 @@ def test_attribute_query_query_string(get_nestle_lowfat_provider):
         """
 
 
+def test_attribute_query_lemma_caching(get_nestle_lowfat_provider):
+    provider, basex_query_spy = get_nestle_lowfat_provider(lambda: '["lemma1","lemma2"]')
+    result1 = provider.attribute_query('lemma')
+    assert result1 == ['lemma1', 'lemma2']
+    assert basex_query_spy.call_count == 1
+    result2 = provider.attribute_query('lemma')
+    assert result2 == ['lemma1', 'lemma2']
+    assert basex_query_spy.call_count == 1
+
+
+def test_attribute_query_surface_form_caching(get_nestle_lowfat_provider):
+    provider, basex_query_spy = get_nestle_lowfat_provider(lambda: '["normalized1","normalized2"]')
+    result1 = provider.attribute_query('normalized')
+    assert result1 == ['normalized1', 'normalized2']
+    assert basex_query_spy.call_count == 1
+    result2 = provider.attribute_query('normalized')
+    assert result2 == ['normalized1', 'normalized2']
+    assert basex_query_spy.call_count == 1
+
+
 def test_attribute_query_error_on_query(get_nestle_lowfat_provider):
     def raise_exception():
         raise TextProviderError('exception on query')

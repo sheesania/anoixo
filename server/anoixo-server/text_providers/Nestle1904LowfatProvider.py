@@ -1,5 +1,5 @@
 from timeout_decorator import timeout
-from typing import Callable, List, Union
+from typing import Any, Callable, Dict, List, Union
 from BaseXClient import BaseXClient
 from QueryResult import QueryResult
 from text_providers.TextProvider import TextProviderError, TextProvider
@@ -74,6 +74,7 @@ class Nestle1904LowfatProvider(TextProvider):
     def __init__(self):
         self.session = None
         self.error = ''
+        self.cache: Dict[str, Any] = {}
 
         try:
             self.session = BaseXClient.Session(Config.basex['host'],
@@ -323,6 +324,11 @@ class Nestle1904LowfatProvider(TextProvider):
         return self._execute_query_and_process_results(query_string, process_results)
 
     def attribute_query(self, attribute_name: str) -> List[str]:
+        if attribute_name == 'lemma' and self.cache.get('lemma'):
+            return self.cache.get('lemma')
+        if attribute_name == 'normalized' and self.cache.get('normalized'):
+            return self.cache.get('normalized')
+
         query_string = f"""
             json:serialize(
               array {{
@@ -337,4 +343,9 @@ class Nestle1904LowfatProvider(TextProvider):
                 raise TextProviderError(f'Error parsing XML database response JSON: not a list')
             return results
 
-        return self._execute_query_and_process_results(query_string, process_results)
+        results = self._execute_query_and_process_results(query_string, process_results)
+        if attribute_name == 'lemma':
+            self.cache['lemma'] = results
+        if attribute_name == 'normalized':
+            self.cache['normalized'] = results
+        return results
