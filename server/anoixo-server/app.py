@@ -57,12 +57,16 @@ def _json_to_text_query(json: Union[Dict[Any, Any], None]) -> TextQuery:
     return TextQuery(json, on_parsing_error)
 
 
-@app.route('/api/text/<string:text_id>', methods=['POST'])
-def text_query(text_id: str):
+def _get_text_provider(text_id: str) -> TextProvider:
     if text_id not in text_providers:
         abort(404, f'Text provider with id \'{text_id}\' was not found. ' 
                    f'Available texts: {" ".join(text_providers.keys())}')
-    text_provider = text_providers[text_id]
+    return text_providers[text_id]
+
+
+@app.route('/api/text/<string:text_id>', methods=['POST'])
+def text_query(text_id: str):
+    text_provider = _get_text_provider(text_id)
 
     # In the future, a particular translation could be requested in the query
     translation_provider = translation_providers['esv']
@@ -75,6 +79,16 @@ def text_query(text_id: str):
         translation_provider.add_translations(query_result)
         return jsonify(query_result.serialize())
     except (TextProviderError, TranslationProviderError) as err:
+        abort(500, err.message)
+
+
+@app.route('/api/text/<string:text_id>/attribute/<string:attribute_id>', methods=['GET'])
+def attribute_query(text_id: str, attribute_id: str):
+    text_provider = _get_text_provider(text_id)
+    try:
+        query_result = text_provider.attribute_query(attribute_id)
+        return jsonify(query_result)
+    except TextProviderError as err:
         abort(500, err.message)
 
 
