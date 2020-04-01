@@ -315,3 +315,6 @@ class Nestle1904LowfatProvider(TextProvider):
         except Exception as err:
             self.error = f'Error processing query results: {type(err).__name__}'
             raise TextProviderError(self.error)
+
+    def attribute_query(self, attribute_name: str) -> List[str]:
+        return ['value1', 'value2']
