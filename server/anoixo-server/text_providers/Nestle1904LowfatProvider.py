@@ -1,5 +1,5 @@
 from timeout_decorator import timeout
-from typing import List, Union
+from typing import Callable, List, Union
 from BaseXClient import BaseXClient
 from QueryResult import QueryResult
 from text_providers.TextProvider import TextProviderError, TextProvider
@@ -292,9 +292,7 @@ class Nestle1904LowfatProvider(TextProvider):
         )
         """
 
-    def text_query(self, query: TextQuery) -> QueryResult:
-        query_string = self._build_query_string(query)
-        raw_results = None
+    def _execute_query_and_process_results(self, query_string: str, process_results: Callable):
         try:
             raw_results = self._execute_query(query_string)
         except TextProviderError:
@@ -304,17 +302,39 @@ class Nestle1904LowfatProvider(TextProvider):
             raise TextProviderError(self.error)
 
         try:
-            results_json = json.loads(raw_results)
-
-            def on_parsing_error(message: str):
-                raise TextProviderError(f'Error parsing XML database response JSON: {message}')
-            results = QueryResult(results_json, on_parsing_error)
-            return results
+            return process_results(raw_results)
         except TextProviderError:
             raise
         except Exception as err:
             self.error = f'Error processing query results: {type(err).__name__}'
             raise TextProviderError(self.error)
 
+    def text_query(self, query: TextQuery) -> QueryResult:
+        query_string = self._build_query_string(query)
+
+        def process_results(raw_results: str) -> QueryResult:
+            results_json = json.loads(raw_results)
+
+            def on_parsing_error(message: str):
+                raise TextProviderError(f'Error parsing XML database response JSON: {message}')
+
+            return QueryResult(results_json, on_parsing_error)
+
+        return self._execute_query_and_process_results(query_string, process_results)
+
     def attribute_query(self, attribute_name: str) -> List[str]:
-        return ['value1', 'value2']
+        query_string = f"""
+            json:serialize(
+              array {{
+                sort(distinct-values(//w/@{attribute_name}))
+              }}
+            )
+        """
+
+        def process_results(raw_results: str) -> List[str]:
+            results = json.loads(raw_results)
+            if not isinstance(results, list):
+                raise TextProviderError(f'Error parsing XML database response JSON: not a list')
+            return results
+
+        return self._execute_query_and_process_results(query_string, process_results)
