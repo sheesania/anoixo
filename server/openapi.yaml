@@ -47,6 +47,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: The given text ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: The server encountered an error executing the query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /text/{textId}/attribute/{attributeId}:
+    get:
+      summary: Get all possible values of a given attribute in a given text.
+      description: Given a text ID and an attribute ID, return a list of all
+        possible values for that attribute in tags on the text.
+      parameters:
+        - name: textId
+          in: path
+          description: Short ID of the text.
+          required: true
+          schema:
+            type: string
+        - name: attributeId
+          in: path
+          description: Short ID of the attribute.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully queried this attribute in this text.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributeQueryResults'
+        404:
+          description: The given text ID or attribute ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         500:
           description: The server encountered an error executing the query.
           content:
@@ -264,6 +307,20 @@ components:
         - text
         - matchedSequence
         - matchedWordQuery
+
+
+    AttributeQueryResults:
+      title: AttributeQueryResults
+      description: Results of all values for an attribute found in a text.
+      type: array
+      items:
+        type: string
+      example:
+        - Nominative
+        - Genitive
+        - Dative
+        - Accusative
+        - Vocative
     
     
     ErrorResponse:
