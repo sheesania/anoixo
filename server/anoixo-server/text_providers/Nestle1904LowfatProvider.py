@@ -73,17 +73,11 @@ available_attributes = {
 class Nestle1904LowfatProvider(TextProvider):
     def __init__(self):
         self.session = None
-        self.error = ''
         self.cache: Dict[str, Any] = {}
 
         try:
-            self.session = BaseXClient.Session(Config.basex['host'],
-                                               Config.basex['port'],
-                                               Config.basex['username'],
-                                               Config.basex['password'])
-            self.session.execute('open nestle1904lowfat')
+            self._reconnect_to_basex()
         except Exception as err:
-            self.error = f'Error opening BaseX XML database: {type(err).__name__}'
             if self.session:
                 self.session.close()
 
@@ -93,11 +87,35 @@ class Nestle1904LowfatProvider(TextProvider):
     def get_source_name(self) -> str:
         return 'Nestle 1904 Lowfat Treebank'
 
-    @timeout(5, use_signals=False)  # timeout after 5 seconds; use_signals to be thread-safe
+    def _reconnect_to_basex(self) -> None:
+        if self.session:
+            try:
+                self.session.close()
+            except BrokenPipeError:
+                pass
+        self.session = BaseXClient.Session(Config.basex['host'],
+                                           Config.basex['port'],
+                                           Config.basex['username'],
+                                           Config.basex['password'])
+        self.session.execute('open nestle1904lowfat')
+
     def _execute_query(self, query_string: str) -> str:
-        if not self.session:
-            raise TextProviderError(self.error)
-        return self.session.query(query_string).execute()
+        @timeout(5, use_signals=False)  # timeout after 5 seconds; use_signals to be thread-safe
+        def run_query():
+            return self.session.query(query_string).execute()
+
+        try:
+            return run_query()
+        except Exception:
+            exception = None
+            for retry in range(3):
+                try:
+                    self._reconnect_to_basex()
+                    return run_query()
+                except Exception as err:
+                    exception = err
+            # if this code is reached, the last retry errored out with an exception
+            raise exception
 
     def get_text_for_reference(self, reference: str) -> str:
         query = f'//sentence[descendant::milestone[@id="{reference}"]]/p/text()'
@@ -106,8 +124,7 @@ class Nestle1904LowfatProvider(TextProvider):
         except TextProviderError:
             raise
         except Exception as err:
-            self.error = f'Error getting reference \'{reference}\': {type(err).__name__}'
-            raise TextProviderError(self.error)
+            raise TextProviderError(f'Error getting reference \'{reference}\': {type(err).__name__}')
 
     """
     Builds an XQuery string to find matches for the given TextQuery.
@@ -299,16 +316,14 @@ class Nestle1904LowfatProvider(TextProvider):
         except TextProviderError:
             raise
         except Exception as err:
-            self.error = f'Error executing XML database query: {type(err).__name__}'
-            raise TextProviderError(self.error)
+            raise TextProviderError(f'Error executing XML database query: {type(err).__name__}')
 
         try:
             return process_results(raw_results)
         except TextProviderError:
             raise
         except Exception as err:
-            self.error = f'Error processing query results: {type(err).__name__}'
-            raise TextProviderError(self.error)
+            raise TextProviderError(f'Error processing query results: {type(err).__name__}')
 
     def text_query(self, query: TextQuery) -> QueryResult:
         query_string = self._build_query_string(query)
