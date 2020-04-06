@@ -73,13 +73,11 @@ available_attributes = {
 class Nestle1904LowfatProvider(TextProvider):
     def __init__(self):
         self.session = None
-        self.error = ''
         self.cache: Dict[str, Any] = {}
 
         try:
             self._reconnect_to_basex()
         except Exception as err:
-            self.error = f'Error opening BaseX XML database: {type(err).__name__}'
             if self.session:
                 self.session.close()
 
@@ -134,37 +132,6 @@ class Nestle1904LowfatProvider(TextProvider):
             # if this code is reached, the last retry errored out with an exception
             raise exception
 
-        # exception = None
-        # for retry in range(3):
-        #     print(f'retry {retry}')
-        #     try:
-        #         return run_query()
-        #     except Exception as err:
-        #         exception = err
-        #         try:
-        #             self._create_new_session()
-        #         except:
-        #             pass
-        #         continue
-        #
-        # # if this code is reached, the last retry errored out with an exception
-        # raise exception
-
-        # try:
-        #     return run_query()
-        # except Exception as err:
-        #     try:
-        #         self._create_new_session()
-        #     except Exception as err:
-
-        # except BrokenPipeError:
-        #     print('broken pipe')
-        #     if retries < 3:
-        #         print('resetting connection')
-        #         return self._execute_query(query_string, retries=retries+1)
-        #     else:
-        #         raise
-
     def get_text_for_reference(self, reference: str) -> str:
         query = f'//sentence[descendant::milestone[@id="{reference}"]]/p/text()'
         try:
@@ -172,8 +139,7 @@ class Nestle1904LowfatProvider(TextProvider):
         except TextProviderError:
             raise
         except Exception as err:
-            self.error = f'Error getting reference \'{reference}\': {type(err).__name__}'
-            raise TextProviderError(self.error)
+            raise TextProviderError(f'Error getting reference \'{reference}\': {type(err).__name__}')
 
     """
     Builds an XQuery string to find matches for the given TextQuery.
@@ -365,16 +331,14 @@ class Nestle1904LowfatProvider(TextProvider):
         except TextProviderError:
             raise
         except Exception as err:
-            self.error = f'Error executing XML database query: {type(err).__name__}'
-            raise TextProviderError(self.error)
+            raise TextProviderError(f'Error executing XML database query: {type(err).__name__}')
 
         try:
             return process_results(raw_results)
         except TextProviderError:
             raise
         except Exception as err:
-            self.error = f'Error processing query results: {type(err).__name__}'
-            raise TextProviderError(self.error)
+            raise TextProviderError(f'Error processing query results: {type(err).__name__}')
 
     def text_query(self, query: TextQuery) -> QueryResult:
         query_string = self._build_query_string(query)
