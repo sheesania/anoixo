@@ -90,7 +90,6 @@ class Nestle1904LowfatProvider(TextProvider):
     def _reconnect_to_basex(self) -> None:
         print('reconnecting')
         if self.session:
-            # test this
             try:
                 self.session.close()
             except BrokenPipeError:
@@ -102,18 +101,6 @@ class Nestle1904LowfatProvider(TextProvider):
         self.session.execute('open nestle1904lowfat')
 
     def _execute_query(self, query_string: str) -> str:
-        """
-        cases:
-        - session isn't initialized (never managed to connect)
-            test_cannot_connect
-        - starts working after error
-            test_recovers_from_error
-        - error in run_query() (e.g. session uninitialized, some other error)
-            test_error_running_query
-        - error in _reconnect_to_basex() (e.g. connection refused)
-            test_error_reconnecting
-        """
-
         @timeout(5, use_signals=False)  # timeout after 5 seconds; use_signals to be thread-safe
         def run_query():
             return self.session.query(query_string).execute()

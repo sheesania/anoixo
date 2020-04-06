@@ -32,6 +32,59 @@ def mock_basex_on_query_execute(mocker, basex_session_mock: MagicMock, on_query_
     return spy
 
 
+def test_handles_basex_not_available(mocker, get_nestle_lowfat_provider):
+    def raise_connection_refused(*args):
+        raise ConnectionRefusedError()
+    mocker.patch('BaseXClient.BaseXClient.Session.__init__', new=raise_connection_refused)
+    provider = get_nestle_lowfat_provider()
+    with pytest.raises(TextProviderError) as excinfo:
+        provider.attribute_query('test_attr')
+    assert excinfo.value.message == 'Error executing XML database query: ConnectionRefusedError'
+
+
+def test_reconnects_to_basex_after_error(mocker, get_nestle_lowfat_provider):
+    def raise_connection_refused(*args):
+        raise ConnectionRefusedError()
+    mocker.patch('BaseXClient.BaseXClient.Session.__init__', new=raise_connection_refused)
+    provider = get_nestle_lowfat_provider()
+    with pytest.raises(TextProviderError):
+        provider.attribute_query('test_attr')
+
+    basex_session_mock = MagicMock()
+    mocker.patch('BaseXClient.BaseXClient.Session', basex_session_mock)
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '["value1","value2"]')
+    result = provider.attribute_query('test_attr')
+    assert result == ['value1', 'value2']
+
+
+def test_retries_queries(basex_session_mock, get_nestle_lowfat_provider):
+    class MockQuery:
+        def execute(self):
+            return '["value1","value2"]'
+    basex_session_mock.return_value.query.side_effect = [Exception(), Exception(), MockQuery()]
+    provider = get_nestle_lowfat_provider()
+
+    result = provider.attribute_query('test_attr')
+    assert result == ['value1', 'value2']
+    assert basex_session_mock.return_value.query.call_count == 3
+
+
+def test_reconnects_to_basex_even_if_close_fails(mocker, basex_session_mock, get_nestle_lowfat_provider):
+    class MockQuery:
+        def execute(self):
+            return '["value1","value2"]'
+
+    def raise_broken_pipe_error():
+        raise BrokenPipeError()
+
+    basex_session_mock.return_value.query.side_effect = [Exception(), Exception(), MockQuery()]
+    basex_session_mock.return_value.close = raise_broken_pipe_error
+    provider = get_nestle_lowfat_provider()
+
+    result = provider.attribute_query('test_attr')
+    assert result == ['value1', 'value2']
+
+
 def test_attribute_query_success(mocker, basex_session_mock, get_nestle_lowfat_provider):
     mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '["value1","value2"]')
     provider = get_nestle_lowfat_provider()
