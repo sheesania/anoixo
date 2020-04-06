@@ -88,7 +88,6 @@ class Nestle1904LowfatProvider(TextProvider):
         return 'Nestle 1904 Lowfat Treebank'
 
     def _reconnect_to_basex(self) -> None:
-        print('reconnecting')
         if self.session:
             try:
                 self.session.close()
@@ -110,7 +109,6 @@ class Nestle1904LowfatProvider(TextProvider):
         except Exception:
             exception = None
             for retry in range(3):
-                print(f'retry {retry}')
                 try:
                     self._reconnect_to_basex()
                     return run_query()
