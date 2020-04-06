@@ -77,11 +77,7 @@ class Nestle1904LowfatProvider(TextProvider):
         self.cache: Dict[str, Any] = {}
 
         try:
-            self.session = BaseXClient.Session(Config.basex['host'],
-                                               Config.basex['port'],
-                                               Config.basex['username'],
-                                               Config.basex['password'])
-            self.session.execute('open nestle1904lowfat')
+            self._reconnect_to_basex()
         except Exception as err:
             self.error = f'Error opening BaseX XML database: {type(err).__name__}'
             if self.session:
@@ -93,11 +89,81 @@ class Nestle1904LowfatProvider(TextProvider):
     def get_source_name(self) -> str:
         return 'Nestle 1904 Lowfat Treebank'
 
-    @timeout(5, use_signals=False)  # timeout after 5 seconds; use_signals to be thread-safe
+    def _reconnect_to_basex(self) -> None:
+        print('reconnecting')
+        if self.session:
+            # test this
+            try:
+                self.session.close()
+            except BrokenPipeError:
+                pass
+        self.session = BaseXClient.Session(Config.basex['host'],
+                                           Config.basex['port'],
+                                           Config.basex['username'],
+                                           Config.basex['password'])
+        self.session.execute('open nestle1904lowfat')
+
     def _execute_query(self, query_string: str) -> str:
-        if not self.session:
-            raise TextProviderError(self.error)
-        return self.session.query(query_string).execute()
+        """
+        cases:
+        - session isn't initialized (never managed to connect)
+            test_cannot_connect
+        - starts working after error
+            test_recovers_from_error
+        - error in run_query() (e.g. session uninitialized, some other error)
+            test_error_running_query
+        - error in _reconnect_to_basex() (e.g. connection refused)
+            test_error_reconnecting
+        """
+
+        @timeout(5, use_signals=False)  # timeout after 5 seconds; use_signals to be thread-safe
+        def run_query():
+            return self.session.query(query_string).execute()
+
+        try:
+            return run_query()
+        except Exception:
+            exception = None
+            for retry in range(3):
+                print(f'retry {retry}')
+                try:
+                    self._reconnect_to_basex()
+                    return run_query()
+                except Exception as err:
+                    exception = err
+            # if this code is reached, the last retry errored out with an exception
+            raise exception
+
+        # exception = None
+        # for retry in range(3):
+        #     print(f'retry {retry}')
+        #     try:
+        #         return run_query()
+        #     except Exception as err:
+        #         exception = err
+        #         try:
+        #             self._create_new_session()
+        #         except:
+        #             pass
+        #         continue
+        #
+        # # if this code is reached, the last retry errored out with an exception
+        # raise exception
+
+        # try:
+        #     return run_query()
+        # except Exception as err:
+        #     try:
+        #         self._create_new_session()
+        #     except Exception as err:
+
+        # except BrokenPipeError:
+        #     print('broken pipe')
+        #     if retries < 3:
+        #         print('resetting connection')
+        #         return self._execute_query(query_string, retries=retries+1)
+        #     else:
+        #         raise
 
     def get_text_for_reference(self, reference: str) -> str:
         query = f'//sentence[descendant::milestone[@id="{reference}"]]/p/text()'
