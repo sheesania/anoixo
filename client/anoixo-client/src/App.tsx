@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Query } from './query/QueryTypes';
+import { TextContextProvider, TextName } from './TextContext'
 import QueryBuilder from './query/QueryBuilder';
 import Results from './results/Results';
 
@@ -8,6 +9,9 @@ const App: React.FC = () => {
     sequences: [[{}]],
   });
   const [showResults, setShowResults] = useState(false);
+
+  // In the future, the current text could be pulled from a selection box/the URL/etc instead of being hardcoded
+  const [currentText] = useState(TextName.NLF);
 
   const updateQuery = useCallback(
     (newQuery: Query) => {
@@ -25,14 +29,14 @@ const App: React.FC = () => {
   }, [setShowResults]);
 
   return (
-    <div className="App">
+    <TextContextProvider text={currentText}>
       <QueryBuilder
         query={query}
         updateQuery={updateQuery}
         openResults={openResults}
       />
       <Results query={query} isOpen={showResults} closeSelf={closeResults} />
-    </div>
+    </TextContextProvider>
   );
 };
 
