@@ -2,7 +2,7 @@ import React, { useContext, ReactNode } from 'react';
 
 enum TextName {
   NLF
-}
+};
 const TextContext = React.createContext<TextName | undefined>(undefined);
 
 type TextContextProviderProps = {
@@ -25,4 +25,4 @@ const useTextSetting = () => {
   return context;
 };
 
-export {TextName, TextContextProvider, useTextSetting}
+export { TextName, TextContextProvider, useTextSetting };
