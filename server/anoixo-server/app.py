@@ -51,7 +51,12 @@ def log_request(response):
     print(f'[{time.asctime()}] {source_address} {request.method} {request.path} {response.status_code}', flush=True)
     print(f'\tTime: {exec_time}', flush=True)
     print(f'\tRequest: {request.json}', flush=True)
-    print(f'\tResponse: {response.json}', flush=True)
+    response_json = response.json
+    if isinstance(response_json, list):
+        response_log = f'<{len(response_json)} results>'
+    else:
+        response_log = response_json
+    print(f'\tResponse: {response_log}', flush=True)
     return response
 
 
