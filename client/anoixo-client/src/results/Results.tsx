@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTextSetting, TextSettings } from '../TextSettings';
 import { Query } from '../query/QueryTypes';
 import {
   ErrorResult,
@@ -6,15 +7,12 @@ import {
   parseErrorResult,
   parseSuccessResult,
 } from './ResultTypes';
+import { ServerSettings } from '../AppSettings';
 import BackForwardButton from '../common/BackForwardButton';
 import Loading from './Loading';
 import ResultsListing from './ResultsListing';
 import Drawer from '@material-ui/core/Drawer';
 import './css/Results.css';
-
-// In the future, the server settings for a text could be grabbed dynamically from a dictionary depending on which text
-// the user selected. For now I am just hardcoding the NLF server.
-import { NLFServerSettings } from '../AppSettings';
 
 type Props = {
   query: Query;
@@ -26,6 +24,7 @@ const Results: React.FC<Props> = (props: Props) => {
   const { query, isOpen, closeSelf } = props;
   const [results, setResults] = useState<SuccessResult | undefined>(undefined);
   const [error, setError] = useState<ErrorResult | undefined>(undefined);
+  const currentText = useTextSetting();
 
   const handleRequestSuccess = (getJson: Promise<any>) => {
     getJson.then((json: any) => {
@@ -62,7 +61,8 @@ const Results: React.FC<Props> = (props: Props) => {
     }
     setResults(undefined);
     setError(undefined);
-    fetch(NLFServerSettings.textServerUrl, {
+    const url = `${ServerSettings.apiUrl}/text/${TextSettings[currentText].serverTextId}`;
+    fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const Results: React.FC<Props> = (props: Props) => {
           description: error.message,
         });
       });
-  }, [isOpen, query]);
+  }, [isOpen, query, currentText]);
 
   let display;
   if (error) {

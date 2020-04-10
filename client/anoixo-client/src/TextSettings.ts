@@ -1,6 +1,7 @@
+import { useContext } from 'react';
 import AttributeToComponentMap from './query/Attributes/AttributeToComponentMap';
 import NLFAttributeToComponentMap from './query/Attributes/NLF/NLFAttributeComponentMap';
-import { TextName } from './TextContext';
+import { TextContext, TextName } from './TextContext';
 
 type TextSetting = {
   serverTextId: string;
@@ -14,4 +15,12 @@ const TextSettings: Record<TextName, TextSetting> = {
   }
 };
 
-export default TextSettings;
+const useTextSetting = () => {
+  const context = useContext(TextContext);
+  if (context === undefined) {
+    throw new Error('useTextSetting must be used within a TextContextProvider');
+  }
+  return context;
+};
+
+export { useTextSetting, TextSettings };
