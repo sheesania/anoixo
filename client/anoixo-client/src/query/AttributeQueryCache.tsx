@@ -52,8 +52,9 @@ const AttributeQueryCacheProvider: React.FC<Props> = (props: Props) => {
   );
 };
 
-const useAttributeQueryCache = () => {
-  return useContext(AttributeQueryCacheContext);
+const useAttributeQueryCache = (attribute: string) => {
+  const cache = useContext(AttributeQueryCacheContext);
+  return cache[attribute] || [];
 };
 
 export { useAttributeQueryCache, AttributeQueryCacheProvider };
