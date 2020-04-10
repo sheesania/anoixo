@@ -30,5 +30,8 @@ You can simply run a load test against the regular Anoixo server, but if you hav
 
 - If your server is currently running, restart it.
 
+## Make any modifications to the locustfile
+If you have your Anoixo server behind HTTP basic auth (as in the Ansible playbook for prod deployment), you'll need to modify `locustfile.py` to pass auth credentials with each request. To do this, simply add a keyword argument `auth=('username', 'password')` to each `self.client.XYZ` call.
+
 ## Run Locust
 In the `locust` directory with your venv activated, run `locust`. It should spawn a server at `localhost:8089`. Navigate there in a browser and you should be able to configure the host where your Anoixo server is at, your desired number of users, the hatch rate, and so forth, and then run and view the results of a load test in Locust's interface.
