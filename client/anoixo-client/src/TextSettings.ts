@@ -6,12 +6,14 @@ import { TextContext, TextName } from './TextContext';
 type TextSetting = {
   serverTextId: string;
   attributeToComponentMap: AttributeToComponentMap;
+  attributeQueriesToCache: string[];
 };
 
 const TextSettings: Record<TextName, TextSetting> = {
   [TextName.NLF]: {
     serverTextId: 'nlf',
     attributeToComponentMap: NLFAttributeToComponentMap,
+    attributeQueriesToCache: ['lemma', 'normalized'],
   }
 };
 

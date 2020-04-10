@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { AttributeQueryCacheProvider } from './AttributeQueryCache';
 import { Query, Sequence } from './QueryTypes';
 import SearchScope from './SearchScope';
 import SequenceBuilder from './SequenceBuilder';
@@ -32,20 +33,22 @@ const QueryBuilder: React.FC<Props> = (props: Props) => {
 
   return (
     <div className="QueryBuilder">
-      <SearchScope />
-      {query.sequences.map((sequence, index) => (
-        <SequenceBuilder
-          sequence={sequence}
-          sequenceIndex={index}
-          updateSequence={updateSequence}
-          key={index}
+      <AttributeQueryCacheProvider>
+        <SearchScope />
+        {query.sequences.map((sequence, index) => (
+          <SequenceBuilder
+            sequence={sequence}
+            sequenceIndex={index}
+            updateSequence={updateSequence}
+            key={index}
+          />
+        ))}
+        <BackForwardButton
+          type="search"
+          onClick={props.openResults}
+          customStyling={{ marginTop: '2rem' }}
         />
-      ))}
-      <BackForwardButton
-        type="search"
-        onClick={props.openResults}
-        customStyling={{ marginTop: '2rem' }}
-      />
+      </AttributeQueryCacheProvider>
     </div>
   );
 };
