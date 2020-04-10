@@ -1,5 +1,5 @@
 import time
-from flask import abort, jsonify, make_response, request, Flask
+from flask import abort, g, jsonify, make_response, request, Flask
 from flask_cors import CORS
 from typing import Any, Dict, Union
 from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
@@ -39,12 +39,24 @@ def internal_error(error):
                          500)
 
 
+@app.before_request
+def get_request_start_time():
+    g.start_time = time.time()
+
+
 @app.after_request
 def log_request(response):
     source_address = request.headers.get('X-Real-Ip', request.remote_addr)
+    exec_time = time.time() - g.start_time
     print(f'[{time.asctime()}] {source_address} {request.method} {request.path} {response.status_code}', flush=True)
+    print(f'\tTime: {exec_time}', flush=True)
     print(f'\tRequest: {request.json}', flush=True)
-    print(f'\tResponse: {response.json}', flush=True)
+    response_json = response.json
+    if isinstance(response_json, list):
+        response_log = f'<{len(response_json)} results>'
+    else:
+        response_log = response_json
+    print(f'\tResponse: {response_log}', flush=True)
     return response
 
 
