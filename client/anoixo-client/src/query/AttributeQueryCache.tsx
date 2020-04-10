@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, ReactNode } from 'react';
 import { useTextSetting, TextSettings } from '../TextSettings';
+import { ServerSettings } from '../AppSettings';
 
 type AttributeQueryCache = {
   [attr: string]: string[];
@@ -17,10 +18,31 @@ const AttributeQueryCacheProvider: React.FC<Props> = (props: Props) => {
   useEffect(() => {
     const newCache: AttributeQueryCache = {}
     const attrsToCache = TextSettings[currentText].attributeQueriesToCache;
+    const attrFetches = [];
+
     for (const attr of attrsToCache) {
-      newCache[attr] = ['test1', 'test2']
+      const url = `${ServerSettings.apiUrl}/text/${TextSettings[currentText].serverTextId}/attribute/${attr}`;
+      attrFetches.push(
+        fetch(url)
+          .then(response => {
+            if (!response.ok) {
+              return;
+            }
+            return response.json();
+          })
+          .then(json => {
+            newCache[attr] = json;
+            return Promise.resolve();
+          })
+          .catch((err) => {  //if we can't get the attributes, they just won't be available for autocomplete
+            console.log(`Error fetching values for attribute '${attr}': ${err}`);
+          })
+      );
     }
-    setCache(newCache);
+
+    Promise.all(attrFetches).then(() => {
+      setCache(newCache);
+    });
   }, [currentText]);
 
   return (
