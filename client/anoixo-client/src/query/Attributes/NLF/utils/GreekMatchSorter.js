@@ -33,14 +33,13 @@
  * @author Kent C. Dodds <kent@doddsfamily.us>
  */
 
+import { twoLetterTransliterationPossibilities, oneLetterTransliterationPossibilities } from './TransliterationPossibilities';
+
 const rankings = {
-  STARTS_WITH: 8,
-  WORD_STARTS_WITH: 7,
-  EQUAL: 6,
-  STRING_CASE: 5,
-  STRING_CASE_ACRONYM: 4,
-  CONTAINS: 3,
-  ACRONYM: 2,
+  STARTS_WITH: 5,
+  WORD_STARTS_WITH: 4,
+  EQUAL: 3,
+  CONTAINS: 2,
   MATCHES: 1,
   NO_MATCH: 0,
 }
@@ -48,19 +47,71 @@ const rankings = {
 matchSorter.rankings = rankings
 
 /**
- * Takes an array of items and a value and returns a new array with the items that match the given value
+ * Takes an array of items and a value and returns a new array with the items that match the given value, considering
+ * different possible romanizations of Greek
  * @param {Array} items - the items to sort
  * @param {String} value - the value to use for ranking
  * @param {Object} options - Some options to configure the sorter
  * @return {Array} - the new sorted array
  */
-function matchSorter(items, value, options = {}) {
+function transliteratedMatchSorter(items, value, options = {}) {
   // not performing any search/sort if value(search term) is empty
-  if (!value) return items
+  if (!value) return items;
 
+  const transliterations = getTransliterations(value);
+  console.log(transliterations);
+
+  const matchedItems = matchSorter(items, value, options);
+  return matchedItems.map(({ item }) => item);
+}
+
+/**
+ * Returns all possible transliterations for romanized Greek text
+ * @param {String} textToTransliterate - the romanized text to transliterate
+ * @param {String} transliterationSoFar - the transliteration so far. Used for recursion
+ * @return {Array<string>} - an array of potential transliterations
+ */
+function getTransliterations(textToTransliterate, transliterationSoFar = '') {
+  const textLeft = textToTransliterate.length;
+  if (textLeft === 0) {
+    return [transliterationSoFar];
+  }
+
+  const transliterations = []
+  let foundPossibilityForLetter = false;
+
+  if (textLeft >= 2) {
+    const nextTwoLetters = textToTransliterate.slice(0, 2);
+    for (const possibility of (twoLetterTransliterationPossibilities[nextTwoLetters] || [])) {
+      foundPossibilityForLetter = true;
+      transliterations.push(...getTransliterations(textToTransliterate.slice(2), transliterationSoFar + possibility));
+    }
+  }
+
+  const nextLetter = textToTransliterate.slice(0, 1);
+  for (const possibility of (oneLetterTransliterationPossibilities[nextLetter] || [])) {
+    foundPossibilityForLetter = true;
+    transliterations.push(...getTransliterations(textToTransliterate.slice(1), transliterationSoFar + possibility));
+  }
+
+  if (!foundPossibilityForLetter) {
+    transliterations.push(...getTransliterations(textToTransliterate.slice(1), transliterationSoFar));
+  }
+
+  return transliterations;
+}
+
+/**
+ * Takes an array of items and a value and returns a new array with the items that match the given value + ranking info
+ * @param {Array} items - the items to sort
+ * @param {String} value - the value to use for ranking
+ * @param {Object} options - Some options to configure the sorter
+ * @return {Array} - the sorted array of matches, with ranking information
+ */
+function matchSorter(items, value, options = {}) {
   const {keys, threshold = rankings.MATCHES} = options
   const matchedItems = items.reduce(reduceItemsToRanked, [])
-  return matchedItems.sort(sortRankedItems).map(({item}) => item)
+  return matchedItems.sort(sortRankedItems)
 
   function reduceItemsToRanked(matches, item, index) {
     const {
@@ -287,5 +338,5 @@ function getKeyAttributes(key) {
   }
 }
 
-export default matchSorter
+export default transliteratedMatchSorter
 export {rankings}
