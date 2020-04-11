@@ -29,9 +29,8 @@
  */
 
 const rankings = {
-  STARTS_WITH: 9,
-  WORD_STARTS_WITH: 8,
-  CASE_SENSITIVE_EQUAL: 7,
+  STARTS_WITH: 8,
+  WORD_STARTS_WITH: 7,
   EQUAL: 6,
   STRING_CASE: 5,
   STRING_CASE_ACRONYM: 4,
@@ -134,19 +133,9 @@ function getMatchRanking(testString, stringToRank, options) {
     return rankings.NO_MATCH
   }
 
-  // case sensitive equals
-  if (testString === stringToRank) {
-    return rankings.CASE_SENSITIVE_EQUAL
-  }
-
   // Lower casing before further comparison
   testString = testString.toLowerCase()
   stringToRank = stringToRank.toLowerCase()
-
-  // case insensitive equals
-  if (testString === stringToRank) {
-    return rankings.EQUAL
-  }
 
   // starts with
   if (testString.indexOf(stringToRank) === 0) {
@@ -156,6 +145,11 @@ function getMatchRanking(testString, stringToRank, options) {
   // word starts with
   if (testString.indexOf(` ${stringToRank}`) !== -1) {
     return rankings.WORD_STARTS_WITH
+  }
+
+  // case insensitive equals
+  if (testString === stringToRank) {
+    return rankings.EQUAL
   }
 
   // contains
