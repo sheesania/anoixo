@@ -1,7 +1,3 @@
-export type ServerSettings = {
-    textServerUrl: string;
+export const ServerSettings = {
+  apiUrl: 'http://{{ server_name }}/api'
 };
-
-export const NLFServerSettings: ServerSettings = {
-    textServerUrl: 'http://{{ server_name }}/api/text/nlf',
-}

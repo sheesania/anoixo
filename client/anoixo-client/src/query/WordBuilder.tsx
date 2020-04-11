@@ -1,14 +1,11 @@
 import React, { memo, useCallback } from 'react';
+import { useTextSetting, TextSettings } from '../TextSettings';
 import { WordQuery } from './QueryTypes';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import './css/WordBuilder.css';
-
-// In the future, this could be grabbing the component map for the current provider (Greek NT, Hebrew OT, Septuagint,
-// etc) from a dictionary or something, instead of hardcoding just this one NT NLF component map.
-import NLFAttributeComponentMap from './Attributes/NLF/NLFAttributeComponentMap';
 
 type Props = {
   word: WordQuery;
@@ -40,7 +37,9 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
     [word, wordIndex, updateWord]
   );
 
-  const attributes = NLFAttributeComponentMap.map((attrToComponent, index) => {
+  const currentText = useTextSetting();
+  const componentMap = TextSettings[currentText].attributeToComponentMap;
+  const attributes = componentMap.map((attrToComponent, index) => {
     let attrValue = undefined;
     if (word.attributes && attrToComponent.attrId in word.attributes) {
       attrValue = word.attributes[attrToComponent.attrId];
