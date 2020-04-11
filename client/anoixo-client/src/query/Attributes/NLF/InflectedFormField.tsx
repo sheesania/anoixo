@@ -1,8 +1,12 @@
 import React, { memo, ChangeEvent, useCallback } from 'react';
+import transliteratedMatchSorter from './utils/GreekMatchSorter';
+import { useAttributeQueryCache } from '../../AttributeQueryCache';
 import { useUID } from 'react-uid';
 import AttributeComponentProps from '../AttributeComponentProps';
 import AttributeEditor from '../AttributeEditor';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
+import { FilterOptionsState } from '@material-ui/lab';
 import './InflectedFormField.css';
 
 const InflectedFormField: React.FC<AttributeComponentProps> = memo(
@@ -10,21 +14,31 @@ const InflectedFormField: React.FC<AttributeComponentProps> = memo(
     const uid = 'attr-field-' + useUID();
     const { updateAttr, id } = props;
     const onChange = useCallback(
-      (event: ChangeEvent<HTMLInputElement>) => {
-        updateAttr(id, event.target.value);
+      (event: ChangeEvent<{}>, value: string | null) => {
+        const newValue = value || '';
+        updateAttr(id, newValue);
       },
       [updateAttr, id]
     );
+
+    const allInflectedForms = useAttributeQueryCache('normalized');
+
+    const filterInflectedForms = (inflectedForms: string[], state: FilterOptionsState<string>) => {
+      return transliteratedMatchSorter(inflectedForms, state.inputValue, 8);
+    };
 
     const label = 'Inflected Form';
 
     return (
       <AttributeEditor labelText={label} labelProps={{ htmlFor: uid }} enabled={props.enabled}>
-        <TextField
+        <Autocomplete
+          className='attribute-input'
           id={uid}
-          className="attribute-input inflected-form-selector"
-          placeholder="Any"
-          value={props.value || ''}
+          renderInput={
+            (params) => <TextField {...params} className='inflected-form-selector' placeholder='Any'/>
+          }
+          options={allInflectedForms}
+          filterOptions={filterInflectedForms}
           onChange={onChange}
         />
       </AttributeEditor>
