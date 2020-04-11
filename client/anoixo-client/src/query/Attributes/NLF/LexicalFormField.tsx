@@ -1,9 +1,10 @@
 import React, { memo, ChangeEvent, useCallback } from 'react';
+import matchSorter from './GreekMatchSorter';
 import { useAttributeQueryCache } from '../../AttributeQueryCache';
 import { useUID } from 'react-uid';
 import AttributeComponentProps from '../AttributeComponentProps';
 import AttributeEditor from '../AttributeEditor';
-import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import { FilterOptionsState } from '@material-ui/lab';
 import './LexicalFormField.css';
@@ -22,9 +23,8 @@ const LexicalFormField: React.FC<AttributeComponentProps> = memo(
 
     const lexicalForms = useAttributeQueryCache('lemma');
 
-    const defaultFilterOptions = createFilterOptions<string>();
     const filterOptions = (options: string[], state: FilterOptionsState<string>) => {
-      return defaultFilterOptions(options, state).slice(0, 8);
+      return matchSorter(options, state.inputValue).slice(0, 8);
     }
 
     const label = 'Lexical Form';
