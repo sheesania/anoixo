@@ -21,10 +21,10 @@ const LexicalFormField: React.FC<AttributeComponentProps> = memo(
       [updateAttr, id]
     );
 
-    const lexicalForms = useAttributeQueryCache('lemma');
+    const allLexicalForms = useAttributeQueryCache('lemma');
 
-    const filterOptions = (options: string[], state: FilterOptionsState<string>) => {
-      return matchSorter(options, state.inputValue).slice(0, 8);
+    const filterLexicalForms = (lexicalForms: string[], state: FilterOptionsState<string>) => {
+      return matchSorter(lexicalForms, state.inputValue).slice(0, 8);
     }
 
     const label = 'Lexical Form';
@@ -37,8 +37,8 @@ const LexicalFormField: React.FC<AttributeComponentProps> = memo(
           renderInput={
             (params) => <TextField {...params} className='lexical-form-selector' placeholder='Any'/>
           }
-          options={lexicalForms}
-          filterOptions={filterOptions}
+          options={allLexicalForms}
+          filterOptions={filterLexicalForms}
           onChange={onChange}
         />
       </AttributeEditor>

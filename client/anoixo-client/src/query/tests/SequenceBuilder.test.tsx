@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { TextContextProvider, TextName } from '../../TextContext';
+import { TextContextProvider } from '../../TextContext';
+import { TextName } from '../../TextSettings';
 import SequenceBuilder from '../SequenceBuilder';
 
 describe('SequenceBuilder component', () => {
