@@ -183,7 +183,7 @@ function getHighestRanking(item, keys, value, options) {
     return {
       // ends up being duplicate of 'item' in matches but consistent
       rankedItem: item,
-      rank: getMatchRanking(item, value, options),
+      rank: getMatchRanking(item, value),
       keyIndex: -1,
       keyThreshold: options.threshold,
     }
@@ -195,7 +195,7 @@ function getHighestRanking(item, keys, value, options) {
       {itemValue, attributes},
       i,
     ) => {
-      let newRank = getMatchRanking(itemValue, value, options)
+      let newRank = getMatchRanking(itemValue, value)
       let newRankedItem = rankedItem
       const {minRanking, maxRanking, threshold} = attributes
       if (newRank < minRanking && newRank >= rankings.MATCHES) {
@@ -219,13 +219,12 @@ function getHighestRanking(item, keys, value, options) {
  * Gives a rankings score based on how well the two strings match.
  * @param {String} testString - the string to test against
  * @param {String} stringToRank - the string to rank
- * @param {Object} options - options for the match (like keepDiacritics for comparison)
  * @returns {Number} the ranking for how well stringToRank matches testString
  */
-function getMatchRanking(testString, stringToRank, options) {
+function getMatchRanking(testString, stringToRank) {
   /* eslint complexity:[2, 12] */
-  testString = prepareValueForComparison(testString, options)
-  stringToRank = prepareValueForComparison(stringToRank, options)
+  testString = prepareValueForComparison(testString)
+  stringToRank = prepareValueForComparison(stringToRank)
 
   // testString has already been lowercased
   stringToRank = stringToRank.toLowerCase()
@@ -295,27 +294,21 @@ function sortRankedItems(a, b) {
 }
 
 /**
- * Prepares value for comparison by stringifying it, removing diacritics (if specified)
+ * Prepares value for comparison by stringifying it, removing diacritics, and normalizing sigmas
  * @param {String} value - the value to clean
- * @param {Object} options - {keepDiacritics: whether to remove diacritics}
  * @return {String} the prepared value
  */
-function prepareValueForComparison(value, {keepDiacritics}) {
+function prepareValueForComparison(value) {
   value = `${value}` // toString
-  if (!keepDiacritics) {
-    value = removeDiacritics(value)
-  }
-  return value
-}
 
-/**
- * Removes diacritics from a string by decomposing accented characters and then removing combining diacritical marks
- * @param {String} value - the string to remove diacritics from
- * @return {String} the string without diacritics
- */
-function removeDiacritics(value) {
+  // Removes diacritics by decomposing accented characters and then removing combining diacritical marks
   // from https://stackoverflow.com/a/45797754/4954731
-  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+  value = value.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+
+  // normalize sigmas
+  value = value.replace(/ς/g, 'σ')
+
+  return value
 }
 
 /**
