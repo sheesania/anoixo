@@ -1,5 +1,10 @@
 /**
  * Modified version of https://github.com/kentcdodds/match-sorter
+ * The key changes are:
+ *  - Criteria are reordered so "starts with" ranks before "equals" (better fits searching for single words)
+ *  - Some irrelevant criteria + the functions for them are removed, e.g. looking for camel case items, acronyms, etc,
+ *    so I don't waste cycles evaluating those criteria
+ *  - The method of removing diacritics is different so Greek text is supported
  * 
  * The MIT License (MIT)
  * Copyright (c) 2017 Kent C. Dodds
