@@ -1,5 +1,5 @@
 import React, { memo, ChangeEvent, useCallback } from 'react';
-import matchSorter from './GreekMatchSorter';
+import matchSorter from './utils/GreekMatchSorter';
 import { useAttributeQueryCache } from '../../AttributeQueryCache';
 import { useUID } from 'react-uid';
 import AttributeComponentProps from '../AttributeComponentProps';
