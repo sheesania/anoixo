@@ -21,7 +21,7 @@ const oneLetterTransliterationPossibilities = {
   'l': ['λ'],
   'm': ['μ'],
   'n': ['ν'],
-  'o': ['ο', 'ω'],
+  'o': ['ο'],
   'ō': ['ω'],
   'p': ['π'],
   'q': ['θ', ''],
