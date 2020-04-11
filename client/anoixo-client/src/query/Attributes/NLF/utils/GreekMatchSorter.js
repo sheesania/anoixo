@@ -9,6 +9,8 @@
  *    so I don't waste cycles evaluating those criteria
  *  - I remove diacritics differently so Greek text is supported, plus I also normalize sigmas
  * 
+ * TODO: Clean up more to remove features I don't use
+ *
  * The MIT License (MIT)
  * Copyright (c) 2017 Kent C. Dodds
  * 
