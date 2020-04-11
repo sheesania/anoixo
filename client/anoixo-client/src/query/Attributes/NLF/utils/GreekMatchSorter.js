@@ -74,6 +74,9 @@ function transliteratedMatchSorter(items, value, options = {}) {
 function getTransliterations(textToTransliterate, transliterationSoFar = '') {
   const textLeft = textToTransliterate.length;
   if (textLeft === 0) {
+    if (transliterationSoFar === '') {
+      return [];
+    }
     return [transliterationSoFar];
   }
 
