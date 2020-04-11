@@ -51,18 +51,54 @@ matchSorter.rankings = rankings
  * different possible romanizations of Greek
  * @param {Array} items - the items to sort
  * @param {String} value - the value to use for ranking
+ * @param {Number} maxMatches - the maximum number of matches you want to get
  * @param {Object} options - Some options to configure the sorter
  * @return {Array} - the new sorted array
  */
-function transliteratedMatchSorter(items, value, options = {}) {
+function transliteratedMatchSorter(items, value, maxMatches, options = {}) {
   // not performing any search/sort if value(search term) is empty
-  if (!value) return items;
+  if (!value) return items.slice(0, maxMatches);
 
+  // Generate possible Greek values this word could be a transliteration of and get matches for each of them
   const transliterations = getTransliterations(value);
-  console.log(transliterations);
+  const possibleGreekValues = [value, ...transliterations];
+  const matchesForGreekValues = [];
+  for (const possibleValue of possibleGreekValues) {
+    matchesForGreekValues.push(matchSorter(items, possibleValue, options));
+  }
 
-  const matchedItems = matchSorter(items, value, options);
-  return matchedItems.map(({ item }) => item);
+  // Find the top matches among the various matches for different Greek values
+  const topMatches = [];
+  while (topMatches.length < maxMatches) {
+    // Get the top match for each possible Greek value, ignoring Greek values that don't have any matches left
+    const topMatchForEachGreekValue = matchesForGreekValues
+      .map((matchesForGreekValue, greekValueIndex) => {
+        return {
+          match: matchesForGreekValue[0],
+          valueIndex: greekValueIndex,
+        };
+      })
+      .filter((match) => !!match.match);
+
+    // Find the overall top among the top matches for each potential value
+    const overallTopMatch = topMatchForEachGreekValue.sort((a, b) => sortRankedItems(a.match, b.match))[0];
+
+    if (overallTopMatch) {
+      const matchText = overallTopMatch.match.item;
+      // Only add this as a new top match if it hasn't already been added (in case multiple potential Greek values
+      // matched the same word)
+      if (topMatches.indexOf(matchText) === -1) {
+        topMatches.push(matchText);
+      }
+      // Remove this top match from the results so we can move on to the next ones
+      matchesForGreekValues[overallTopMatch.valueIndex].shift();
+    } else {
+      // If no top match was found, there are no matches left for any Greek values
+      break;
+    }
+  }
+
+  return topMatches;
 }
 
 /**

@@ -24,7 +24,7 @@ const LexicalFormField: React.FC<AttributeComponentProps> = memo(
     const allLexicalForms = useAttributeQueryCache('lemma');
 
     const filterLexicalForms = (lexicalForms: string[], state: FilterOptionsState<string>) => {
-      return transliteratedMatchSorter(lexicalForms, state.inputValue).slice(0, 8);
+      return transliteratedMatchSorter(lexicalForms, state.inputValue, 8);
     }
 
     const label = 'Lexical Form';
