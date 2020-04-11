@@ -36,6 +36,7 @@
 import { twoLetterTransliterationPossibilities, oneLetterTransliterationPossibilities } from './TransliterationPossibilities';
 
 const rankings = {
+  EXACT_MATCH: 6,
   STARTS_WITH: 5,
   WORD_STARTS_WITH: 4,
   EQUAL: 3,
@@ -58,6 +59,9 @@ matchSorter.rankings = rankings
 function transliteratedMatchSorter(items, value, maxMatches, options = {}) {
   // not performing any search/sort if value(search term) is empty
   if (!value) return items.slice(0, maxMatches);
+
+  // All search is case insensitive
+  value = value.toLowerCase();
 
   // Generate possible Greek values this word could be a transliteration of and get matches for each of them
   const transliterations = getTransliterations(value);
@@ -223,14 +227,18 @@ function getMatchRanking(testString, stringToRank, options) {
   testString = prepareValueForComparison(testString, options)
   stringToRank = prepareValueForComparison(stringToRank, options)
 
+  // testString has already been lowercased
+  stringToRank = stringToRank.toLowerCase()
+
   // too long
   if (stringToRank.length > testString.length) {
     return rankings.NO_MATCH
   }
 
-  // Lower casing before further comparison
-  testString = testString.toLowerCase()
-  stringToRank = stringToRank.toLowerCase()
+  // exact match
+  if (testString === stringToRank) {
+    return rankings.EXACT_MATCH
+  }
 
   // starts with
   if (testString.indexOf(stringToRank) === 0) {
