@@ -1,8 +1,5 @@
 import React, { ReactNode } from 'react';
-
-enum TextName {
-  NLF
-};
+import { TextName } from './TextSettings';
 
 const TextContext = React.createContext<TextName | undefined>(undefined);
 
@@ -20,4 +17,4 @@ const TextContextProvider: React.FC<TextContextProviderProps> = (props: TextCont
 };
 
 
-export { TextContext, TextName, TextContextProvider };
+export { TextContext, TextContextProvider };

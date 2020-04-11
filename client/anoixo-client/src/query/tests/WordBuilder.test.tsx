@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { TextContextProvider, TextName } from '../../TextContext';
+import { TextContextProvider } from '../../TextContext';
+import { TextName } from '../../TextSettings';
 import getSelectItemFunction from '../../test/helpers/getSelectItem';
 import WordBuilder from '../WordBuilder';
 

@@ -1,7 +1,11 @@
 import { useContext } from 'react';
 import AttributeToComponentMap from './query/Attributes/AttributeToComponentMap';
 import NLFAttributeToComponentMap from './query/Attributes/NLF/NLFAttributeComponentMap';
-import { TextContext, TextName } from './TextContext';
+import { TextContext } from './TextContext';
+
+enum TextName {
+  NLF
+};
 
 type TextSetting = {
   serverTextId: string;
@@ -25,4 +29,4 @@ const useTextSetting = () => {
   return context;
 };
 
-export { useTextSetting, TextSettings };
+export { useTextSetting, TextName, TextSettings };
