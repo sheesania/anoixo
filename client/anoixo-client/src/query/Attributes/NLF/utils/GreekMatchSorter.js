@@ -1,10 +1,13 @@
 /**
  * Modified version of https://github.com/kentcdodds/match-sorter for autocompleting Koine Greek words
  * The key changes are:
- *  - Criteria are reordered so "starts with" ranks before "equals" (better fits searching for single words)
+ *  - Generation of possible detransliterations of into Greek of the input, then sorting/filtering the
+ *    matches from each possible detransliteration
+ *  - Criteria are reordered so "starts with" ranks before "equals", there's a new "exact match" criteria on top, etc
+ *    (essentially changes to better fit searching for single words)
  *  - Some irrelevant criteria + the functions for them are removed, e.g. looking for camel case items, acronyms, etc,
  *    so I don't waste cycles evaluating those criteria
- *  - The method of removing diacritics is different so Greek text is supported
+ *  - I remove diacritics differently so Greek text is supported, plus I also normalize sigmas
  * 
  * The MIT License (MIT)
  * Copyright (c) 2017 Kent C. Dodds
