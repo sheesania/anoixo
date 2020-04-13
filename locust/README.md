@@ -8,7 +8,7 @@ This folder contains tools for load testing Anoixo using [Locust](https://locust
 ## Prepare the Anoixo server
 You can simply run a load test against the regular Anoixo server, but if you have restrictions on your ESV API key, you may quickly run out of API quota. If you want to avoid hitting the actual ESV API server, follow these instructions to replace the request code with a mock version on the Anoixo server you'll run your load test against.
 
-- The relevant file in the repository is `server/anoixo-server/translation_providers_ESVApiTranslationProvider.py`. Find it and open it for editing.
+- The relevant file in the repository is `server/anoixo-server/translation_providers/ESVApiTranslationProvider.py`. Find it and open it for editing.
 
 - Find these lines where the actual request is made and the JSON response is grabbed:
   ```
