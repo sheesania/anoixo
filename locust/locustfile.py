@@ -4,6 +4,10 @@ from locust import HttpLocust, task, between
 class AnoixoAPIUser(HttpLocust):
     wait_time = between(2, 10)
 
+    @task(3)
+    def get_index(self):
+        self.client.get('/')
+
     @task(5)
     def tiny_query(self):
         self.client.post('/api/text/nlf', json={
