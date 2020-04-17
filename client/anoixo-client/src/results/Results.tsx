@@ -8,8 +8,8 @@ import {
   parseSuccessResult,
 } from './ResultTypes';
 import { ServerSettings } from '../AppSettings';
-import BackForwardButton from '../common/BackForwardButton';
 import Loading from './Loading';
+import ResultsError from './ResultsError';
 import ResultsListing from './ResultsListing';
 import Drawer from '@material-ui/core/Drawer';
 import './css/Results.css';
@@ -87,12 +87,7 @@ const Results: React.FC<Props> = (props: Props) => {
 
   let display;
   if (error) {
-    display = (
-      <div>
-        {JSON.stringify(error)}{' '}
-        <BackForwardButton type="back" onClick={closeSelf} />
-      </div>
-    );
+    display = <ResultsError error={error} closeResults={closeSelf} />;
   } else if (results) {
     display = <ResultsListing results={results} closeResults={closeSelf} />;
   } else {
