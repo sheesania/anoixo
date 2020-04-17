@@ -66,7 +66,7 @@ const PassageCard: React.FC<Props> = memo((props: Props) => {
   const reference = makeReferenceString(props.passage.references);
   const text = makeTextElements(props.passage.words);
   return (
-    <Paper className="passage-card" elevation={3} key={props.passageIndex}>
+    <Paper className="results-item passage-card" elevation={3} key={props.passageIndex}>
       <Typography variant="h6" component="h3">
         {reference}
       </Typography>

@@ -3,6 +3,7 @@ import { SuccessResult } from './ResultTypes';
 import BackForwardButton from '../common/BackForwardButton';
 import CopyrightNotice from './CopyrightNotice';
 import PassageCard from './PassageCard';
+import Alert from '@material-ui/lab/Alert';
 import Typography from '@material-ui/core/Typography';
 import './css/ResultsListing.css';
 
@@ -12,7 +13,13 @@ type Props = {
 };
 
 const ResultsListing: React.FC<Props> = memo((props: Props) => {
-  const passageCards = props.results.map((passage, index) => <PassageCard passage={passage} passageIndex={index}/>);
+  const hasResults = props.results.length > 0;
+  let resultsView;
+  if (hasResults) {
+    resultsView = props.results.map((passage, index) => <PassageCard passage={passage} passageIndex={index} />);
+  } else {
+    resultsView = <Alert className='results-item' severity='info'>No results were found for your search.</Alert>;
+  }
 
   return (
     <div className="ResultsListing">
@@ -25,9 +32,9 @@ const ResultsListing: React.FC<Props> = memo((props: Props) => {
           onClick={props.closeResults}
           customStyling={{ marginLeft: '1.2rem' }}
         />
-        <CopyrightNotice />
+        {hasResults && <CopyrightNotice />}
       </div>
-      {passageCards}
+      {resultsView}
       <BackForwardButton
         type="back"
         onClick={props.closeResults}
