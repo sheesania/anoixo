@@ -2,8 +2,9 @@ import abc
 
 
 class AnoixoError(Exception, abc.ABC):
-    def __init__(self, message):
+    def __init__(self, message: str, http_error_code: int = 500):
         self.message = message
+        self.http_error_code = http_error_code
 
     @abc.abstractmethod
     def get_friendly_error_message(self) -> str:
