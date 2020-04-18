@@ -109,15 +109,6 @@ class Nestle1904LowfatProvider(TextProvider):
         # if this code is reached, the last retry errored out with an exception
         raise exception
 
-    def get_text_for_reference(self, reference: str) -> str:
-        query = f'//sentence[descendant::milestone[@id="{reference}"]]/p/text()'
-        try:
-            return self._execute_query(query)
-        except TextProviderError:
-            raise
-        except Exception as err:
-            raise TextProviderError(f'Error getting reference \'{reference}\': {type(err).__name__}')
-
     """
     Builds an XQuery string to find matches for the given TextQuery.
 
