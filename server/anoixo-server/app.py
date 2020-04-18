@@ -6,7 +6,7 @@ from translation_providers.ESVApiTranslationProvider import ESVApiTranslationPro
 from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
 from text_providers.TextProvider import TextProvider
 from werkzeug.http import HTTP_STATUS_CODES
-from AnoixoError import AnoixoError, ProbableBugError, ServerOverwhelmedError
+from AnoixoError import AnoixoError, ProbableBugError
 from TextQuery import TextQuery
 from translation_providers.TranslationProvider import TranslationProvider
 
