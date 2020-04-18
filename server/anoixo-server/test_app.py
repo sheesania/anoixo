@@ -1,9 +1,9 @@
 import pytest
 from app import app
 from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
-from text_providers.TextProvider import TextProviderError
 from typing import Dict
 from werkzeug.wrappers import BaseResponse
+from AnoixoError import AnoixoError
 
 
 @pytest.fixture
@@ -39,12 +39,12 @@ def test_attribute_query_text_not_found(client):
 
 def test_attribute_query_internal_error(client):
     def mock_attribute_query(self, attribute_id):
-        raise TextProviderError('Text provider error')
+        raise AnoixoError('Error message')
 
     Nestle1904LowfatProvider.attribute_query = mock_attribute_query
     response = client.get('/api/text/nlf/attribute/lemma')
     assert response.status_code == 500
     assert get_json_response(response) == {
         'error': 'Internal server error',
-        'description': 'Text provider error'
+        'description': 'Error message'
     }

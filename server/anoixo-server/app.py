@@ -4,9 +4,10 @@ from flask_cors import CORS
 from typing import Any, Dict, Union
 from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
 from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
-from text_providers.TextProvider import TextProviderError, TextProvider
+from text_providers.TextProvider import TextProvider
+from AnoixoError import AnoixoError
 from TextQuery import TextQuery
-from translation_providers.TranslationProvider import TranslationProvider, TranslationProviderError
+from translation_providers.TranslationProvider import TranslationProvider
 
 
 app = Flask(__name__)
@@ -88,7 +89,7 @@ def text_query(text_id: str):
         query_result = text_provider.text_query(query)
         translation_provider.add_translations(query_result)
         return jsonify(query_result.serialize())
-    except (TextProviderError, TranslationProviderError) as err:
+    except AnoixoError as err:
         abort(500, err.message)
 
 
@@ -98,7 +99,7 @@ def attribute_query(text_id: str, attribute_id: str):
     try:
         query_result = text_provider.attribute_query(attribute_id)
         return jsonify(query_result)
-    except TextProviderError as err:
+    except AnoixoError as err:
         abort(500, err.message)
 
 
