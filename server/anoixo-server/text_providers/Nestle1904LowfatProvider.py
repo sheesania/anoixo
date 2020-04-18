@@ -1,5 +1,5 @@
 from typing import Any, Callable, Dict, List, Union
-from AnoixoError import ProbableBugError, ServerOverwhelmedError
+from AnoixoError import AnoixoError, ProbableBugError, ServerOverwhelmedError
 from BaseXClient import BaseXClient
 from QueryResult import QueryResult
 from text_providers.TextProvider import TextProvider
@@ -302,6 +302,8 @@ class Nestle1904LowfatProvider(TextProvider):
 
         try:
             return process_results(raw_results)
+        except AnoixoError:
+            raise
         except Exception as err:
             raise ProbableBugError(f'Error processing query results: {type(err).__name__}')
 
