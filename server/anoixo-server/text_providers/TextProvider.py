@@ -19,10 +19,6 @@ class TextProvider(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_text_for_reference(self, reference: str) -> str:
-        pass
-
-    @abc.abstractmethod
     def text_query(self, query: TextQuery) -> QueryResult:
         pass
 

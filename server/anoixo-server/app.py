@@ -84,8 +84,6 @@ def text_query(text_id: str):
     translation_provider = translation_providers['esv']
 
     try:
-        if 'reference' in request.json:
-            return jsonify({'text': text_provider.get_text_for_reference(request.json['reference'])})
         query = _json_to_text_query(request.json)
         query_result = text_provider.text_query(query)
         translation_provider.add_translations(query_result)
