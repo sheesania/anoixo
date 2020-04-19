@@ -2,6 +2,11 @@
   padding: 0.8rem;
 }
 
+.passage-card-header {
+  display: flex;
+  align-items: center;
+}
+
 .passage-card-text-container {
   display: flex;
 }

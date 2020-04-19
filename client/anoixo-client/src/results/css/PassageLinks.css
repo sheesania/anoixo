@@ -1,0 +1,10 @@
+.passage-card-links {
+  margin-left: 0.7rem;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.passage-link-chip {
+  margin: 3px;
+}

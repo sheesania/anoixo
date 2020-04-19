@@ -3,6 +3,7 @@ import { PassageResult, ReferenceResult, WordResult } from './ResultTypes';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
+import PassageLinks from './PassageLinks';
 import './css/PassageCard.css';
 
 type Props = {
@@ -67,9 +68,12 @@ const PassageCard: React.FC<Props> = memo((props: Props) => {
   const text = makeTextElements(props.passage.words);
   return (
     <Paper className="results-item passage-card" elevation={3} key={props.passageIndex}>
-      <Typography variant="h6" component="h3">
-        {reference}
-      </Typography>
+      <div className='passage-card-header'>
+        <Typography variant="h6" component="h3">
+          {reference}
+        </Typography>
+        <PassageLinks />
+      </div>
       <div className="passage-card-text-container">
         <Typography className="passage-card-text-element" variant="body1">{text}</Typography>
         <Divider style={dividerStyle} orientation="vertical" flexItem/>
