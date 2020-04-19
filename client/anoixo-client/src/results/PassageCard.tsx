@@ -72,7 +72,7 @@ const PassageCard: React.FC<Props> = memo((props: Props) => {
         <Typography variant="h6" component="h3">
           {reference}
         </Typography>
-        <PassageLinks />
+        <PassageLinks references={props.passage.references} />
       </div>
       <div className="passage-card-text-container">
         <Typography className="passage-card-text-element" variant="body1">{text}</Typography>
