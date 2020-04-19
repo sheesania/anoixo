@@ -100,20 +100,24 @@ type PassageLinksProps = {
 };
 
 const PassageLinks: React.FC<PassageLinksProps> = memo((props: PassageLinksProps) => {
-  return (
-    <div className='passage-card-links'>
-      <div className='passage-card-main-links'>
-        {mainResources.map((resourceToLink) =>
-          <LinkChip label={resourceToLink.label} href={resourceToLink.generateLink(props.references)} />
-        )}
+  if (props.references.length > 0) {
+    return (
+      <div className='passage-card-links'>
+        <div className='passage-card-main-links'>
+          {mainResources.map((resourceToLink, index) =>
+            <LinkChip label={resourceToLink.label} href={resourceToLink.generateLink(props.references)} key={index} />
+          )}
+        </div>
+        <div className='passage-card-translation-links'>
+          {translationResources.map((resourceToLink, index) =>
+            <LinkChip label={resourceToLink.label} href={resourceToLink.generateLink(props.references)} key={index} />
+          )}
+        </div>
       </div>
-      <div className='passage-card-translation-links'>
-        {translationResources.map((resourceToLink) =>
-          <LinkChip label={resourceToLink.label} href={resourceToLink.generateLink(props.references)} />
-        )}
-      </div>
-    </div>
-  );
+    );
+  } else {
+    return <div></div>;
+  }
 });
 
 export default PassageLinks;
