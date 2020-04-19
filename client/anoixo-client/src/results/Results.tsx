@@ -20,6 +20,13 @@ type Props = {
   closeSelf: () => void;
 };
 
+const JSON_PARSING_ERROR_FRIENDLY_MESSAGE = 'I couldn\'t understand the server. Check your Internet ' +
+  'connection. If that doesn\'t help, there might be a bug in the app, so let us know about this problem so we can ' +
+  'fix it!'
+const REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE = 'I couldn\'t send your search to the server. Check your Internet ' +
+  'connection. If that doesn\'t help, there might be a bug in the app, so let us know about this problem so we can ' +
+  'fix it!'
+
 const Results: React.FC<Props> = (props: Props) => {
   const { query, isOpen, closeSelf } = props;
   const [results, setResults] = useState<SuccessResult | undefined>(undefined);
@@ -36,6 +43,7 @@ const Results: React.FC<Props> = (props: Props) => {
           error: 'JSON parsing error',
           description:
             'There was a problem parsing the response from the server',
+          friendlyErrorMessage: JSON_PARSING_ERROR_FRIENDLY_MESSAGE,
         });
       }
     });
@@ -50,6 +58,7 @@ const Results: React.FC<Props> = (props: Props) => {
           error: 'JSON parsing error',
           description:
             'There was a problem parsing the error received from the server',
+          friendlyErrorMessage: JSON_PARSING_ERROR_FRIENDLY_MESSAGE,
         });
       }
     });
@@ -81,6 +90,7 @@ const Results: React.FC<Props> = (props: Props) => {
         setError({
           error: `Error sending request: ${error.name}`,
           description: error.message,
+          friendlyErrorMessage: REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE,
         });
       });
   }, [isOpen, query, currentText]);

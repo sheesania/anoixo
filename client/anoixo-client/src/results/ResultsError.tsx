@@ -17,7 +17,7 @@ const ResultsError: React.FC<Props> = memo((props: Props) => {
     <div>
       <Alert className='results-error-message' severity='error'>
         <AlertTitle>There was a problem doing your search</AlertTitle>
-        {error.error} - {error.description}
+        {error.friendlyErrorMessage}
       </Alert>
       <BackForwardButton
         customStyling={{ marginLeft: '1.2rem', marginBottom: '1.2rem' }}

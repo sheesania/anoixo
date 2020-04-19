@@ -6,29 +6,28 @@ describe('Results component', () => {
   it('displays an explanation that there was an error', () => {
     const { getByText } = render(
       <ResultsError
-        error={{ error: '', description: '' }}
+        error={{ error: '', description: '', friendlyErrorMessage: '' }}
         closeResults={() => { }}
       />
     );
     expect(getByText('There was a problem doing your search')).toBeInTheDocument();
   });
 
-  it('displays the given error name and description', () => {
+  it('displays the friendly message for the given error', () => {
     const { getByText } = render(
       <ResultsError
-        error={{ error: 'error name', description: 'error description' }}
+        error={{ error: 'error name', description: 'error description', friendlyErrorMessage: 'friendly message' }}
         closeResults={() => {}}
       />
     );
-    expect(getByText(/error name/)).toBeInTheDocument();
-    expect(getByText(/error description/)).toBeInTheDocument();
+    expect(getByText('friendly message')).toBeInTheDocument();
   });
 
   it('displays a back button that closes the results', () => {
     const closeResults = jest.fn();
     const { getByText } = render(
       <ResultsError
-        error={{ error: '', description: '' }}
+        error={{ error: '', description: '', friendlyErrorMessage: '' }}
         closeResults={closeResults}
       />
     );

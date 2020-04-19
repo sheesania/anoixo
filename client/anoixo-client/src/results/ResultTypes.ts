@@ -22,6 +22,7 @@ export type SuccessResult = PassageResult[];
 export type ErrorResult = {
   error: string;
   description: string;
+  friendlyErrorMessage: string;
 };
 
 export const parseWordResult = (json: any): WordResult => {
@@ -82,7 +83,8 @@ export const parseErrorResult = (json: any): ErrorResult => {
     !(
       json &&
       typeof json.error === 'string' &&
-      typeof json.description === 'string'
+      typeof json.description === 'string' &&
+      typeof json.friendlyErrorMessage === 'string'
     )
   ) {
     throw new TypeError();
@@ -90,5 +92,6 @@ export const parseErrorResult = (json: any): ErrorResult => {
   return {
     error: json.error,
     description: json.description,
+    friendlyErrorMessage: json.friendlyErrorMessage,
   };
 };
