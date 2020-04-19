@@ -1,7 +1,8 @@
 from typing import Any, Callable, Dict, List, Union
+from AnoixoError import AnoixoError, ProbableBugError, ServerOverwhelmedError
 from BaseXClient import BaseXClient
 from QueryResult import QueryResult
-from text_providers.TextProvider import TextProviderError, TextProvider
+from text_providers.TextProvider import TextProvider
 from TextQuery import TextQuery
 import json
 from text_providers import Nestle1904LowfatProvider_Config as Config
@@ -296,17 +297,15 @@ class Nestle1904LowfatProvider(TextProvider):
     def _execute_query_and_process_results(self, query_string: str, process_results: Callable):
         try:
             raw_results = self._execute_query(query_string)
-        except TextProviderError:
-            raise
         except Exception as err:
-            raise TextProviderError(f'Error executing XML database query: {type(err).__name__}')
+            raise ServerOverwhelmedError(f'Error executing XML database query: {type(err).__name__}')
 
         try:
             return process_results(raw_results)
-        except TextProviderError:
+        except AnoixoError:
             raise
         except Exception as err:
-            raise TextProviderError(f'Error processing query results: {type(err).__name__}')
+            raise ProbableBugError(f'Error processing query results: {type(err).__name__}')
 
     def text_query(self, query: TextQuery) -> QueryResult:
         query_string = self._build_query_string(query)
@@ -315,7 +314,7 @@ class Nestle1904LowfatProvider(TextProvider):
             results_json = json.loads(raw_results)
 
             def on_parsing_error(message: str):
-                raise TextProviderError(f'Error parsing XML database response JSON: {message}')
+                raise ProbableBugError(f'Error parsing XML database response JSON: {message}')
 
             return QueryResult(results_json, on_parsing_error)
 
@@ -338,7 +337,7 @@ class Nestle1904LowfatProvider(TextProvider):
         def process_results(raw_results: str) -> List[str]:
             results = json.loads(raw_results)
             if not isinstance(results, list):
-                raise TextProviderError(f'Error parsing XML database response JSON: not a list')
+                raise ProbableBugError(f'Error parsing XML database response JSON: not a list')
             return results
 
         results = self._execute_query_and_process_results(query_string, process_results)

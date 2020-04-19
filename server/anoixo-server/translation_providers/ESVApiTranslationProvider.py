@@ -2,8 +2,9 @@ import aiohttp
 import asyncio
 from translation_providers import ESVApiTranslationProvider_Secret as Config
 from typing import Dict, List
+from AnoixoError import ProbableBugError, ServerOverwhelmedError
 from QueryResult import QueryResult, Reference
-from translation_providers.TranslationProvider import TranslationProvider, TranslationProviderError
+from translation_providers.TranslationProvider import TranslationProvider
 
 
 class TranslationsForResultIndexes:
@@ -11,7 +12,7 @@ class TranslationsForResultIndexes:
         if not (isinstance(response, dict) and
                 'passages' in response and
                 isinstance(response['passages'], list)):
-            raise TranslationProviderError('Invalid response from ESV API')
+            raise ProbableBugError('Could not understand response from ESV API')
         self.translations: List[str] = response['passages']
         self.result_start_index = result_start_index
 
@@ -37,7 +38,7 @@ class ESVApiTranslationProvider(TranslationProvider):
 
     def _get_verse_query(self, references: List[Reference]) -> str:
         if not references:
-            raise TranslationProviderError('Result has no references')
+            raise ProbableBugError('Result has no references')
         if len(references) == 1:
             return references[0].string_ref
         else:
@@ -51,12 +52,12 @@ class ESVApiTranslationProvider(TranslationProvider):
                                      params={'q': query, **self.DEFAULT_REQUEST_PARAMS})
             json = await resp.json()
         except aiohttp.ContentTypeError:
-            raise TranslationProviderError('ESV API did not return JSON')
+            raise ServerOverwhelmedError('ESV API did not return JSON')
         except aiohttp.ClientResponseError as err:
             if err.status == 502:
-                raise TranslationProviderError('ESV API quota exceeded')
+                raise ServerOverwhelmedError('ESV API quota exceeded')
             else:
-                raise TranslationProviderError(f'Error response from ESV API: {err.status} {err.message}')
+                raise ServerOverwhelmedError(f'Error response from ESV API: {err.status} {err.message}')
         return TranslationsForResultIndexes(json, chunk_start_index)
 
     async def _request_translations(self, query_result: QueryResult) -> List[TranslationsForResultIndexes]:

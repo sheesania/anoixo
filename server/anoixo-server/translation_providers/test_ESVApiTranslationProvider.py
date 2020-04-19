@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import AsyncMock
 from typing import Callable, List
-from translation_providers.TranslationProvider import TranslationProviderError
 from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
+from AnoixoError import ProbableBugError, ServerOverwhelmedError
 from QueryResult import QueryResult
 
 
@@ -124,7 +124,7 @@ def test_chunks_translation_api_request_by_query_string_length(mocker, esv_provi
 def test_handles_wrongly_formatted_query_result(mocker, esv_provider: ESVApiTranslationProvider):
     result = query_result_for_json([{'references': [], 'words': []}])
     mock_response(mocker, lambda: None)
-    with pytest.raises(TranslationProviderError) as excinfo:
+    with pytest.raises(ProbableBugError) as excinfo:
         esv_provider.add_translations(result)
     assert excinfo.value.message == 'Result has no references'
 
@@ -132,9 +132,9 @@ def test_handles_wrongly_formatted_query_result(mocker, esv_provider: ESVApiTran
 def test_handles_wrongly_formatted_response(mocker, esv_provider: ESVApiTranslationProvider):
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
     mock_response(mocker, lambda: {'wrong': 'keys'})
-    with pytest.raises(TranslationProviderError) as excinfo:
+    with pytest.raises(ProbableBugError) as excinfo:
         esv_provider.add_translations(result)
-    assert excinfo.value.message == 'Invalid response from ESV API'
+    assert excinfo.value.message == 'Could not understand response from ESV API'
 
 
 def test_handles_content_type_error(mocker, esv_provider: ESVApiTranslationProvider):
@@ -145,7 +145,7 @@ def test_handles_content_type_error(mocker, esv_provider: ESVApiTranslationProvi
     mock_response(mocker, raise_mock_exception)
 
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
-    with pytest.raises(TranslationProviderError) as excinfo:
+    with pytest.raises(ServerOverwhelmedError) as excinfo:
         esv_provider.add_translations(result)
     assert excinfo.value.message == 'ESV API did not return JSON'
 
@@ -159,7 +159,7 @@ def test_handles_quota_exceeded(mocker, esv_provider: ESVApiTranslationProvider)
     mock_response(mocker, raise_mock_exception)
 
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
-    with pytest.raises(TranslationProviderError) as excinfo:
+    with pytest.raises(ServerOverwhelmedError) as excinfo:
         esv_provider.add_translations(result)
     assert excinfo.value.message == 'ESV API quota exceeded'
 
@@ -174,6 +174,6 @@ def test_handles_other_api_exceptions(mocker, esv_provider: ESVApiTranslationPro
     mock_response(mocker, raise_mock_exception)
 
     result = query_result_for_json([{'references': ['John.1.1'], 'words': []}])
-    with pytest.raises(TranslationProviderError) as excinfo:
+    with pytest.raises(ServerOverwhelmedError) as excinfo:
         esv_provider.add_translations(result)
     assert excinfo.value.message == 'Error response from ESV API: 500 Internal Server Error'

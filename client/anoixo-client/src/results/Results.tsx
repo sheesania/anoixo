@@ -8,8 +8,8 @@ import {
   parseSuccessResult,
 } from './ResultTypes';
 import { ServerSettings } from '../AppSettings';
-import BackForwardButton from '../common/BackForwardButton';
 import Loading from './Loading';
+import ResultsError from './ResultsError';
 import ResultsListing from './ResultsListing';
 import Drawer from '@material-ui/core/Drawer';
 import './css/Results.css';
@@ -19,6 +19,13 @@ type Props = {
   isOpen: boolean;
   closeSelf: () => void;
 };
+
+const JSON_PARSING_ERROR_FRIENDLY_MESSAGE = 'I couldn\'t understand the server. Check your Internet ' +
+  'connection. If that doesn\'t help, there might be a bug in the app, so let us know about this problem so we can ' +
+  'fix it!'
+const REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE = 'I couldn\'t send your search to the server. Check your Internet ' +
+  'connection. If that doesn\'t help, there might be a bug in the app, so let us know about this problem so we can ' +
+  'fix it!'
 
 const Results: React.FC<Props> = (props: Props) => {
   const { query, isOpen, closeSelf } = props;
@@ -36,6 +43,7 @@ const Results: React.FC<Props> = (props: Props) => {
           error: 'JSON parsing error',
           description:
             'There was a problem parsing the response from the server',
+          friendlyErrorMessage: JSON_PARSING_ERROR_FRIENDLY_MESSAGE,
         });
       }
     });
@@ -50,6 +58,7 @@ const Results: React.FC<Props> = (props: Props) => {
           error: 'JSON parsing error',
           description:
             'There was a problem parsing the error received from the server',
+          friendlyErrorMessage: JSON_PARSING_ERROR_FRIENDLY_MESSAGE,
         });
       }
     });
@@ -81,18 +90,14 @@ const Results: React.FC<Props> = (props: Props) => {
         setError({
           error: `Error sending request: ${error.name}`,
           description: error.message,
+          friendlyErrorMessage: REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE,
         });
       });
   }, [isOpen, query, currentText]);
 
   let display;
   if (error) {
-    display = (
-      <div>
-        {JSON.stringify(error)}{' '}
-        <BackForwardButton type="back" onClick={closeSelf} />
-      </div>
-    );
+    display = <ResultsError error={error} closeResults={closeSelf} />;
   } else if (results) {
     display = <ResultsListing results={results} closeResults={closeSelf} />;
   } else {

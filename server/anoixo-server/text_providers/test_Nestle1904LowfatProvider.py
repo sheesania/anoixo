@@ -1,8 +1,9 @@
 import pytest
 from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
-from text_providers.TextProvider import TextProviderError
 from typing import Callable
 from unittest.mock import MagicMock
+from AnoixoError import ProbableBugError, ServerOverwhelmedError
+from TextQuery import TextQuery
 
 
 @pytest.fixture
@@ -34,7 +35,7 @@ def test_handles_basex_not_available(mocker, provider):
     def raise_connection_refused(*args):
         raise ConnectionRefusedError()
     mocker.patch('BaseXClient.BaseXClient.Session.__init__', new=raise_connection_refused)
-    with pytest.raises(TextProviderError) as excinfo:
+    with pytest.raises(ServerOverwhelmedError) as excinfo:
         provider.attribute_query('test_attr')
     assert excinfo.value.message == 'Error executing XML database query: ConnectionRefusedError'
 
@@ -43,7 +44,7 @@ def test_reconnects_to_basex_after_error(mocker, provider):
     def raise_connection_refused(*args):
         raise ConnectionRefusedError()
     mocker.patch('BaseXClient.BaseXClient.Session.__init__', new=raise_connection_refused)
-    with pytest.raises(TextProviderError):
+    with pytest.raises(ServerOverwhelmedError):
         provider.attribute_query('test_attr')
 
     basex_session_mock = MagicMock()
@@ -81,12 +82,28 @@ def test_reconnects_to_basex_even_if_close_fails(basex_session_mock, provider):
 
 def test_closes_basex_session_even_on_errors(mocker, basex_session_mock, provider):
     def raise_exception():
-        raise TextProviderError('exception on query')
+        raise ServerOverwhelmedError('exception on query')
     mock_basex_on_query_execute(mocker, basex_session_mock, raise_exception)
 
-    with pytest.raises(TextProviderError):
+    with pytest.raises(ServerOverwhelmedError):
         provider.attribute_query('test_attr')
     assert basex_session_mock.return_value.close.call_count == 3
+
+
+def test_text_query_error_on_query(mocker, basex_session_mock, provider):
+    def raise_exception():
+        raise Exception()
+    mock_basex_on_query_execute(mocker, basex_session_mock, raise_exception)
+    with pytest.raises(ServerOverwhelmedError) as excinfo:
+        provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert excinfo.value.message == 'Error executing XML database query: Exception'
+
+
+def test_text_query_error_on_processing_results(mocker, basex_session_mock, provider):
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '{"invalid": "json"}')
+    with pytest.raises(ProbableBugError) as excinfo:
+        provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert excinfo.value.message == 'Error parsing XML database response JSON: Results are not a list'
 
 
 def test_attribute_query_success(mocker, basex_session_mock, provider):
@@ -129,15 +146,15 @@ def test_attribute_query_surface_form_caching(mocker, basex_session_mock, provid
 
 def test_attribute_query_error_on_query(mocker, basex_session_mock, provider):
     def raise_exception():
-        raise TextProviderError('exception on query')
+        raise Exception()
     mock_basex_on_query_execute(mocker, basex_session_mock, raise_exception)
-    with pytest.raises(TextProviderError) as excinfo:
+    with pytest.raises(ServerOverwhelmedError) as excinfo:
         provider.attribute_query('test_attr')
-    assert excinfo.value.message == 'exception on query'
+    assert excinfo.value.message == 'Error executing XML database query: Exception'
 
 
 def test_attribute_query_error_on_processing_results(mocker, basex_session_mock, provider):
     mock_basex_on_query_execute(mocker, basex_session_mock, lambda: 'not valid json')
-    with pytest.raises(TextProviderError) as excinfo:
+    with pytest.raises(ProbableBugError) as excinfo:
         provider.attribute_query('test_attr')
     assert excinfo.value.message == 'Error processing query results: JSONDecodeError'

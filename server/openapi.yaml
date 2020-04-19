@@ -339,6 +339,12 @@ components:
           description: Longer explanation of the error encountered
           type: string
           example: Error connecting to database
+        friendlyErrorMessage:
+          description: A "friendly" message about the error designed for end-users to read, with troubleshooting tips.
+            It will not specify the details of the error and may use the same message for multiple kinds of error.
+          type: string
+          example: It looks like the server is currently overwhelmed. Try your search again later.
       required:
         - error
         - description
+        - friendlyErrorMessage
