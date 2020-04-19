@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import ResultsError from '../ResultsError';
+import { FEEDBACK_FORM_URL } from '../../AppSettings';
 
 describe('Results component', () => {
   it('displays an explanation that there was an error', () => {
@@ -21,6 +22,18 @@ describe('Results component', () => {
       />
     );
     expect(getByText('friendly message')).toBeInTheDocument();
+  });
+
+  it('shows a button for reporting problems', () => {
+    const { getByText } = render(
+      <ResultsError
+        error={{ error: '', description: '', friendlyErrorMessage: '' }}
+        closeResults={() => {}}
+      />
+    );
+    const reportProblemButton = getByText('Report your problem').closest('a');
+    expect(reportProblemButton && reportProblemButton.getAttribute('href')).toBe(FEEDBACK_FORM_URL);
+    expect(reportProblemButton && reportProblemButton.getAttribute('target')).toBe('_blank');
   });
 
   it('displays a back button that closes the results', () => {
