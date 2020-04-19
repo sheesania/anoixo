@@ -1,3 +1,11 @@
-.results-error-message {
+.results-error-alert {
   margin: 1.2rem;
+}
+
+.results-error-message {
+  margin-bottom: 1.2rem;
+}
+
+.report-problem-button {
+  align-self: flex-start;
 }
