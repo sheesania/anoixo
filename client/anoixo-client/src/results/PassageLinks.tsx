@@ -34,9 +34,52 @@ const mainResources: ResourceToLink[] = [
   {
     label: 'NET Bible',
     generateLink: (references: ReferenceResult[]) => {
-      return `https://netbible.org/bible/${references[0].book}+${references[0].chapter}`;
+      let book;
+      if (references[0].book === 'Phlm') {
+        book = 'Philemon';
+      } else {
+        book = references[0].book;
+      }
+      const chapter = references[0].chapter;
+      return `https://netbible.org/bible/${book}+${chapter}`;
     },
-  }
+  },
+  {
+    label: 'Commentaries',
+    generateLink: (references: ReferenceResult[]) => {
+      const BIBLEHUB_BOOK_MAPPING: {[book: string]: string} = {
+        'Matt': 'matthew',
+        'Mark': 'mark',
+        'Luke': 'luke',
+        'John': 'john',
+        'Acts': 'acts',
+        'Romans': 'rom',
+        '1Cor': '1_corinthians',
+        '2Cor': '2_corinthians',
+        'Gal': 'galatians',
+        'Eph': 'ephesians',
+        'Phil': 'philippians',
+        'Col': 'colossians',
+        '1Thess': '1_thessalonians',
+        '2Thess': '2_thessalonians',
+        '1Tim': '1_timothy',
+        '2Tim': '2_timothy',
+        'Titus': 'titus',
+        'Phlm': 'philemon',
+        'Heb': 'hebrews',
+        'Jas': 'james',
+        '1Pet': '1_peter',
+        '2Pet': '2_peter',
+        '1John': '1_john',
+        'Jude': 'jude',
+        'Rev': 'revelation',
+      };
+      const book = BIBLEHUB_BOOK_MAPPING[references[0].book];
+      const chapter = references[0].chapter;
+      const verse = references[0].verse;
+      return `https://biblehub.com/commentaries/${book}/${chapter}-${verse}.htm`;
+    },
+  },
 ];
 
 const translationResources: ResourceToLink[] = [
