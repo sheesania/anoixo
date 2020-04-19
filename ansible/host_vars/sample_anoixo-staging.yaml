@@ -20,6 +20,9 @@ basex_server_password: password
 # Your ESV API key from https://api.esv.org/
 esv_api_key: 'Token ffffffffffffffffffffffffffffffffffffffff'
 
+# Where you want your users to be linked to if they click "report a problem", "submit feedback", etc
+feedback_form_url: https://forms.gle/fffffffffffffffff
+
 # Desired directories for where Ansible will put the repo, logs, etc
 source_abs_dir: /home/anoixo/anoixo
 logs_abs_dir: /home/anoixo/logs

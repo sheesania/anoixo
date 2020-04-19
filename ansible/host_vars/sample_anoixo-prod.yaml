@@ -17,6 +17,8 @@ basex_server_password: password
 
 esv_api_key: 'Token ffffffffffffffffffffffffffffffffffffffff'
 
+feedback_form_url: https://forms.gle/fffffffffffffffff
+
 # The username and password to put the app behind (a temporary security measure)
 htpasswd_path: /etc/nginx/.htpasswd
 app_auth_username: username
