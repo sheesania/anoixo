@@ -53,7 +53,7 @@ const mainResources: ResourceToLink[] = [
         'Luke': 'luke',
         'John': 'john',
         'Acts': 'acts',
-        'Romans': 'rom',
+        'Rom': 'romans',
         '1Cor': '1_corinthians',
         '2Cor': '2_corinthians',
         'Gal': 'galatians',
