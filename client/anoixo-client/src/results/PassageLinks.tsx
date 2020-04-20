@@ -90,7 +90,7 @@ const translationResources: ResourceToLink[] = [
       const lastReference = references[references.length - 1];
       const referenceString = `${firstReference.book}${firstReference.chapter}:${firstReference.verse}-` +
         `${lastReference.chapter}:${lastReference.verse}`;
-      return `https://www.biblegateway.com/passage/?search=${referenceString}&version=sblgnt;ESV`;
+      return `https://www.biblegateway.com/passage/?search=${referenceString}&version=SBLGNT;ESV`;
     },
   }
 ];
