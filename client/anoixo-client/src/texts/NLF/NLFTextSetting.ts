@@ -3,13 +3,6 @@ import { TextSetting } from '../TextSettings';
 import getNLFAttributeSelector from './Attributes/getNLFAttributeSelector';
 import LexicalFormField from './Attributes/LexicalFormField';
 import InflectedFormField from './Attributes/InflectedFormField';
-import CaseSelector from './Attributes/CaseSelector';
-import PersonSelector from './Attributes/PersonSelector';
-import NumberSelector from './Attributes/NumberSelector';
-import GenderSelector from './Attributes/GenderSelector';
-import TenseSelector from './Attributes/TenseSelector';
-import VoiceSelector from './Attributes/VoiceSelector';
-import MoodSelector from './Attributes/MoodSelector';
 
 export type NLFAttribute =
   'class' | 'lemma' | 'normalized' | 'case' | 'person' | 'number' | 'gender' | 'tense' | 'voice' | 'mood';
@@ -26,59 +19,59 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
       values: [
         {
           value: 'adj',
-          displayName: 'Adjective'
+          displayName: 'Adjective',
         },
         {
           value: 'adv',
-          displayName: 'Adverb'
+          displayName: 'Adverb',
         },
         {
           value: 'det',
-          displayName: 'Article/Determiner'
+          displayName: 'Article/Determiner',
         },
         {
           value: 'conj',
-          displayName: 'Conjunction'
+          displayName: 'Conjunction',
         },
         {
           value: 'intj',
-          displayName: 'Interjection'
+          displayName: 'Interjection',
         },
         {
           value: 'noun',
-          displayName: 'Noun'
+          displayName: 'Noun',
         },
         {
           value: 'ptcl',
-          displayName: 'Particle'
+          displayName: 'Particle',
         },
         {
           value: 'prep',
-          displayName: 'Preposition'
+          displayName: 'Preposition',
         },
         {
           value: 'pron',
-          displayName: 'Pronoun'
+          displayName: 'Pronoun',
         },
         {
           value: 'verb',
-          displayName: 'Verbal'
-        }
+          displayName: 'Verbal',
+        },
       ],
     },
-    lemma: {
+    'lemma': {
       displayName: 'Lexical Form',
       component: LexicalFormField,
       shouldBeEnabled: () => true,
     },
-    normalized: {
+    'normalized': {
       displayName: 'Inflected Form',
       component: InflectedFormField,
       shouldBeEnabled: () => true,
     },
-    case: {
+    'case': {
       displayName: 'Case',
-      component: CaseSelector,
+      component: getNLFAttributeSelector('case'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'adj' ||
@@ -87,18 +80,54 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
           allAttributes['class'] === 'pron' ||
           allAttributes['class'] === 'verb';
       },
+      'values': [
+        {
+          value: 'accusative',
+          displayName: 'Accusative',
+        },
+        {
+          value: 'dative',
+          displayName: 'Dative',
+        },
+        {
+          value: 'genitive',
+          displayName: 'Genitive',
+        },
+        {
+          value: 'nominative',
+          displayName: 'Nominative',
+        },
+        {
+          value: 'vocative',
+          displayName: 'Vocative',
+        },
+      ]
     },
-    person: {
+    'person': {
       displayName: 'Person',
-      component: PersonSelector,
+      component: getNLFAttributeSelector('person'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
+      values: [
+        {
+          value: 'first',
+          displayName: '1st person',
+        },
+        {
+          value: 'second',
+          displayName: '2nd person',
+        },
+        {
+          value: 'third',
+          displayName: '3rd person',
+        },
+      ]
     },
-    number: {
+    'number': {
       displayName: 'Number',
-      component: NumberSelector,
+      component: getNLFAttributeSelector('number'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'adj' ||
@@ -107,10 +136,20 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
           allAttributes['class'] === 'pron' ||
           allAttributes['class'] === 'verb';
       },
+      values: [
+        {
+          value: 'singular',
+          displayName: 'Singular',
+        },
+        {
+          value: 'plural',
+          displayName: 'Plural',
+        },
+      ]
     },
-    gender: {
+    'gender': {
       displayName: 'Gender',
-      component: GenderSelector,
+      component: getNLFAttributeSelector('gender'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'adj' ||
@@ -119,30 +158,114 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
           allAttributes['class'] === 'pron' ||
           allAttributes['class'] === 'verb';
       },
+      values: [
+        {
+          value: 'masculine',
+          displayName: 'Masculine',
+        },
+        {
+          value: 'feminine',
+          displayName: 'Feminine',
+        },
+        {
+          value: 'neuter',
+          displayName: 'Neuter',
+        },
+      ]
     },
-    tense: {
+    'tense': {
       displayName: 'Tense',
-      component: TenseSelector,
+      component: getNLFAttributeSelector('tense'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
+      values: [
+        {
+          value: 'aorist',
+          displayName: 'Aorist',
+        },
+        {
+          value: 'imperfect',
+          displayName: 'Imperfect',
+        },
+        {
+          value: 'future',
+          displayName: 'Future',
+        },
+        {
+          value: 'perfect',
+          displayName: 'Perfect',
+        },
+        {
+          value: 'pluperfect',
+          displayName: 'Pluperfect',
+        },
+        {
+          value: 'present',
+          displayName: 'Present',
+        },
+      ]
     },
-    voice: {
+    'voice': {
       displayName: 'Voice',
-      component: VoiceSelector,
+      component: getNLFAttributeSelector('voice'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
+      values: [
+        {
+          value: 'active',
+          displayName: 'Active',
+        },
+        {
+          value: 'passive',
+          displayName: 'Passive',
+        },
+        {
+          value: 'middle',
+          displayName: 'Middle',
+        },
+        {
+          value: 'middlepassive',
+          displayName: 'Middle/Passive',
+        },
+      ]
     },
-    mood: {
+    'mood': {
       displayName: 'Mood',
-      component: MoodSelector,
+      component: getNLFAttributeSelector('mood'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
+      values: [
+        {
+          value: 'indicative',
+          displayName: 'Indicative',
+        },
+        {
+          value: 'imperative',
+          displayName: 'Imperative',
+        },
+        {
+          value: 'infinitive',
+          displayName: 'Infinitive',
+        },
+        {
+          value: 'optative',
+          displayName: 'Optative',
+        },
+        {
+          value: 'participle',
+          displayName: 'Participle',
+        },
+        {
+          value: 'subjunctive',
+          displayName: 'Subjunctive',
+        },
+      ]
     }
   }
-}
+};
