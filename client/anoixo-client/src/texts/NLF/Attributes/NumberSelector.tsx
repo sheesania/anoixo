@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from 'react';
-import { AttributeComponent, AttributeComponentProps } from '../AttributeComponent';
-import AttrSelectionBox from '../AttrSelectionBox';
+import { AttributeComponent, AttributeComponentProps } from '../../../query/Attributes/AttributeComponent';
+import AttrSelectionBox from '../../../query/Attributes/AttrSelectionBox';
 
 const NumberSelector: AttributeComponent = memo((props: AttributeComponentProps) => {
     const { updateAttr, id } = props;

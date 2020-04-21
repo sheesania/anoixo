@@ -1,9 +1,9 @@
 import React, { memo, ChangeEvent, useCallback } from 'react';
 import transliteratedMatchSorter from './utils/GreekMatchSorter';
-import { useAttributeQueryCache } from '../../AttributeQueryCache';
+import { useAttributeQueryCache } from '../../../query/AttributeQueryCache';
 import { useUID } from 'react-uid';
-import { AttributeComponent, AttributeComponentProps } from '../AttributeComponent';
-import AttributeEditor from '../AttributeEditor';
+import { AttributeComponent, AttributeComponentProps } from '../../../query/Attributes/AttributeComponent';
+import AttributeEditor from '../../../query/Attributes/AttributeEditor';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import { FilterOptionsState } from '@material-ui/lab';

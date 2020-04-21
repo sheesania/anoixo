@@ -1,5 +1,5 @@
-import AttributeToComponentMap from '../AttributeToComponentMap';
-import { AttributesQuery } from '../../QueryTypes';
+import AttributeToComponentMap from '../../../query/Attributes/AttributeToComponentMap';
+import { AttributesQuery } from '../../../query/QueryTypes';
 import PartOfSpeechSelector from './PartOfSpeechSelector';
 import LexicalFormField from './LexicalFormField';
 import InflectedFormField from './InflectedFormField';
