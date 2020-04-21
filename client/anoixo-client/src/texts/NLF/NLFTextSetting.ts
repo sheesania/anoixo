@@ -1,6 +1,6 @@
 import { AttributesQuery } from '../../query/QueryTypes';
 import { TextSetting } from '../TextSettings';
-import PartOfSpeechSelector from './Attributes/PartOfSpeechSelector';
+import getNLFAttributeSelector from './Attributes/getNLFAttributeSelector';
 import LexicalFormField from './Attributes/LexicalFormField';
 import InflectedFormField from './Attributes/InflectedFormField';
 import CaseSelector from './Attributes/CaseSelector';
@@ -19,10 +19,52 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
   attributeDisplayOrder:
     ['class', 'lemma', 'normalized', 'case', 'person', 'number', 'gender', 'tense', 'voice', 'mood'],
   attributes: {
-    class: {
+    'class': {
       displayName: 'Part of Speech',
-      component: PartOfSpeechSelector,
+      component: getNLFAttributeSelector('class'),
       shouldBeEnabled: () => true,
+      values: [
+        {
+          value: 'adj',
+          displayName: 'Adjective'
+        },
+        {
+          value: 'adv',
+          displayName: 'Adverb'
+        },
+        {
+          value: 'det',
+          displayName: 'Article/Determiner'
+        },
+        {
+          value: 'conj',
+          displayName: 'Conjunction'
+        },
+        {
+          value: 'intj',
+          displayName: 'Interjection'
+        },
+        {
+          value: 'noun',
+          displayName: 'Noun'
+        },
+        {
+          value: 'ptcl',
+          displayName: 'Particle'
+        },
+        {
+          value: 'prep',
+          displayName: 'Preposition'
+        },
+        {
+          value: 'pron',
+          displayName: 'Pronoun'
+        },
+        {
+          value: 'verb',
+          displayName: 'Verbal'
+        }
+      ],
     },
     lemma: {
       displayName: 'Lexical Form',
