@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from 'react';
-import { useTextSetting, TextSettings } from '../texts/TextSettings';
+import { useTextSetting } from '../texts/TextSettings';
 import { WordQuery } from './QueryTypes';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
@@ -38,17 +38,17 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
   );
 
   const currentText = useTextSetting();
-  const componentMap = TextSettings[currentText].attributeToComponentMap;
-  const attributes = componentMap.map((attrToComponent, index) => {
+  const attributes = currentText.attributeDisplayOrder.map((attribute, index) => {
     let attrValue = undefined;
-    if (word.attributes && attrToComponent.attrId in word.attributes) {
-      attrValue = word.attributes[attrToComponent.attrId];
+    if (word.attributes && attribute in word.attributes) {
+      attrValue = word.attributes[attribute];
     }
-    const AttrComponent = attrToComponent.component;
-    const enabled = attrToComponent.shouldBeEnabled(word.attributes);
+
+    const AttrComponent = currentText.attributes[attribute].component;
+    const enabled = currentText.attributes[attribute].shouldBeEnabled(word.attributes);
     return (
       <AttrComponent
-        id={attrToComponent.attrId}
+        id={attribute}
         value={attrValue}
         updateAttr={updateAttr}
         enabled={enabled}

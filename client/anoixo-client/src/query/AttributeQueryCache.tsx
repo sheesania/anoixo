@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, ReactNode } from 'react';
-import { useTextSetting, TextSettings } from '../texts/TextSettings';
+import { useTextSetting } from '../texts/TextSettings';
 import { ServerSettings } from '../AppSettings';
 
 type AttributeQueryCache = {
@@ -17,11 +17,11 @@ const AttributeQueryCacheProvider: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     const newCache: AttributeQueryCache = {}
-    const attrsToCache = TextSettings[currentText].attributeQueriesToCache;
+    const attrsToCache = currentText.attributeQueriesToCache;
     const attrFetches = [];
 
     for (const attr of attrsToCache) {
-      const url = `${ServerSettings.apiUrl}/text/${TextSettings[currentText].serverTextId}/attribute/${attr}`;
+      const url = `${ServerSettings.apiUrl}/text/${currentText.serverTextId}/attribute/${attr}`;
       attrFetches.push(
         fetch(url)
           .then(response => {
