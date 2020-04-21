@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import AttributeToComponentMap from './query/Attributes/AttributeToComponentMap';
-import NLFAttributeToComponentMap from './query/Attributes/NLF/NLFAttributeComponentMap';
+import AttributeToComponentMap from '../query/Attributes/AttributeToComponentMap';
+import NLFAttributeToComponentMap from '../query/Attributes/NLF/NLFAttributeComponentMap';
 import { TextContext } from './TextContext';
 
 enum TextName {

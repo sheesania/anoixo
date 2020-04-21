@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from 'react';
-import { useTextSetting, TextSettings } from '../TextSettings';
+import { useTextSetting, TextSettings } from '../texts/TextSettings';
 import { WordQuery } from './QueryTypes';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';

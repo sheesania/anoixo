@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTextSetting, TextSettings } from '../TextSettings';
+import { useTextSetting, TextSettings } from '../texts/TextSettings';
 import { Query } from '../query/QueryTypes';
 import {
   ErrorResult,

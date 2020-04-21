@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, ReactNode } from 'react';
-import { useTextSetting, TextSettings } from '../TextSettings';
+import { useTextSetting, TextSettings } from '../texts/TextSettings';
 import { ServerSettings } from '../AppSettings';
 
 type AttributeQueryCache = {
