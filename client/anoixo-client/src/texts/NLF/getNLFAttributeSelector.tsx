@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from 'react';
-import { AttributeComponent, AttributeComponentProps } from '../../../query/Attributes/AttributeComponent';
-import { NLFAttribute, NLFTextSetting } from '../NLFTextSetting';
-import AttrSelectionBox from '../../../query/Attributes/AttrSelectionBox';
+import { AttributeComponent, AttributeComponentProps } from '../../query/Attributes/AttributeComponent';
+import { NLFAttribute, NLFTextSetting } from './NLFTextSetting';
+import AttrSelectionBox from '../../query/Attributes/AttrSelectionBox';
 
 const getNLFAttributeSelector = (attribute: NLFAttribute): AttributeComponent => {
   const NLFAttributeSelectorComponent: React.FC<AttributeComponentProps> = memo((props: AttributeComponentProps) => {

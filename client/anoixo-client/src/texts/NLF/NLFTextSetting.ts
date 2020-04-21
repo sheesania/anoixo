@@ -1,8 +1,8 @@
 import { AttributesQuery } from '../../query/QueryTypes';
 import { TextSetting } from '../TextSettings';
-import getNLFAttributeSelector from './Attributes/getNLFAttributeSelector';
-import LexicalFormField from './Attributes/LexicalFormField';
-import InflectedFormField from './Attributes/InflectedFormField';
+import getNLFAttributeSelector from './getNLFAttributeSelector';
+import LexicalFormField from './LexicalFormField';
+import InflectedFormField from './InflectedFormField';
 
 export type NLFAttribute =
   'class' | 'lemma' | 'normalized' | 'case' | 'person' | 'number' | 'gender' | 'tense' | 'voice' | 'mood';

@@ -1,15 +1,15 @@
 import React, { memo, ChangeEvent, useCallback } from 'react';
 import transliteratedMatchSorter from './utils/GreekMatchSorter';
-import { useAttributeQueryCache } from '../../../query/AttributeQueryCache';
+import { useAttributeQueryCache } from '../../query/AttributeQueryCache';
 import { useUID } from 'react-uid';
-import { AttributeComponent, AttributeComponentProps } from '../../../query/Attributes/AttributeComponent';
-import AttributeEditor from '../../../query/Attributes/AttributeEditor';
+import { AttributeComponent, AttributeComponentProps } from '../../query/Attributes/AttributeComponent';
+import AttributeEditor from '../../query/Attributes/AttributeEditor';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import { FilterOptionsState } from '@material-ui/lab';
-import './InflectedFormField.css';
+import './LexicalFormField.css';
 
-const InflectedFormField: AttributeComponent = memo((props: AttributeComponentProps) => {
+const LexicalFormField: AttributeComponent = memo((props: AttributeComponentProps) => {
     const uid = 'attr-field-' + useUID();
     const { updateAttr, id } = props;
     const onChange = useCallback(
@@ -20,13 +20,13 @@ const InflectedFormField: AttributeComponent = memo((props: AttributeComponentPr
       [updateAttr, id]
     );
 
-    const allInflectedForms = useAttributeQueryCache('normalized');
+    const allLexicalForms = useAttributeQueryCache('lemma');
 
-    const filterInflectedForms = (inflectedForms: string[], state: FilterOptionsState<string>) => {
-      return transliteratedMatchSorter(inflectedForms, state.inputValue, 8);
-    };
+    const filterLexicalForms = (lexicalForms: string[], state: FilterOptionsState<string>) => {
+      return transliteratedMatchSorter(lexicalForms, state.inputValue, 8);
+    }
 
-    const label = 'Inflected Form';
+    const label = 'Lexical Form';
 
     return (
       <AttributeEditor labelText={label} labelProps={{ htmlFor: uid }} enabled={props.enabled}>
@@ -34,10 +34,10 @@ const InflectedFormField: AttributeComponent = memo((props: AttributeComponentPr
           className='attribute-input'
           id={uid}
           renderInput={
-            (params) => <TextField {...params} className='inflected-form-selector' placeholder='Any'/>
+            (params) => <TextField {...params} className='lexical-form-selector' placeholder='Any'/>
           }
-          options={allInflectedForms}
-          filterOptions={filterInflectedForms}
+          options={allLexicalForms}
+          filterOptions={filterLexicalForms}
           onChange={onChange}
         />
       </AttributeEditor>
@@ -45,4 +45,4 @@ const InflectedFormField: AttributeComponent = memo((props: AttributeComponentPr
   }
 );
 
-export default InflectedFormField;
+export default LexicalFormField;
