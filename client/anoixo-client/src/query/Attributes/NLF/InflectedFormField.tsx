@@ -2,15 +2,14 @@ import React, { memo, ChangeEvent, useCallback } from 'react';
 import transliteratedMatchSorter from './utils/GreekMatchSorter';
 import { useAttributeQueryCache } from '../../AttributeQueryCache';
 import { useUID } from 'react-uid';
-import AttributeComponentProps from '../AttributeComponentProps';
+import { AttributeComponent, AttributeComponentProps } from '../AttributeComponent';
 import AttributeEditor from '../AttributeEditor';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import { FilterOptionsState } from '@material-ui/lab';
 import './InflectedFormField.css';
 
-const InflectedFormField: React.FC<AttributeComponentProps> = memo(
-  (props: AttributeComponentProps) => {
+const InflectedFormField: AttributeComponent = memo((props: AttributeComponentProps) => {
     const uid = 'attr-field-' + useUID();
     const { updateAttr, id } = props;
     const onChange = useCallback(

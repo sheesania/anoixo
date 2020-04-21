@@ -1,5 +1,5 @@
 import React from 'react';
-import AttributeComponentProps from './AttributeComponentProps';
+import { AttributeComponent } from './AttributeComponent';
 import { AttributesQuery } from '../QueryTypes';
 
 /**
@@ -20,7 +20,7 @@ type AttributeToComponentMap = Array<{
   /** the key for this attribute in the query */
   attrId: string;
   /** the component for editing the attribute value */
-  component: React.FC<AttributeComponentProps>;
+  component: AttributeComponent;
   /**
    * A matching function for whether this attribute is relevant based on the value of other attributes.
    * For example, a 'tense' attribute component might only be enabled if 'verb' is selected for part of speech.

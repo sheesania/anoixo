@@ -1,9 +1,8 @@
 import React, { memo, useCallback } from 'react';
-import AttributeComponentProps from '../AttributeComponentProps';
+import { AttributeComponent, AttributeComponentProps } from '../AttributeComponent';
 import AttrSelectionBox from '../AttrSelectionBox';
 
-const VoiceSelector: React.FC<AttributeComponentProps> = memo(
-  (props: AttributeComponentProps) => {
+const VoiceSelector: AttributeComponent = memo((props: AttributeComponentProps) => {
     const { updateAttr, id } = props;
     const handleChange = useCallback(
       (newValue: string) => {
