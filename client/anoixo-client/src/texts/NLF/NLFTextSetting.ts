@@ -16,48 +16,38 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
       displayName: 'Part of Speech',
       component: getNLFAttributeSelector('class'),
       shouldBeEnabled: () => true,
-      values: [
-        {
-          value: 'adj',
-          displayName: 'Adjective',
-        },
-        {
-          value: 'adv',
-          displayName: 'Adverb',
-        },
-        {
-          value: 'det',
-          displayName: 'Article/Determiner',
-        },
-        {
-          value: 'conj',
-          displayName: 'Conjunction',
-        },
-        {
-          value: 'intj',
-          displayName: 'Interjection',
-        },
-        {
-          value: 'noun',
-          displayName: 'Noun',
-        },
-        {
-          value: 'ptcl',
-          displayName: 'Particle',
-        },
-        {
-          value: 'prep',
-          displayName: 'Preposition',
-        },
-        {
-          value: 'pron',
-          displayName: 'Pronoun',
-        },
-        {
-          value: 'verb',
-          displayName: 'Verbal',
-        },
-      ],
+      values: new Map([
+        [
+          'adj', { displayName: 'Adjective' },
+        ],
+        [
+          'adv', { displayName: 'Adverb' },
+        ],
+        [
+          'det', { displayName: 'Article/Determiner' },
+        ],
+        [
+          'conj', { displayName: 'Conjunction' },
+        ],
+        [
+          'intj', { displayName: 'Interjection' },
+        ],
+        [
+          'noun', { displayName: 'Noun' },
+        ],
+        [
+          'ptcl', { displayName: 'Particle' },
+        ],
+        [
+          'prep', { displayName: 'Preposition' },
+        ],
+        [
+          'pron', { displayName: 'Pronoun' },
+        ],
+        [
+          'verb', { displayName: 'Verbal' },
+        ],
+      ]),
     },
     'lemma': {
       displayName: 'Lexical Form',
@@ -80,28 +70,23 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
           allAttributes['class'] === 'pron' ||
           allAttributes['class'] === 'verb';
       },
-      'values': [
-        {
-          value: 'accusative',
-          displayName: 'Accusative',
-        },
-        {
-          value: 'dative',
-          displayName: 'Dative',
-        },
-        {
-          value: 'genitive',
-          displayName: 'Genitive',
-        },
-        {
-          value: 'nominative',
-          displayName: 'Nominative',
-        },
-        {
-          value: 'vocative',
-          displayName: 'Vocative',
-        },
-      ]
+      values: new Map([
+        [
+          'accusative', { displayName: 'Accusative' },
+        ],
+        [
+          'dative', { displayName: 'Dative' },
+        ],
+        [
+          'genitive', { displayName: 'Genitive' },
+        ],
+        [
+          'nominative', { displayName: 'Nominative' },
+        ],
+        [
+          'vocative', { displayName: 'Vocative' },
+        ],
+      ]),
     },
     'person': {
       displayName: 'Person',
@@ -110,20 +95,17 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
-      values: [
-        {
-          value: 'first',
-          displayName: '1st person',
-        },
-        {
-          value: 'second',
-          displayName: '2nd person',
-        },
-        {
-          value: 'third',
-          displayName: '3rd person',
-        },
-      ]
+      values: new Map([
+        [
+          'first', { displayName: '1st person' },
+        ],
+        [
+          'second', { displayName: '2nd person' },
+        ],
+        [
+          'third', { displayName: '3rd person' },
+        ],
+      ]),
     },
     'number': {
       displayName: 'Number',
@@ -136,16 +118,14 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
           allAttributes['class'] === 'pron' ||
           allAttributes['class'] === 'verb';
       },
-      values: [
-        {
-          value: 'singular',
-          displayName: 'Singular',
-        },
-        {
-          value: 'plural',
-          displayName: 'Plural',
-        },
-      ]
+      values: new Map([
+        [
+          'singular', { displayName: 'Singular' },
+        ],
+        [
+          'plural', { displayName: 'Plural' },
+        ],
+      ]),
     },
     'gender': {
       displayName: 'Gender',
@@ -158,20 +138,17 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
           allAttributes['class'] === 'pron' ||
           allAttributes['class'] === 'verb';
       },
-      values: [
-        {
-          value: 'masculine',
-          displayName: 'Masculine',
-        },
-        {
-          value: 'feminine',
-          displayName: 'Feminine',
-        },
-        {
-          value: 'neuter',
-          displayName: 'Neuter',
-        },
-      ]
+      values: new Map([
+        [
+          'masculine', { displayName: 'Masculine' },
+        ],
+        [
+          'feminine', { displayName: 'Feminine' },
+        ],
+        [
+          'neuter', { displayName: 'Neuter' },
+        ],
+      ]),
     },
     'tense': {
       displayName: 'Tense',
@@ -180,32 +157,26 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
-      values: [
-        {
-          value: 'aorist',
-          displayName: 'Aorist',
-        },
-        {
-          value: 'imperfect',
-          displayName: 'Imperfect',
-        },
-        {
-          value: 'future',
-          displayName: 'Future',
-        },
-        {
-          value: 'perfect',
-          displayName: 'Perfect',
-        },
-        {
-          value: 'pluperfect',
-          displayName: 'Pluperfect',
-        },
-        {
-          value: 'present',
-          displayName: 'Present',
-        },
-      ]
+      values: new Map([
+        [
+          'aorist', { displayName: 'Aorist' },
+        ],
+        [
+          'imperfect', { displayName: 'Imperfect' },
+        ],
+        [
+          'future', { displayName: 'Future' },
+        ],
+        [
+          'perfect', { displayName: 'Perfect' },
+        ],
+        [
+          'pluperfect', { displayName: 'Pluperfect' },
+        ],
+        [
+          'present', { displayName: 'Present' },
+        ],
+      ]),
     },
     'voice': {
       displayName: 'Voice',
@@ -214,24 +185,20 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
-      values: [
-        {
-          value: 'active',
-          displayName: 'Active',
-        },
-        {
-          value: 'passive',
-          displayName: 'Passive',
-        },
-        {
-          value: 'middle',
-          displayName: 'Middle',
-        },
-        {
-          value: 'middlepassive',
-          displayName: 'Middle/Passive',
-        },
-      ]
+      values: new Map([
+        [
+          'active', { displayName: 'Active' },
+        ],
+        [
+          'passive', { displayName: 'Passive' },
+        ],
+        [
+          'middle', { displayName: 'Middle' },
+        ],
+        [
+          'middlepassive', { displayName: 'Middle/Passive' },
+        ],
+      ]),
     },
     'mood': {
       displayName: 'Mood',
@@ -240,32 +207,26 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
         return !allAttributes || !allAttributes['class'] ||
           allAttributes['class'] === 'verb';
       },
-      values: [
-        {
-          value: 'indicative',
-          displayName: 'Indicative',
-        },
-        {
-          value: 'imperative',
-          displayName: 'Imperative',
-        },
-        {
-          value: 'infinitive',
-          displayName: 'Infinitive',
-        },
-        {
-          value: 'optative',
-          displayName: 'Optative',
-        },
-        {
-          value: 'participle',
-          displayName: 'Participle',
-        },
-        {
-          value: 'subjunctive',
-          displayName: 'Subjunctive',
-        },
-      ]
+      values: new Map([
+        [
+          'indicative', { displayName: 'Indicative' },
+        ],
+        [
+          'infinitive', { displayName: 'Infinitive' },
+        ],
+        [
+          'imperative', { displayName: 'Imperative' },
+        ],
+        [
+          'optative', { displayName: 'Optative' },
+        ],
+        [
+          'participle', { displayName: 'Participle' },
+        ],
+        [
+          'subjunctive', { displayName: 'Subjunctive' },
+        ],
+      ]),
     }
   }
 };

@@ -15,12 +15,15 @@ const getNLFAttributeSelector = (attribute: NLFAttribute): AttributeComponent =>
 
     const attrSettings = NLFTextSetting.attributes[attribute];
     const label = attrSettings.displayName;
-    const items = (attrSettings.values || []).map((value) => {
-      return {
-        value: value.value,
-        label: value.displayName,
+    const items = [];
+    if (attrSettings.values) {
+      for (let [value, valueProperties] of attrSettings.values) {
+        items.push({
+          value: value,
+          label: valueProperties.displayName,
+        });
       }
-    });
+    }
 
     return (
       <AttrSelectionBox

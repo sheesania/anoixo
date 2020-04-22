@@ -66,17 +66,16 @@ export type TextSetting<Attribute extends AvailableAttributes> = {
        */
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => boolean;
       /**
-       * Possible values for this attribute and their display names, ordered in the desired display order. This is
-       * basically a centralized place for UI components to find out what values are available for a given attribute
-       * and how to display those values.
+       * Possible values for this attribute and their display names, ordered in the desired display order. (Map
+       * maintains order, which regular objects/dictionaries don't.) This is basically a centralized place for UI
+       * components to find out what values are available for a given attribute and how to display those values.
        *
        * Note that this is an alternative to using attribute queries - if you specify values here, you're hardcoding
        * them client-side instead of dynamically requesting them from the server. I've been using hardcoded values when
        * there are only a few (e.g. for case, gender, number) and attribute queries when there are many (e.g. for root
        * forms).
        */
-      values?: Array<{
-        value: string;
+      values?: Map<string, {
         displayName: string;
       }>;
     };
