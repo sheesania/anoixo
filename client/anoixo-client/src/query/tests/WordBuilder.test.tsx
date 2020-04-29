@@ -1,9 +1,17 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { TextContextProvider } from '../../texts/TextContext';
 import { TextName } from '../../texts/TextSettings';
 import getSelectItemFunction from '../../test/helpers/getSelectItem';
 import WordBuilder from '../WordBuilder';
+
+import { useAttributeQueryCache } from '../AttributeQueryCache';
+jest.mock("../AttributeQueryCache", () => {
+  return {
+    useAttributeQueryCache: jest.fn(() => [])
+  };
+});
+const mockUseAttributeQueryCache = useAttributeQueryCache as jest.Mock;
 
 describe('WordBuilder component', () => {
   describe('delete button', () => {
@@ -90,6 +98,82 @@ describe('WordBuilder component', () => {
       expect(personSelector).toHaveClass('Mui-disabled');
       const caseSelector = getByLabelText('Case');
       expect(caseSelector).not.toHaveClass('Mui-disabled');
+    });
+  });
+
+  describe('with NLF as the text setting', () => {
+    it('has a part of speech dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Part of Speech');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('Adjective')).toBeDefined();
+      expect(within(options).getByText('Adverb')).toBeDefined();
+      expect(within(options).getByText('Article/Determiner')).toBeDefined();
+      expect(within(options).getByText('Conjunction')).toBeDefined();
+      expect(within(options).getByText('Interjection')).toBeDefined();
+      expect(within(options).getByText('Noun')).toBeDefined();
+      expect(within(options).getByText('Particle')).toBeDefined();
+      expect(within(options).getByText('Preposition')).toBeDefined();
+      expect(within(options).getByText('Pronoun')).toBeDefined();
+      expect(within(options).getByText('Verbal')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('Verbal'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'class': 'verb'
+        }
+      });
+    });
+
+    it('has a lexical form selector', () => {
+      mockUseAttributeQueryCache.mockImplementation(() => {
+        return [
+          'λογος',
+          'αγαπη',
+        ];
+      })
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const lexicalFormField = screen.getByLabelText('Lexical Form');
+      fireEvent.mouseDown(lexicalFormField);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('λογος')).toBeDefined();
+      expect(within(options).getByText('αγαπη')).toBeDefined();
+
+      fireEvent.change(lexicalFormField, { target: { value: 'λογος' } })
+      expect(within(options).queryByText('αγαπη')).toBeNull();
+      fireEvent.click(within(options).getByText('λογος'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'lemma': 'λογος'
+        }
+      });
     });
   });
 });
