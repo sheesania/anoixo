@@ -41,12 +41,9 @@
 import { twoLetterTransliterationPossibilities, oneLetterTransliterationPossibilities } from './TransliterationPossibilities';
 
 const rankings = {
-  EXACT_MATCH: 6,
-  STARTS_WITH: 5,
-  WORD_STARTS_WITH: 4,
-  EQUAL: 3,
-  CONTAINS: 2,
-  MATCHES: 1,
+  EXACT_MATCH: 3,
+  STARTS_WITH: 2,
+  CONTAINS: 1,
   NO_MATCH: 0,
 }
 
@@ -157,7 +154,7 @@ function getTransliterations(textToTransliterate, transliterationSoFar = '') {
  * @return {Array} - the sorted array of matches, with ranking information
  */
 function matchSorter(items, value, options = {}) {
-  const {keys, threshold = rankings.MATCHES} = options
+  const {keys, threshold = rankings.CONTAINS} = options
   const matchedItems = items.reduce(reduceItemsToRanked, [])
   return matchedItems.sort(sortRankedItems)
 
@@ -203,7 +200,7 @@ function getHighestRanking(item, keys, value, options) {
       let newRank = getMatchRanking(itemValue, value)
       let newRankedItem = rankedItem
       const {minRanking, maxRanking, threshold} = attributes
-      if (newRank < minRanking && newRank >= rankings.MATCHES) {
+      if (newRank < minRanking && newRank >= rankings.CONTAINS) {
         newRank = minRanking
       } else if (newRank > maxRanking) {
         newRank = maxRanking
@@ -227,12 +224,11 @@ function getHighestRanking(item, keys, value, options) {
  * @returns {Number} the ranking for how well stringToRank matches testString
  */
 function getMatchRanking(testString, stringToRank) {
+  // stringToRank has already been lowercased
+  testString = testString.toLowerCase()
   /* eslint complexity:[2, 12] */
   testString = prepareValueForComparison(testString)
   stringToRank = prepareValueForComparison(stringToRank)
-
-  // testString has already been lowercased
-  stringToRank = stringToRank.toLowerCase()
 
   // too long
   if (stringToRank.length > testString.length) {
@@ -247,16 +243,6 @@ function getMatchRanking(testString, stringToRank) {
   // starts with
   if (testString.indexOf(stringToRank) === 0) {
     return rankings.STARTS_WITH
-  }
-
-  // word starts with
-  if (testString.indexOf(` ${stringToRank}`) !== -1) {
-    return rankings.WORD_STARTS_WITH
-  }
-
-  // case insensitive equals
-  if (testString === stringToRank) {
-    return rankings.EQUAL
   }
 
   // contains
