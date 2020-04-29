@@ -31,6 +31,6 @@ describe('PassageLinks component', () => {
     );
     const link = getByText('Compare other translations').closest('a');
     expect(link && link.getAttribute('href')).toBe(
-      'https://www.biblegateway.com/passage/?search=2Cor1:1-1:2&version=sblgnt;ESV');
+      'https://www.biblegateway.com/passage/?search=2Cor1:1-1:2&version=SBLGNT;ESV');
   })
 });
