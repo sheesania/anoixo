@@ -175,5 +175,260 @@ describe('WordBuilder component', () => {
         }
       });
     });
+
+    it('has an inflected form selector', () => {
+      mockUseAttributeQueryCache.mockImplementation(() => {
+        return [
+          'λογος',
+          'αγαπη',
+        ];
+      })
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const lexicalFormField = screen.getByLabelText('Inflected Form');
+      fireEvent.mouseDown(lexicalFormField);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('λογος')).toBeDefined();
+      expect(within(options).getByText('αγαπη')).toBeDefined();
+
+      fireEvent.change(lexicalFormField, { target: { value: 'λογος' } })
+      expect(within(options).queryByText('αγαπη')).toBeNull();
+      fireEvent.click(within(options).getByText('λογος'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'normalized': 'λογος'
+        }
+      });
+    });
+
+    it('has a case dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Case');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('Accusative')).toBeDefined();
+      expect(within(options).getByText('Dative')).toBeDefined();
+      expect(within(options).getByText('Genitive')).toBeDefined();
+      expect(within(options).getByText('Nominative')).toBeDefined();
+      expect(within(options).getByText('Vocative')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('Accusative'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'case': 'accusative'
+        }
+      });
+    });
+
+    it('has a person dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Person');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('1st person')).toBeDefined();
+      expect(within(options).getByText('2nd person')).toBeDefined();
+      expect(within(options).getByText('3rd person')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('1st person'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'person': 'first'
+        }
+      });
+    });
+
+    it('has a number dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Number');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('Singular')).toBeDefined();
+      expect(within(options).getByText('Plural')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('Singular'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'number': 'singular'
+        }
+      });
+    });
+
+    it('has a gender dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Gender');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('Masculine')).toBeDefined();
+      expect(within(options).getByText('Feminine')).toBeDefined();
+      expect(within(options).getByText('Neuter')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('Masculine'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'gender': 'masculine'
+        }
+      });
+    });
+
+    it('has a tense dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Tense');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('Aorist')).toBeDefined();
+      expect(within(options).getByText('Imperfect')).toBeDefined();
+      expect(within(options).getByText('Future')).toBeDefined();
+      expect(within(options).getByText('Perfect')).toBeDefined();
+      expect(within(options).getByText('Pluperfect')).toBeDefined();
+      expect(within(options).getByText('Present')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('Aorist'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'tense': 'aorist'
+        }
+      });
+    });
+
+    it('has a voice dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Voice');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('Active')).toBeDefined();
+      expect(within(options).getByText('Passive')).toBeDefined();
+      expect(within(options).getByText('Middle')).toBeDefined();
+      expect(within(options).getByText('Middle/Passive')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('Active'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'voice': 'active'
+        }
+      });
+    });
+
+    it('has a mood dropdown', () => {
+      const updateWord = jest.fn();
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={updateWord}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const dropdown = screen.getByLabelText('Mood');
+      fireEvent.mouseDown(dropdown);
+
+      const options = screen.getByRole('listbox');
+      expect(within(options).getByText('Indicative')).toBeDefined();
+      expect(within(options).getByText('Infinitive')).toBeDefined();
+      expect(within(options).getByText('Imperative')).toBeDefined();
+      expect(within(options).getByText('Optative')).toBeDefined();
+      expect(within(options).getByText('Participle')).toBeDefined();
+      expect(within(options).getByText('Subjunctive')).toBeDefined();
+
+      fireEvent.click(within(options).getByText('Indicative'));
+      expect(updateWord).toHaveBeenCalledWith(0, {
+        attributes: {
+          'mood': 'indicative'
+        }
+      });
+    });
   });
 });
