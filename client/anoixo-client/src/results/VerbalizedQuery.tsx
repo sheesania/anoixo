@@ -13,7 +13,7 @@ const verbalizeQuery = (query: Query, verbalizeAttributes: (attributes: Attribut
     const wordStrings = sequence.map((word) => <strong>{verbalizeAttributes(word.attributes)}</strong>);
 
     if (!wordStrings.length) {
-      return [''];
+      return [];
     }
 
     const wordStringsWithLinks: (JSX.Element | string)[] = [wordStrings[0]];
@@ -26,8 +26,6 @@ const verbalizeQuery = (query: Query, verbalizeAttributes: (attributes: Attribut
         const plural = previousWord.link.allowedWordsBetween === 1 ? '' : 's'
         wordStringsWithLinks.push(` with up to ${previousWord.link.allowedWordsBetween} word${plural} in between`);
       }
-
-      wordStringsWithLinks.push(' ');
     }
 
     return wordStringsWithLinks;
@@ -36,11 +34,13 @@ const verbalizeQuery = (query: Query, verbalizeAttributes: (attributes: Attribut
   // Join sequences into one non-nested array of elements joined by 'and'
   const joinedText = sequenceStrings.reduce(
     (previous: (string | JSX.Element)[], current: (string | JSX.Element)[]) => {
+      if (!current.length) {  // skip empty arrays (which came from empty sequences)
+        return previous;
+      }
       if (!previous.length) {
         return [...current];
-      } else {
-        return [...previous, ' and ', ...current];
       }
+      return [...previous, ' and ', ...current];
     },
     []
   );
@@ -51,9 +51,14 @@ const verbalizeQuery = (query: Query, verbalizeAttributes: (attributes: Attribut
 const VerbalizedQuery: React.FC<Props> = memo((props: Props) => {
   const currentText = useTextSetting();
 
+  let verbalizedQuery: (string | JSX.Element)[] | string = verbalizeQuery(props.query, currentText.verbalizeAttributes);
+  if (!verbalizedQuery.length) {
+    verbalizedQuery = 'an empty query';
+  }
+
   return (
     <Typography style={{ margin: '1.2rem'}}>
-      for {verbalizeQuery(props.query, currentText.verbalizeAttributes)}
+      for {verbalizedQuery}
     </Typography>
   );
 });
