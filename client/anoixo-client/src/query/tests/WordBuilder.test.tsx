@@ -166,12 +166,10 @@ describe('WordBuilder component', () => {
     });
 
     it('has a lexical form selector', () => {
-      mockUseAttributeQueryCache.mockImplementation(() => {
-        return [
-          'λογος',
-          'αγαπη',
-        ];
-      })
+      mockUseAttributeQueryCache.mockReturnValue([
+        'λογος',
+        'αγαπη',
+      ]);
       const updateWord = jest.fn();
       render(
         <TextContextProvider text={TextName.NLF}>
@@ -203,12 +201,10 @@ describe('WordBuilder component', () => {
     });
 
     it('has an inflected form selector', () => {
-      mockUseAttributeQueryCache.mockImplementation(() => {
-        return [
-          'λογος',
-          'αγαπη',
-        ];
-      })
+      mockUseAttributeQueryCache.mockReturnValue([
+        'λογος',
+        'αγαπη',
+      ]);
       const updateWord = jest.fn();
       render(
         <TextContextProvider text={TextName.NLF}>
