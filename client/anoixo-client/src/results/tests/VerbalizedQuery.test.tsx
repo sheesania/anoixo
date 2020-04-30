@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { TextContextProvider } from '../../texts/TextContext';
 import { TextName } from '../../texts/TextSettings';
 import withMarkup from '../../test/helpers/withMarkup';
