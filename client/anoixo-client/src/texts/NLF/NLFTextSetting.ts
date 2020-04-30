@@ -13,7 +13,7 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
     ['class', 'lemma', 'normalized', 'case', 'person', 'number', 'gender', 'tense', 'voice', 'mood'],
   verbalizeAttributes: (attributes: AttributesQuery | undefined) => {
     if (!attributes) {
-      return 'word';
+      return 'a word';
     }
 
     const getValueForAttr = (attr: NLFAttribute): string => {
@@ -62,11 +62,11 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
 
     let finalString = '';
     if (root && descriptors) {
-      finalString = `${descriptors}from ${root}`;
+      finalString = `a ${descriptors}from ${root}`;
     } else if (root) {
       finalString = root;
     } else if (descriptors) {
-      finalString = descriptors;
+      finalString = `a ${descriptors}`;
     }
 
     // Display names may be capitalized for display elsewhere, so lowercase them, plus trim the trailing space
