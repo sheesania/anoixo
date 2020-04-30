@@ -1,8 +1,8 @@
 import React from 'react';
 import fetchMock from 'jest-fetch-mock';
 import { act, render } from '@testing-library/react';
-import { TextContextProvider } from '../../TextContext';
-import { TextName } from '../../TextSettings';
+import { TextContextProvider } from '../../texts/TextContext';
+import { TextName } from '../../texts/TextSettings';
 import Results from '../Results';
 
 describe('Results component', () => {

@@ -1,16 +1,15 @@
 import React, { memo, ChangeEvent, useCallback } from 'react';
 import transliteratedMatchSorter from './utils/GreekMatchSorter';
-import { useAttributeQueryCache } from '../../AttributeQueryCache';
+import { useAttributeQueryCache } from '../../query/AttributeQueryCache';
 import { useUID } from 'react-uid';
-import AttributeComponentProps from '../AttributeComponentProps';
-import AttributeEditor from '../AttributeEditor';
+import { AttributeComponent, AttributeComponentProps } from '../../query/Attributes/AttributeComponent';
+import AttributeEditor from '../../query/Attributes/AttributeEditor';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import { FilterOptionsState } from '@material-ui/lab';
 import './LexicalFormField.css';
 
-const LexicalFormField: React.FC<AttributeComponentProps> = memo(
-  (props: AttributeComponentProps) => {
+const LexicalFormField: AttributeComponent = memo((props: AttributeComponentProps) => {
     const uid = 'attr-field-' + useUID();
     const { updateAttr, id } = props;
     const onChange = useCallback(

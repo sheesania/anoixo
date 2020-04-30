@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { AttributeQueryCacheProvider } from '../AttributeQueryCache';
-import { TextContextProvider } from '../../TextContext';
-import { TextName } from '../../TextSettings';
+import { TextContextProvider } from '../../texts/TextContext';
+import { TextName } from '../../texts/TextSettings';
 import fetchMock from "jest-fetch-mock"
 import { act } from 'react-dom/test-utils';
 
