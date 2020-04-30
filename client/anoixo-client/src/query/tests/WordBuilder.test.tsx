@@ -165,7 +165,7 @@ describe('WordBuilder component', () => {
       });
     });
 
-    it('has a lexical form selector', () => {
+    it('has an autocompleting lexical form selector', () => {
       mockUseAttributeQueryCache.mockReturnValue([
         'λογος',
         'αγαπη',
@@ -200,7 +200,7 @@ describe('WordBuilder component', () => {
       });
     });
 
-    it('has an inflected form selector', () => {
+    it('has an autocompleting inflected form selector', () => {
       mockUseAttributeQueryCache.mockReturnValue([
         'λογος',
         'αγαπη',
