@@ -102,6 +102,32 @@ describe('WordBuilder component', () => {
   });
 
   describe('with NLF as the text setting', () => {
+    it('displays attribute editors in the correct order', () => {
+      render(
+        <TextContextProvider text={TextName.NLF}>
+          <WordBuilder
+            word={{}}
+            wordIndex={0}
+            showDeleteButton={false}
+            updateWord={() => { }}
+            deleteWord={() => { }}
+          />
+        </TextContextProvider>
+      );
+
+      const labels = screen.getAllByTestId('attribute-editor');
+      expect(within(labels[0]).getByLabelText('Part of Speech')).toBeDefined();
+      expect(within(labels[1]).getByLabelText('Lexical Form')).toBeDefined();
+      expect(within(labels[2]).getByLabelText('Inflected Form')).toBeDefined();
+      expect(within(labels[3]).getByLabelText('Case')).toBeDefined();
+      expect(within(labels[4]).getByLabelText('Person')).toBeDefined();
+      expect(within(labels[5]).getByLabelText('Number')).toBeDefined();
+      expect(within(labels[6]).getByLabelText('Gender')).toBeDefined();
+      expect(within(labels[7]).getByLabelText('Tense')).toBeDefined();
+      expect(within(labels[8]).getByLabelText('Voice')).toBeDefined();
+      expect(within(labels[9]).getByLabelText('Mood')).toBeDefined();
+    });
+
     it('has a part of speech dropdown', () => {
       const updateWord = jest.fn();
       render(

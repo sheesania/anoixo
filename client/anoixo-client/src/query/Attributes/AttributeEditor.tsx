@@ -45,7 +45,7 @@ type AttrEditorProps = {
 const AttributeEditor: React.FC<AttrEditorProps> = memo(
   (props: AttrEditorProps) => {
     return (
-      <div className="attribute-editor">
+      <div data-testid='attribute-editor' className='attribute-editor'>
         <AttrLabel text={props.labelText} enabled={props.enabled} extraProps={props.labelProps} />
         {props.children}
       </div>
