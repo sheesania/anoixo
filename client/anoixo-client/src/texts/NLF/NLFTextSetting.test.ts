@@ -120,4 +120,15 @@ describe('NLF verbalization', () => {
     });
     expect(verbalizationWithReplace).toEqual('a future participle from ἀνοίγω');
   });
+
+  it('uses "a"/"an" as appropriate based on whether the verbalization starts with a vowel', () => {
+    const verbalizationWithA = NLFTextSetting.verbalizeAttributes({
+      case: 'genitive'
+    });
+    expect(verbalizationWithA).toEqual('a genitive');
+    const verbalizationWithAn = NLFTextSetting.verbalizeAttributes({
+      case: 'accusative'
+    });
+    expect(verbalizationWithAn).toEqual('an accusative');
+  });
 });

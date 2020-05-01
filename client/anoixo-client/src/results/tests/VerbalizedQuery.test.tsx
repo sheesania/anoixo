@@ -157,7 +157,7 @@ describe('VerbalizedQuery component', () => {
     );
     const getByTextWithMarkup = withMarkup(getByText);
     expect(getByTextWithMarkup('for a preposition followed by a genitive with up to 1 word in between ' +
-      'and a article/determiner followed by a participle'))
+      'and an article/determiner followed by a participle'))
       .toBeInTheDocument();
   });
 
@@ -230,7 +230,7 @@ describe('VerbalizedQuery component', () => {
       </TextContextProvider>
     );
     const getByTextWithMarkup = withMarkup(getByText);
-    expect(getByTextWithMarkup('for a preposition followed by a genitive and a article/determiner followed by ' +
+    expect(getByTextWithMarkup('for a preposition followed by a genitive and an article/determiner followed by ' +
       'a participle')).toBeInTheDocument();
   });
 

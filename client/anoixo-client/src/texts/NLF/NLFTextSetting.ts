@@ -28,6 +28,14 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
       return `${displayName || attributes[attr]} `;
     };
 
+    const getVerbalizationWithArticle = (verbalization: string): string => {
+      if (verbalization.charAt(0).toLowerCase().match(/[aeiou]/)) {
+        return `an ${verbalization}`;
+      } else {
+        return `a ${verbalization}`;
+      }
+    }
+
     const lexicalForm = getValueForAttr('lemma');
     const inflectedForm = getValueForAttr('normalized');
     const caseStr = getValueForAttr('case');
@@ -62,11 +70,11 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
 
     let finalString = '';
     if (root && descriptors) {
-      finalString = `a ${descriptors}from ${root}`;
+      finalString = getVerbalizationWithArticle(`${descriptors}from ${root}`);
     } else if (root) {
       finalString = root;
     } else if (descriptors) {
-      finalString = `a ${descriptors}`;
+      finalString = getVerbalizationWithArticle(descriptors);
     }
 
     // Display names may be capitalized for display elsewhere, so lowercase them, plus trim the trailing space
