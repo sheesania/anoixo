@@ -11,6 +11,75 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
   attributeQueriesToCache: ['lemma', 'normalized'],
   attributeDisplayOrder:
     ['class', 'lemma', 'normalized', 'case', 'person', 'number', 'gender', 'tense', 'voice', 'mood'],
+  verbalizeAttributes: (attributes: AttributesQuery | undefined) => {
+    if (!attributes) {
+      return 'a word';
+    }
+
+    const getValueForAttr = (attr: NLFAttribute): string => {
+      if (!attributes[attr]) {
+        return '';
+      }
+      const values = NLFTextSetting.attributes[attr].values;
+      const valueInfo = values && values.get(attributes[attr]);
+      const displayName = valueInfo && valueInfo.displayName;
+      // Default to just using the raw value of the attribute if there's no display name defined for it
+      // Note the space needed for concatenating different attributes!
+      return `${displayName || attributes[attr]} `;
+    };
+
+    const getVerbalizationWithArticle = (verbalization: string): string => {
+      if (verbalization.charAt(0).toLowerCase().match(/[aeiou]/)) {
+        return `an ${verbalization}`;
+      } else {
+        return `a ${verbalization}`;
+      }
+    }
+
+    const lexicalForm = getValueForAttr('lemma');
+    const inflectedForm = getValueForAttr('normalized');
+    const caseStr = getValueForAttr('case');
+    const person = getValueForAttr('person');
+    const number = getValueForAttr('number');
+    const gender = getValueForAttr('gender');
+    const tense = getValueForAttr('tense');
+    const voice = getValueForAttr('voice');
+
+    // If mood is participle or infinitive, use it as part of speech instead
+    let mood = getValueForAttr('mood');
+    let partOfSpeech = '';
+    if (attributes['mood'] === 'participle') {
+      partOfSpeech = mood;
+      mood = '';
+    } else if (attributes['mood'] === 'infinitive') {
+      partOfSpeech = mood;
+      mood = '';
+    } else {
+      partOfSpeech = getValueForAttr('class');
+    }
+
+    // If both inflected form and lexical form are defined, go with inflected form
+    let root = '';
+    if (inflectedForm) {
+      root = inflectedForm;
+    } else if (lexicalForm) {
+      root = lexicalForm;
+    }
+
+    const descriptors = `${person}${number}${caseStr}${gender}${tense}${voice}${mood}${partOfSpeech}`;
+
+    let finalString = '';
+    if (root && descriptors) {
+      finalString = getVerbalizationWithArticle(`${descriptors}from ${root}`);
+    } else if (root) {
+      finalString = root;
+    } else if (descriptors) {
+      finalString = getVerbalizationWithArticle(descriptors);
+    }
+
+    // Display names may be capitalized for display elsewhere, so lowercase them, plus trim the trailing space
+    return finalString.toLowerCase().trim();
+  },
   attributes: {
     'class': {
       displayName: 'Part of Speech',

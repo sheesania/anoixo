@@ -48,6 +48,11 @@ export type TextSetting<Attribute extends AvailableAttributes> = {
   attributeQueriesToCache: Attribute[];
   /** The order that attribute editors should be displayed in inside the word query box */
   attributeDisplayOrder: Attribute[];
+  /**
+   * Function for turning a set of attributes into a string description like 'perfect passive participle.' Used for
+   * things like displaying the query you searched for.
+   */
+  verbalizeAttributes: (attributes: AttributesQuery | undefined) => string;
   /** Settings for each attribute */
   attributes: {
     /** You are required to have settings for every attribute! */

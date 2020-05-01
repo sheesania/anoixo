@@ -1,13 +1,16 @@
 import React, { memo } from 'react';
 import { SuccessResult } from './ResultTypes';
+import { Query } from '../query/QueryTypes';
 import BackForwardButton from '../common/BackForwardButton';
 import CopyrightNotice from './CopyrightNotice';
 import PassageCard from './PassageCard';
+import VerbalizedQuery from './VerbalizedQuery';
 import Alert from '@material-ui/lab/Alert';
 import Typography from '@material-ui/core/Typography';
 import './css/ResultsListing.css';
 
 type Props = {
+  query: Query;
   results: SuccessResult;
   closeResults: () => void;
 };
@@ -34,6 +37,7 @@ const ResultsListing: React.FC<Props> = memo((props: Props) => {
         />
         {hasResults && <CopyrightNotice />}
       </div>
+      <VerbalizedQuery query={props.query}/>
       {resultsView}
       <BackForwardButton
         type="back"
