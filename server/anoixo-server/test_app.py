@@ -123,11 +123,10 @@ def test_text_query_handles_translation_provider_error(monkeypatch, client):
     }
 
 
-def test_attribute_query_success(client):
+def test_attribute_query_success(monkeypatch, client):
     def mock_attribute_query(self, attribute_id):
         return [f'{attribute_id}_val1', f'{attribute_id}_val2']
-
-    Nestle1904LowfatProvider.attribute_query = mock_attribute_query
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'attribute_query', mock_attribute_query)
     response = client.get('/api/text/nlf/attribute/lemma')
     assert response.status_code == 200
     assert get_json_response(response) == ['lemma_val1', 'lemma_val2']
@@ -139,11 +138,10 @@ def test_attribute_query_text_not_found(client):
     assert get_json_response(response)['error'] == 'Not Found'
 
 
-def test_attribute_query_internal_error(client):
+def test_attribute_query_internal_error(monkeypatch, client):
     def mock_attribute_query(self, attribute_id):
         raise ServerOverwhelmedError('Error message')
-
-    Nestle1904LowfatProvider.attribute_query = mock_attribute_query
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'attribute_query', mock_attribute_query)
     response = client.get('/api/text/nlf/attribute/lemma')
     assert response.status_code == 500
     assert get_json_response(response)['error'] == 'Internal Server Error'
