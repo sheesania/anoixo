@@ -106,6 +106,26 @@ def test_text_query_error_on_processing_results(mocker, basex_session_mock, prov
     assert excinfo.value.message == 'Error parsing XML database response JSON: Results are not a list'
 
 
+def test_text_query_handles_word_query_with_no_attributes(mocker, basex_session_mock, provider):
+    basex_query_spy = mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '[]')
+    query = TextQuery({
+        'sequences': [
+            [
+                {
+                    'attributes': {
+                        'lemma': 'λόγος'
+                    }
+                },
+                {
+                    # no attributes
+                }
+            ]
+        ]
+    }, lambda x: None)
+    provider.text_query(query)
+    assert "for $word0 in $sentence//w[@lemma='λόγος'] for $word1 in $sentence//w" in basex_query_spy.call_args.args[1]
+
+
 def test_attribute_query_success(mocker, basex_session_mock, provider):
     mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '["value1","value2"]')
     result = provider.attribute_query('test_attr')
