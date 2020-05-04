@@ -163,8 +163,12 @@ class Nestle1904LowfatProvider(TextProvider):
                 position_variable_declarations.append(f'let {pos_var} := xs:integer({word_variable}/@position)')
 
                 # A filter string for only matching words with the given attributes. Will look something like:
-                # `@lemma='κύριος' and @case='genitive'`
-                attribute_filters = " and ".join([f"@{key}='{val}'" for key, val in word_query.attributes.items()])
+                # `[@lemma='κύριος' and @case='genitive']`
+                if word_query.attributes:
+                    attribute_filters = " and ".join([f"@{key}='{val}'" for key, val in word_query.attributes.items()])
+                    attribute_filter_string = f'[{attribute_filters}]'
+                else:
+                    attribute_filter_string = ''
 
                 # Collect information about words between restrictions for each word query
                 if word_query.link_to_next_word:
@@ -174,7 +178,7 @@ class Nestle1904LowfatProvider(TextProvider):
 
                 # A loop for grabbing matches for this word query. Will look something like:
                 # for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
-                word_matchers.append(f'for {word_variable} in $sentence//w[{attribute_filters}]')
+                word_matchers.append(f'for {word_variable} in $sentence//w{attribute_filter_string}')
 
                 # Will be used to build a dictionary mapping word IDs to their matched word query indexes. Looks like:
                 # $word0/@osisId: 0
