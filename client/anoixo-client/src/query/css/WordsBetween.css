@@ -1,0 +1,18 @@
+.words-between {
+  margin-top: 1em;
+  display: flex;
+  align-items: flex-start;
+}
+
+.words-between-label {
+  line-height: 1.4;
+}
+
+.words-between-allowed-words-div {
+  margin-left: 0.5em;
+  vertical-align: baseline;
+}
+
+.words-between-allowed-words-input {
+  padding: 2px;
+}

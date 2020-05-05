@@ -1,15 +1,10 @@
 import React, { memo } from 'react';
 import Typography from '@material-ui/core/Typography';
-
-const style = {
-  marginLeft: 'auto',
-  marginRight: '1.2rem',
-  width: 'calc(50% - 1.2rem)',
-};
+import './css/CopyrightNotice.css';
 
 const CopyrightNotice: React.FC = memo(() => {
   return (
-    <Typography style={style} variant="caption" component="p">
+    <Typography className="copyright-notice" variant="caption" component="p">
       Scripture quotations are from the{' '}
       <a href="http://www.esv.org/">ESV® Bible</a> (The Holy Bible, English
       Standard Version®), copyright © 2001 by Crossway, a publishing ministry of

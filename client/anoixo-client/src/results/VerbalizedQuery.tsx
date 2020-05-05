@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { AttributesQuery, Query } from '../query/QueryTypes';
 import { useTextSetting } from '../texts/TextSettings';
 import Typography from '@material-ui/core/Typography';
+import './css/VerbalizedQuery.css';
 
 type Props = {
   query: Query;
@@ -13,7 +14,9 @@ const verbalizeQuery = (
 ): (JSX.Element | string)[] => {
   const sequenceStrings = query.sequences.map(sequence => {
     const wordStrings = sequence.map(word => (
-      <strong>{verbalizeAttributes(word.attributes)}</strong>
+      <span className="attribute-description">
+        {verbalizeAttributes(word.attributes)}
+      </span>
     ));
 
     if (!wordStrings.length) {
@@ -69,8 +72,8 @@ const VerbalizedQuery: React.FC<Props> = memo((props: Props) => {
   // Note React.createElement workaround for "missing key props" warning, which is irrelevant here since the array will
   // not dynamically change and need to be rerendered
   return (
-    <Typography style={{ margin: '1.2rem' }}>
-      for {React.createElement('span', {}, ...verbalizedQuery)}
+    <Typography className="verbalized-query">
+      for {React.createElement(React.Fragment, {}, ...verbalizedQuery)}
     </Typography>
   );
 });
