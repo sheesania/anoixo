@@ -7,67 +7,18 @@ from TextQuery import TextQuery
 import json
 from text_providers import Nestle1904LowfatProvider_Config as Config
 
-# All searchable attributes and their possible values.
-available_attributes = {
-    'class': [
-        'noun',
-        'verb',
-        'det',
-        'conj',
-        'pron',
-        'prep',
-        'adj',
-        'adv',
-        'ptcl',
-        'num',
-        'intj',
-    ],
-    'lemma': [],  # too many to list them all
-    'normalized': [],  # surface form
-    'person': [
-        'first',
-        'second',
-        'third',
-    ],
-    'number': [
-        'singular',
-        'plural',
-    ],
-    'gender': [
-        'masculine',
-        'feminine',
-        'neuter',
-    ],
-    'case': [
-        'nominative',
-        'genitive',
-        'dative',
-        'accusative',
-        'vocative',
-    ],
-    'tense': [
-        'aorist',
-        'present',
-        'imperfect',
-        'future',
-        'perfect',
-        'pluperfect',
-    ],
-    'voice': [
-        'active',
-        'passive',
-        'middle',
-        'middlepassive',
-    ],
-    'mood': [
-        'indicative',
-        'imperative',
-        'subjunctive',
-        'optative',
-        'participle',
-        'infinitive',
-    ],
-}
+allowed_attributes = [
+    'class',
+    'lemma',
+    'normalized',
+    'person',
+    'number',
+    'gender',
+    'case',
+    'tense',
+    'voice',
+    'mood'
+]
 
 
 class Nestle1904LowfatProvider(TextProvider):
@@ -109,6 +60,22 @@ class Nestle1904LowfatProvider(TextProvider):
 
         # if this code is reached, the last retry errored out with an exception
         raise exception
+
+    def _check_attributes(self, query: TextQuery) -> None:
+        for sequence in query.sequences:
+            for word_query in sequence.word_queries:
+                for attribute in word_query.attributes:
+                    if attribute not in allowed_attributes:
+                        raise ProbableBugError(f'Attribute \'{attribute}\' not allowed')
+
+    def _sanitize(self, string: str) -> str:
+        """
+        Sanitizes a user-input string so it can be safely included in an XQuery query without the risk of injection
+        attacks.
+        :param string: The string to sanitize
+        :return: The sanitized string
+        """
+        return string.replace('&', '').replace('\'', '’')
 
     """
     Builds an XQuery string to find matches for the given TextQuery.
@@ -163,8 +130,15 @@ class Nestle1904LowfatProvider(TextProvider):
                 position_variable_declarations.append(f'let {pos_var} := xs:integer({word_variable}/@position)')
 
                 # A filter string for only matching words with the given attributes. Will look something like:
-                # `@lemma='κύριος' and @case='genitive'`
-                attribute_filters = " and ".join([f"@{key}='{val}'" for key, val in word_query.attributes.items()])
+                # `[@lemma='κύριος' and @case='genitive']`
+                if word_query.attributes:
+                    attribute_filters = " and ".join([
+                        # key has already been checked using check_attributes
+                        f"@{key}='{self._sanitize(val)}'" for key, val in word_query.attributes.items()
+                    ])
+                    attribute_filter_string = f'[{attribute_filters}]'
+                else:
+                    attribute_filter_string = ''
 
                 # Collect information about words between restrictions for each word query
                 if word_query.link_to_next_word:
@@ -174,7 +148,7 @@ class Nestle1904LowfatProvider(TextProvider):
 
                 # A loop for grabbing matches for this word query. Will look something like:
                 # for $word0 in $sentence//w[@lemma='κύριος' and @case='genitive']
-                word_matchers.append(f'for {word_variable} in $sentence//w[{attribute_filters}]')
+                word_matchers.append(f'for {word_variable} in $sentence//w{attribute_filter_string}')
 
                 # Will be used to build a dictionary mapping word IDs to their matched word query indexes. Looks like:
                 # $word0/@osisId: 0
@@ -308,6 +282,8 @@ class Nestle1904LowfatProvider(TextProvider):
             raise ProbableBugError(f'Error processing query results: {type(err).__name__}')
 
     def text_query(self, query: TextQuery) -> QueryResult:
+        self._check_attributes(query)
+
         query_string = self._build_query_string(query)
 
         def process_results(raw_results: str) -> QueryResult:
@@ -321,6 +297,9 @@ class Nestle1904LowfatProvider(TextProvider):
         return self._execute_query_and_process_results(query_string, process_results)
 
     def attribute_query(self, attribute_name: str) -> List[str]:
+        if attribute_name not in allowed_attributes:
+            raise ProbableBugError(f'Attribute \'{attribute_name}\' not allowed')
+
         if attribute_name == 'lemma' and self.cache.get('lemma'):
             return self.cache.get('lemma')
         if attribute_name == 'normalized' and self.cache.get('normalized'):

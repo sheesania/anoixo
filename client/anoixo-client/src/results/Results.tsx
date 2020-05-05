@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTextSetting, TextSettings } from '../TextSettings';
+import { useTextSetting } from '../texts/TextSettings';
 import { Query } from '../query/QueryTypes';
 import {
   ErrorResult,
@@ -70,7 +70,7 @@ const Results: React.FC<Props> = (props: Props) => {
     }
     setResults(undefined);
     setError(undefined);
-    const url = `${ServerSettings.apiUrl}/text/${TextSettings[currentText].serverTextId}`;
+    const url = `${ServerSettings.apiUrl}/text/${currentText.serverTextId}`;
     fetch(url, {
       method: 'POST',
       headers: {
@@ -99,7 +99,7 @@ const Results: React.FC<Props> = (props: Props) => {
   if (error) {
     display = <ResultsError error={error} closeResults={closeSelf} />;
   } else if (results) {
-    display = <ResultsListing results={results} closeResults={closeSelf} />;
+    display = <ResultsListing query={query} results={results} closeResults={closeSelf} />;
   } else {
     display = <Loading closeSelf={closeSelf} />;
   }

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Query } from './query/QueryTypes';
-import { TextContextProvider } from './TextContext'
-import { TextName } from './TextSettings';
+import { TextContextProvider } from './texts/TextContext'
+import { TextName } from './texts/TextSettings';
 import QueryBuilder from './query/QueryBuilder';
 import Results from './results/Results';
 
