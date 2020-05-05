@@ -61,7 +61,7 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
         checked={checked}
         onChange={(event) => setChecked(event.target.checked)}
         inputProps={{
-          'aria-labelledby': `${uid}-up-to ${uid}-num-words ${uid}-words-in-between`
+          'aria-label': 'Restrict number of words between'
         }}
       />
       <div>
@@ -81,7 +81,7 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
           inputProps={{
             style: inputStyle,
             size: 2,
-            'aria-label': 'Number of words to allow in between'
+            'aria-labelledby': `${uid}-up-to ${uid}-num-words ${uid}-words-in-between`,
           }}
           value={textFieldValue}
           onChange={(event) => setTextFieldValue(event.target.value)}
@@ -99,24 +99,6 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
           words in between 
         </Typography>
       </div>
-      {/* <Typography style={labelStyle} variant='subtitle1' component='label' htmlFor={uid}>
-        up to 
-        <TextField
-          style={fieldDivStyle}
-          variant='outlined'
-          inputProps={{
-            style: inputStyle,
-            size: 2,
-            'aria-label': 'Number of words to allow in between'
-          }}
-          value={textFieldValue}
-          onChange={(event) => setTextFieldValue(event.target.value)}
-          error={error}
-          helperText={error ? 'Not a number' : undefined}
-        />
-        <br />
-        words in between 
-      </Typography> */}
     </div> 
   );
 });
