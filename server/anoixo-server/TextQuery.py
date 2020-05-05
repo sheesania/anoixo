@@ -22,6 +22,7 @@ class WordQuery:
         if 'link' in word_query_json:
             self.link_to_next_word = Link(word_query_json['link'], on_parsing_error)
 
+        # Take note: attributes are not sanitized at all and could contain injection attacks!
         self.attributes: Dict[str, str] = {}
         if 'attributes' in word_query_json:
             if not isinstance(word_query_json['attributes'], dict):
