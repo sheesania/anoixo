@@ -16,6 +16,6 @@ jobs:
     - run: |
         venv/bin/python -m pip install -r requirements.txt
       working-directory: ${{env.working-directory}}
-    # - run: |
-    #     pytest
-    #   working-directory: ${{env.working-directory}}
+    - run: |
+        venv/bin/python -m pytest
+      working-directory: ${{env.working-directory}}
