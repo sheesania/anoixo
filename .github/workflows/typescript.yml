@@ -8,14 +8,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js 12.x
-      working-directory: ${{env.working-directory}}
       uses: actions/setup-node@v1
       with:
         node-version: "12.x"
     - name: npm install and test
-      working-directory: ${{env.working-directory}}
       run: |
         npm install
         npm test
+      working-directory: ${{env.working-directory}}
       env:
         CI: true
