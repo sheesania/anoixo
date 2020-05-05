@@ -6,18 +6,36 @@ jobs:
       working-directory: ./client/anoixo-client
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: "12.x"
-    - name: Install dependencies
-      run: |
-        npm install
-      working-directory: ${{env.working-directory}}
-    - name: Run tests
-      run: |
-        npm test
-      working-directory: ${{env.working-directory}}
-      env:
-        CI: true
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+      - name: Install dependencies
+        run: |
+          npm install
+        working-directory: ${{env.working-directory}}
+      - name: Run tests
+        run: |
+          npm test
+        working-directory: ${{env.working-directory}}
+        env:
+          CI: true
+  prettier:
+    env:
+      working-directory: ./client/anoixo-client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+      - name: Install dependencies
+        run: |
+          npm install
+        working-directory: ${{env.working-directory}}
+      - name: Run prettier check
+        run: |
+          prettier --check 'src/**/*.*'
+        working-directory: ${{env.working-directory}}
