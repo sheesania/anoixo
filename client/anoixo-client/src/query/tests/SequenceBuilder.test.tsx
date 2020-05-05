@@ -103,7 +103,7 @@ describe('SequenceBuilder component', () => {
   describe('word link components', () => {
     it('updates the sequence when a link is changed', () => {
       const updateSequence = jest.fn();
-      const { getByLabelText } = render(
+      const { getByRole } = render(
         <TextContextProvider text={TextName.NLF}>
           <SequenceBuilder
             sequence={[
@@ -115,7 +115,9 @@ describe('SequenceBuilder component', () => {
           />
         </TextContextProvider>
       );
-      const restrictWordsBetweenCheckbox = getByLabelText(/up to.*words in between/);
+      const restrictWordsBetweenCheckbox = getByRole('checkbox', {
+        name: 'Restrict number of words between',
+      });
       fireEvent.click(restrictWordsBetweenCheckbox);
       expect(updateSequence).toHaveBeenCalledWith(0, [
         { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0 } },
@@ -125,7 +127,7 @@ describe('SequenceBuilder component', () => {
 
     it('updates the sequence when a link is removed', () => {
       const updateSequence = jest.fn();
-      const { getByLabelText } = render(
+      const { getByRole } = render(
         <TextContextProvider text={TextName.NLF}>
           <SequenceBuilder
             sequence={[
@@ -137,7 +139,9 @@ describe('SequenceBuilder component', () => {
           />
         </TextContextProvider>
       );
-      const restrictWordsBetweenCheckbox = getByLabelText(/up to.*words in between/);
+      const restrictWordsBetweenCheckbox = getByRole('checkbox', {
+        name: 'Restrict number of words between',
+      });
       fireEvent.click(restrictWordsBetweenCheckbox);
       expect(updateSequence).toHaveBeenCalledWith(0, [
         { attributes: { 'class': 'verb' } },

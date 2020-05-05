@@ -1,7 +1,21 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import App from './App';
+import { TextContextProvider } from './texts/TextContext'
+import QueryBuilder from './query/QueryBuilder';
+import Results from './results/Results';
 
-it('renders without crashing', () => {
-  mount(<App />);
+it('provides the current text setting', () => {
+  const app = shallow(<App />);
+  expect(app.find(TextContextProvider)).toBeDefined();
+});
+
+it('contains the query builder', () => {
+  const app = shallow(<App />);
+  expect(app.find(QueryBuilder)).toBeDefined();
+});
+
+it('contains the results view', () => {
+  const app = shallow(<App />);
+  expect(app.find(Results)).toBeDefined();
 });

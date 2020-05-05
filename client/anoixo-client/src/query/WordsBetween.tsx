@@ -56,25 +56,49 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
 
   return (
     <div style={divStyle}>
-      <Checkbox id={uid} checked={checked} onChange={(event) => setChecked(event.target.checked)} />
-      <Typography style={labelStyle} variant='subtitle1' component='label' htmlFor={uid}>
-        up to 
+      <Checkbox
+        id={`${uid}-checkbox`}
+        checked={checked}
+        onChange={(event) => setChecked(event.target.checked)}
+        inputProps={{
+          'aria-label': 'Restrict number of words between'
+        }}
+      />
+      <div>
+        <Typography
+          id={`${uid}-up-to`}
+          style={labelStyle}
+          variant='subtitle1'
+          component='label'
+          htmlFor={`${uid}-checkbox`}
+        >
+          up to 
+        </Typography>
         <TextField
+          id={`${uid}-num-words`}
           style={fieldDivStyle}
           variant='outlined'
           inputProps={{
             style: inputStyle,
             size: 2,
-            'aria-label': 'Number of words to allow in between'
+            'aria-labelledby': `${uid}-up-to ${uid}-num-words ${uid}-words-in-between`,
           }}
           value={textFieldValue}
           onChange={(event) => setTextFieldValue(event.target.value)}
           error={error}
           helperText={error ? 'Not a number' : undefined}
         />
-        <br />
-        words in between 
-      </Typography>
+        <br/>
+        <Typography
+          id={`${uid}-words-in-between`}
+          style={labelStyle}
+          variant='subtitle1'
+          component='label'
+          htmlFor={`${uid}-checkbox`}
+        >
+          words in between 
+        </Typography>
+      </div>
     </div> 
   );
 });
