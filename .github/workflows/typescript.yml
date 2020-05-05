@@ -7,12 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - name: Setup Node
+      uses: actions/setup-node@v1
       with:
         node-version: "12.x"
-    - name: npm install and test
+    - name: Install dependencies
       run: |
-        npm install
+        npm test
+      working-directory: ${{env.working-directory}}
+    - name: Run tests
+      run: |
         npm test
       working-directory: ${{env.working-directory}}
       env:

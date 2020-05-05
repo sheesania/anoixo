@@ -7,15 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - name: Setup Python 3.8
+      uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - run: |
+    - name: Install requirements
+      run: |
         pip install -r requirements.txt
       working-directory: ${{env.working-directory}}
-    - run: |
+    - name: Create secret key file (which needs to be available for import)
+      run: |
         mv ESVApiTranslationProvider_Secret_sample.py ESVApiTranslationProvider_Secret.py
       working-directory: ${{env.working-directory}}/translation_providers
-    - run: |
+    - name: Run tests
+      run: |
         pytest
       working-directory: ${{env.working-directory}}
