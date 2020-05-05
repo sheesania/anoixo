@@ -32,6 +32,7 @@ const App: React.FC = () => {
 
   return (
     <TextContextProvider text={currentText}>
+      {/* injectFirst allows for overriding Material UI styles with regular CSS */}
       <StylesProvider injectFirst>
         <QueryBuilder
           query={query}
