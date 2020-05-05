@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './App';
-import { TextContextProvider } from './TextContext'
+import { TextContextProvider } from './texts/TextContext'
 import QueryBuilder from './query/QueryBuilder';
 import Results from './results/Results';
 
