@@ -14,5 +14,8 @@ jobs:
         pip install -r requirements.txt
       working-directory: ${{env.working-directory}}
     - run: |
+        mv ESVApiTranslationProvider_Secret_sample.py ESVApiTranslationProvider_Secret.py
+      working-directory: ${{env.working-directory}}/translation_providers
+    - run: |
         pytest
       working-directory: ${{env.working-directory}}
