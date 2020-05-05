@@ -23,8 +23,3 @@ jobs:
         run: |
           pytest
         working-directory: ${{env.working-directory}}
-  pep8:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run pep8 check
-        uses: andymckay/pycodestyle-action@0.1.3
