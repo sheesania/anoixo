@@ -9,8 +9,8 @@ describe('WordLink component', () => {
         <WordLink
           link={undefined}
           wordIndex={0}
-          type='inactive'
-          updateLink={() => { }}
+          type="inactive"
+          updateLink={() => {}}
         />
       );
       const restrictWordsBetweenCheckbox = queryByRole('checkbox', {
@@ -24,8 +24,8 @@ describe('WordLink component', () => {
         <WordLink
           link={undefined}
           wordIndex={0}
-          type='active'
-          updateLink={() => { }}
+          type="active"
+          updateLink={() => {}}
         />
       );
       const restrictWordsBetweenCheckbox = getByRole('checkbox', {
@@ -40,7 +40,7 @@ describe('WordLink component', () => {
         <WordLink
           link={undefined}
           wordIndex={0}
-          type='active'
+          type="active"
           updateLink={updateLink}
         />
       );
@@ -49,7 +49,7 @@ describe('WordLink component', () => {
       });
       fireEvent.click(restrictWordsBetweenCheckbox);
       expect(updateLink).toHaveBeenCalledWith(0, {
-        allowedWordsBetween: 0
+        allowedWordsBetween: 0,
       });
     });
 
@@ -57,9 +57,9 @@ describe('WordLink component', () => {
       const updateLink = jest.fn();
       const { getByRole } = render(
         <WordLink
-          link={{allowedWordsBetween: 2}}
+          link={{ allowedWordsBetween: 2 }}
           wordIndex={0}
-          type='active'
+          type="active"
           updateLink={updateLink}
         />
       );

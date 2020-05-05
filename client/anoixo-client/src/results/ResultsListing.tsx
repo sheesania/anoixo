@@ -19,11 +19,15 @@ const ResultsListing: React.FC<Props> = memo((props: Props) => {
   const hasResults = props.results.length > 0;
   let resultsView;
   if (hasResults) {
-    resultsView = props.results.map((passage, index) =>
+    resultsView = props.results.map((passage, index) => (
       <PassageCard key={index} passage={passage} passageIndex={index} />
-    );
+    ));
   } else {
-    resultsView = <Alert className='results-item' severity='info'>No results were found for your search.</Alert>;
+    resultsView = (
+      <Alert className="results-item" severity="info">
+        No results were found for your search.
+      </Alert>
+    );
   }
 
   return (
@@ -39,7 +43,7 @@ const ResultsListing: React.FC<Props> = memo((props: Props) => {
         />
         {hasResults && <CopyrightNotice />}
       </div>
-      <VerbalizedQuery query={props.query}/>
+      <VerbalizedQuery query={props.query} />
       {resultsView}
       <BackForwardButton
         type="back"

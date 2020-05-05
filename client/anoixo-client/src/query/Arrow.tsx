@@ -10,7 +10,7 @@ const Arrow: React.FC<Props> = memo((props: Props) => {
   const lineLength = props.type === 'active' ? 140 : 90;
 
   return (
-    <svg id={props.id} width={`${lineLength+8}px`} height="40px">
+    <svg id={props.id} width={`${lineLength + 8}px`} height="40px">
       <defs>
         <marker
           id={`arrowhead${props.id}`}

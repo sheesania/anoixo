@@ -40,8 +40,8 @@ describe('SequenceBuilder component', () => {
         <TextContextProvider text={TextName.NLF}>
           <SequenceBuilder
             sequence={[
-              { attributes: { 'class': 'verb' } },
-              { attributes: { 'class': 'noun' } }
+              { attributes: { class: 'verb' } },
+              { attributes: { class: 'noun' } },
             ]}
             sequenceIndex={0}
             updateSequence={updateSequence}
@@ -51,7 +51,7 @@ describe('SequenceBuilder component', () => {
       const deleteButton = getAllByLabelText('Delete')[1];
       fireEvent.click(deleteButton);
       expect(updateSequence).toHaveBeenCalledWith(0, [
-        { attributes: { 'class': 'verb' } }
+        { attributes: { class: 'verb' } },
       ]);
     });
 
@@ -61,8 +61,11 @@ describe('SequenceBuilder component', () => {
         <TextContextProvider text={TextName.NLF}>
           <SequenceBuilder
             sequence={[
-              { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0} },
-              { attributes: { 'class': 'noun' } }
+              {
+                attributes: { class: 'verb' },
+                link: { allowedWordsBetween: 0 },
+              },
+              { attributes: { class: 'noun' } },
             ]}
             sequenceIndex={0}
             updateSequence={updateSequence}
@@ -72,7 +75,7 @@ describe('SequenceBuilder component', () => {
       const deleteButton = getAllByLabelText('Delete')[1];
       fireEvent.click(deleteButton);
       expect(updateSequence).toHaveBeenCalledWith(0, [
-        { attributes: { 'class': 'verb' } }
+        { attributes: { class: 'verb' } },
       ]);
     });
 
@@ -82,9 +85,12 @@ describe('SequenceBuilder component', () => {
         <TextContextProvider text={TextName.NLF}>
           <SequenceBuilder
             sequence={[
-              { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0} },
-              { attributes: { 'class': 'noun' } },
-              { attributes: { 'class': 'conj'} }
+              {
+                attributes: { class: 'verb' },
+                link: { allowedWordsBetween: 0 },
+              },
+              { attributes: { class: 'noun' } },
+              { attributes: { class: 'conj' } },
             ]}
             sequenceIndex={0}
             updateSequence={updateSequence}
@@ -94,8 +100,8 @@ describe('SequenceBuilder component', () => {
       const deleteButton = getAllByLabelText('Delete')[1];
       fireEvent.click(deleteButton);
       expect(updateSequence).toHaveBeenCalledWith(0, [
-        { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0} },
-        { attributes: { 'class': 'conj'} }
+        { attributes: { class: 'verb' }, link: { allowedWordsBetween: 0 } },
+        { attributes: { class: 'conj' } },
       ]);
     });
   });
@@ -107,8 +113,8 @@ describe('SequenceBuilder component', () => {
         <TextContextProvider text={TextName.NLF}>
           <SequenceBuilder
             sequence={[
-              { attributes: { 'class': 'verb' } },
-              { attributes: { 'class': 'noun' } }
+              { attributes: { class: 'verb' } },
+              { attributes: { class: 'noun' } },
             ]}
             sequenceIndex={0}
             updateSequence={updateSequence}
@@ -120,8 +126,8 @@ describe('SequenceBuilder component', () => {
       });
       fireEvent.click(restrictWordsBetweenCheckbox);
       expect(updateSequence).toHaveBeenCalledWith(0, [
-        { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 0 } },
-        { attributes: { 'class': 'noun' } }
+        { attributes: { class: 'verb' }, link: { allowedWordsBetween: 0 } },
+        { attributes: { class: 'noun' } },
       ]);
     });
 
@@ -131,8 +137,11 @@ describe('SequenceBuilder component', () => {
         <TextContextProvider text={TextName.NLF}>
           <SequenceBuilder
             sequence={[
-              { attributes: { 'class': 'verb' }, link: { allowedWordsBetween: 3 } },
-              { attributes: { 'class': 'noun' } }
+              {
+                attributes: { class: 'verb' },
+                link: { allowedWordsBetween: 3 },
+              },
+              { attributes: { class: 'noun' } },
             ]}
             sequenceIndex={0}
             updateSequence={updateSequence}
@@ -144,8 +153,8 @@ describe('SequenceBuilder component', () => {
       });
       fireEvent.click(restrictWordsBetweenCheckbox);
       expect(updateSequence).toHaveBeenCalledWith(0, [
-        { attributes: { 'class': 'verb' } },
-        { attributes: { 'class': 'noun' } }
+        { attributes: { class: 'verb' } },
+        { attributes: { class: 'noun' } },
       ]);
     });
   });

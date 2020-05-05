@@ -15,11 +15,11 @@ describe('VerbalizedQuery component', () => {
               [
                 {
                   attributes: {
-                    'case': 'genitive'
-                  }
-                }
-              ]
-            ]
+                    case: 'genitive',
+                  },
+                },
+              ],
+            ],
           }}
         />
       </TextContextProvider>
@@ -37,22 +37,24 @@ describe('VerbalizedQuery component', () => {
               [
                 {
                   attributes: {
-                    'class': 'prep'
-                  }
+                    class: 'prep',
+                  },
                 },
                 {
                   attributes: {
-                    'case': 'genitive'
-                  }
-                }
-              ]
-            ]
+                    case: 'genitive',
+                  },
+                },
+              ],
+            ],
           }}
         />
       </TextContextProvider>
     );
     const getByTextWithMarkup = withMarkup(getByText);
-    expect(getByTextWithMarkup('for a preposition followed by a genitive')).toBeInTheDocument();
+    expect(
+      getByTextWithMarkup('for a preposition followed by a genitive')
+    ).toBeInTheDocument();
   });
 
   it('verbalizes words with restricted allowedWordsBetween', () => {
@@ -64,26 +66,29 @@ describe('VerbalizedQuery component', () => {
               [
                 {
                   attributes: {
-                    'class': 'prep'
+                    class: 'prep',
                   },
                   link: {
-                    allowedWordsBetween: 0
+                    allowedWordsBetween: 0,
                   },
                 },
                 {
                   attributes: {
-                    'case': 'genitive'
-                  }
-                }
-              ]
-            ]
+                    case: 'genitive',
+                  },
+                },
+              ],
+            ],
           }}
         />
       </TextContextProvider>
     );
     const getByTextWithMarkup = withMarkup(getByText);
-    expect(getByTextWithMarkup('for a preposition followed by a genitive with up to 0 words in between'))
-      .toBeInTheDocument();
+    expect(
+      getByTextWithMarkup(
+        'for a preposition followed by a genitive with up to 0 words in between'
+      )
+    ).toBeInTheDocument();
   });
 
   it('uses the correct plural when allowedWordsBetween = 1', () => {
@@ -95,26 +100,29 @@ describe('VerbalizedQuery component', () => {
               [
                 {
                   attributes: {
-                    'class': 'prep'
+                    class: 'prep',
                   },
                   link: {
-                    allowedWordsBetween: 1
+                    allowedWordsBetween: 1,
                   },
                 },
                 {
                   attributes: {
-                    'case': 'genitive'
-                  }
-                }
-              ]
-            ]
+                    case: 'genitive',
+                  },
+                },
+              ],
+            ],
           }}
         />
       </TextContextProvider>
     );
     const getByTextWithMarkup = withMarkup(getByText);
-    expect(getByTextWithMarkup('for a preposition followed by a genitive with up to 1 word in between'))
-      .toBeInTheDocument();
+    expect(
+      getByTextWithMarkup(
+        'for a preposition followed by a genitive with up to 1 word in between'
+      )
+    ).toBeInTheDocument();
   });
 
   it('verbalizes multiple sequences', () => {
@@ -126,39 +134,42 @@ describe('VerbalizedQuery component', () => {
               [
                 {
                   attributes: {
-                    'class': 'prep'
+                    class: 'prep',
                   },
                   link: {
-                    allowedWordsBetween: 1
+                    allowedWordsBetween: 1,
                   },
                 },
                 {
                   attributes: {
-                    'case': 'genitive'
-                  }
-                }
+                    case: 'genitive',
+                  },
+                },
               ],
               [
                 {
                   attributes: {
-                    'class': 'det'
+                    class: 'det',
                   },
                 },
                 {
                   attributes: {
-                    'mood': 'participle'
-                  }
-                }
-              ]
-            ]
+                    mood: 'participle',
+                  },
+                },
+              ],
+            ],
           }}
         />
       </TextContextProvider>
     );
     const getByTextWithMarkup = withMarkup(getByText);
-    expect(getByTextWithMarkup('for a preposition followed by a genitive with up to 1 word in between ' +
-      'and an article/determiner followed by a participle'))
-      .toBeInTheDocument();
+    expect(
+      getByTextWithMarkup(
+        'for a preposition followed by a genitive with up to 1 word in between ' +
+          'and an article/determiner followed by a participle'
+      )
+    ).toBeInTheDocument();
   });
 
   it('highlights the word descriptions in the verbalization', () => {
@@ -170,19 +181,19 @@ describe('VerbalizedQuery component', () => {
               [
                 {
                   attributes: {
-                    'class': 'prep'
+                    class: 'prep',
                   },
                   link: {
-                    allowedWordsBetween: 1
+                    allowedWordsBetween: 1,
                   },
                 },
                 {
                   attributes: {
-                    'case': 'genitive'
-                  }
-                }
-              ]
-            ]
+                    case: 'genitive',
+                  },
+                },
+              ],
+            ],
           }}
         />
       </TextContextProvider>
@@ -201,37 +212,41 @@ describe('VerbalizedQuery component', () => {
               [
                 {
                   attributes: {
-                    'class': 'prep'
-                  }
+                    class: 'prep',
+                  },
                 },
                 {
                   attributes: {
-                    'case': 'genitive'
-                  }
-                }
+                    case: 'genitive',
+                  },
+                },
               ],
               [],
               [
                 {
                   attributes: {
-                    'class': 'det'
+                    class: 'det',
                   },
                 },
                 {
                   attributes: {
-                    'mood': 'participle'
-                  }
-                }
+                    mood: 'participle',
+                  },
+                },
               ],
               [],
-            ]
+            ],
           }}
         />
       </TextContextProvider>
     );
     const getByTextWithMarkup = withMarkup(getByText);
-    expect(getByTextWithMarkup('for a preposition followed by a genitive and an article/determiner followed by ' +
-      'a participle')).toBeInTheDocument();
+    expect(
+      getByTextWithMarkup(
+        'for a preposition followed by a genitive and an article/determiner followed by ' +
+          'a participle'
+      )
+    ).toBeInTheDocument();
   });
 
   it('handles an empty query', () => {
@@ -239,7 +254,7 @@ describe('VerbalizedQuery component', () => {
       <TextContextProvider text={TextName.NLF}>
         <VerbalizedQuery
           query={{
-            sequences: []
+            sequences: [],
           }}
         />
       </TextContextProvider>

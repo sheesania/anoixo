@@ -17,17 +17,17 @@ const ResultsError: React.FC<Props> = memo((props: Props) => {
 
   return (
     <div>
-      <Alert className='results-error-alert' severity='error'>
+      <Alert className="results-error-alert" severity="error">
         <AlertTitle>There was a problem doing your search</AlertTitle>
-        <div className='results-error-message'>
+        <div className="results-error-message">
           {error.friendlyErrorMessage}
         </div>
         <Button
-          className='report-problem-button'
-          variant='outlined'
+          className="report-problem-button"
+          variant="outlined"
           href={FEEDBACK_FORM_URL}
-          target='_blank'
-          rel='noopener'
+          target="_blank"
+          rel="noopener"
         >
           Report your problem
         </Button>

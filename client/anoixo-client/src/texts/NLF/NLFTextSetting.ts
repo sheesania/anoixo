@@ -5,12 +5,31 @@ import LexicalFormField from './LexicalFormField';
 import InflectedFormField from './InflectedFormField';
 
 export type NLFAttribute =
-  'class' | 'lemma' | 'normalized' | 'case' | 'person' | 'number' | 'gender' | 'tense' | 'voice' | 'mood';
+  | 'class'
+  | 'lemma'
+  | 'normalized'
+  | 'case'
+  | 'person'
+  | 'number'
+  | 'gender'
+  | 'tense'
+  | 'voice'
+  | 'mood';
 export const NLFTextSetting: TextSetting<NLFAttribute> = {
   serverTextId: 'nlf',
   attributeQueriesToCache: ['lemma', 'normalized'],
-  attributeDisplayOrder:
-    ['class', 'lemma', 'normalized', 'case', 'person', 'number', 'gender', 'tense', 'voice', 'mood'],
+  attributeDisplayOrder: [
+    'class',
+    'lemma',
+    'normalized',
+    'case',
+    'person',
+    'number',
+    'gender',
+    'tense',
+    'voice',
+    'mood',
+  ],
   verbalizeAttributes: (attributes: AttributesQuery | undefined) => {
     if (!attributes) {
       return 'a word';
@@ -29,12 +48,17 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
     };
 
     const getVerbalizationWithArticle = (verbalization: string): string => {
-      if (verbalization.charAt(0).toLowerCase().match(/[aeiou]/)) {
+      if (
+        verbalization
+          .charAt(0)
+          .toLowerCase()
+          .match(/[aeiou]/)
+      ) {
         return `an ${verbalization}`;
       } else {
         return `a ${verbalization}`;
       }
-    }
+    };
 
     const lexicalForm = getValueForAttr('lemma');
     const inflectedForm = getValueForAttr('normalized');
@@ -81,221 +105,164 @@ export const NLFTextSetting: TextSetting<NLFAttribute> = {
     return finalString.toLowerCase().trim();
   },
   attributes: {
-    'class': {
+    class: {
       displayName: 'Part of Speech',
       component: getNLFAttributeSelector('class'),
       shouldBeEnabled: () => true,
       values: new Map([
-        [
-          'adj', { displayName: 'Adjective' },
-        ],
-        [
-          'adv', { displayName: 'Adverb' },
-        ],
-        [
-          'det', { displayName: 'Article/Determiner' },
-        ],
-        [
-          'conj', { displayName: 'Conjunction' },
-        ],
-        [
-          'intj', { displayName: 'Interjection' },
-        ],
-        [
-          'noun', { displayName: 'Noun' },
-        ],
-        [
-          'ptcl', { displayName: 'Particle' },
-        ],
-        [
-          'prep', { displayName: 'Preposition' },
-        ],
-        [
-          'pron', { displayName: 'Pronoun' },
-        ],
-        [
-          'verb', { displayName: 'Verbal' },
-        ],
+        ['adj', { displayName: 'Adjective' }],
+        ['adv', { displayName: 'Adverb' }],
+        ['det', { displayName: 'Article/Determiner' }],
+        ['conj', { displayName: 'Conjunction' }],
+        ['intj', { displayName: 'Interjection' }],
+        ['noun', { displayName: 'Noun' }],
+        ['ptcl', { displayName: 'Particle' }],
+        ['prep', { displayName: 'Preposition' }],
+        ['pron', { displayName: 'Pronoun' }],
+        ['verb', { displayName: 'Verbal' }],
       ]),
     },
-    'lemma': {
+    lemma: {
       displayName: 'Lexical Form',
       component: LexicalFormField,
       shouldBeEnabled: () => true,
     },
-    'normalized': {
+    normalized: {
       displayName: 'Inflected Form',
       component: InflectedFormField,
       shouldBeEnabled: () => true,
     },
-    'case': {
+    case: {
       displayName: 'Case',
       component: getNLFAttributeSelector('case'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
-        return !allAttributes || !allAttributes['class'] ||
+        return (
+          !allAttributes ||
+          !allAttributes['class'] ||
           allAttributes['class'] === 'adj' ||
           allAttributes['class'] === 'det' ||
           allAttributes['class'] === 'noun' ||
           allAttributes['class'] === 'pron' ||
-          allAttributes['class'] === 'verb';
+          allAttributes['class'] === 'verb'
+        );
       },
       values: new Map([
-        [
-          'accusative', { displayName: 'Accusative' },
-        ],
-        [
-          'dative', { displayName: 'Dative' },
-        ],
-        [
-          'genitive', { displayName: 'Genitive' },
-        ],
-        [
-          'nominative', { displayName: 'Nominative' },
-        ],
-        [
-          'vocative', { displayName: 'Vocative' },
-        ],
+        ['accusative', { displayName: 'Accusative' }],
+        ['dative', { displayName: 'Dative' }],
+        ['genitive', { displayName: 'Genitive' }],
+        ['nominative', { displayName: 'Nominative' }],
+        ['vocative', { displayName: 'Vocative' }],
       ]),
     },
-    'person': {
+    person: {
       displayName: 'Person',
       component: getNLFAttributeSelector('person'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
-        return !allAttributes || !allAttributes['class'] ||
-          allAttributes['class'] === 'verb';
+        return (
+          !allAttributes ||
+          !allAttributes['class'] ||
+          allAttributes['class'] === 'verb'
+        );
       },
       values: new Map([
-        [
-          'first', { displayName: '1st person' },
-        ],
-        [
-          'second', { displayName: '2nd person' },
-        ],
-        [
-          'third', { displayName: '3rd person' },
-        ],
+        ['first', { displayName: '1st person' }],
+        ['second', { displayName: '2nd person' }],
+        ['third', { displayName: '3rd person' }],
       ]),
     },
-    'number': {
+    number: {
       displayName: 'Number',
       component: getNLFAttributeSelector('number'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
-        return !allAttributes || !allAttributes['class'] ||
+        return (
+          !allAttributes ||
+          !allAttributes['class'] ||
           allAttributes['class'] === 'adj' ||
           allAttributes['class'] === 'det' ||
           allAttributes['class'] === 'noun' ||
           allAttributes['class'] === 'pron' ||
-          allAttributes['class'] === 'verb';
+          allAttributes['class'] === 'verb'
+        );
       },
       values: new Map([
-        [
-          'singular', { displayName: 'Singular' },
-        ],
-        [
-          'plural', { displayName: 'Plural' },
-        ],
+        ['singular', { displayName: 'Singular' }],
+        ['plural', { displayName: 'Plural' }],
       ]),
     },
-    'gender': {
+    gender: {
       displayName: 'Gender',
       component: getNLFAttributeSelector('gender'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
-        return !allAttributes || !allAttributes['class'] ||
+        return (
+          !allAttributes ||
+          !allAttributes['class'] ||
           allAttributes['class'] === 'adj' ||
           allAttributes['class'] === 'det' ||
           allAttributes['class'] === 'noun' ||
           allAttributes['class'] === 'pron' ||
-          allAttributes['class'] === 'verb';
+          allAttributes['class'] === 'verb'
+        );
       },
       values: new Map([
-        [
-          'masculine', { displayName: 'Masculine' },
-        ],
-        [
-          'feminine', { displayName: 'Feminine' },
-        ],
-        [
-          'neuter', { displayName: 'Neuter' },
-        ],
+        ['masculine', { displayName: 'Masculine' }],
+        ['feminine', { displayName: 'Feminine' }],
+        ['neuter', { displayName: 'Neuter' }],
       ]),
     },
-    'tense': {
+    tense: {
       displayName: 'Tense',
       component: getNLFAttributeSelector('tense'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
-        return !allAttributes || !allAttributes['class'] ||
-          allAttributes['class'] === 'verb';
+        return (
+          !allAttributes ||
+          !allAttributes['class'] ||
+          allAttributes['class'] === 'verb'
+        );
       },
       values: new Map([
-        [
-          'aorist', { displayName: 'Aorist' },
-        ],
-        [
-          'imperfect', { displayName: 'Imperfect' },
-        ],
-        [
-          'future', { displayName: 'Future' },
-        ],
-        [
-          'perfect', { displayName: 'Perfect' },
-        ],
-        [
-          'pluperfect', { displayName: 'Pluperfect' },
-        ],
-        [
-          'present', { displayName: 'Present' },
-        ],
+        ['aorist', { displayName: 'Aorist' }],
+        ['imperfect', { displayName: 'Imperfect' }],
+        ['future', { displayName: 'Future' }],
+        ['perfect', { displayName: 'Perfect' }],
+        ['pluperfect', { displayName: 'Pluperfect' }],
+        ['present', { displayName: 'Present' }],
       ]),
     },
-    'voice': {
+    voice: {
       displayName: 'Voice',
       component: getNLFAttributeSelector('voice'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
-        return !allAttributes || !allAttributes['class'] ||
-          allAttributes['class'] === 'verb';
+        return (
+          !allAttributes ||
+          !allAttributes['class'] ||
+          allAttributes['class'] === 'verb'
+        );
       },
       values: new Map([
-        [
-          'active', { displayName: 'Active' },
-        ],
-        [
-          'passive', { displayName: 'Passive' },
-        ],
-        [
-          'middle', { displayName: 'Middle' },
-        ],
-        [
-          'middlepassive', { displayName: 'Middle/Passive' },
-        ],
+        ['active', { displayName: 'Active' }],
+        ['passive', { displayName: 'Passive' }],
+        ['middle', { displayName: 'Middle' }],
+        ['middlepassive', { displayName: 'Middle/Passive' }],
       ]),
     },
-    'mood': {
+    mood: {
       displayName: 'Mood',
       component: getNLFAttributeSelector('mood'),
       shouldBeEnabled: (allAttributes: AttributesQuery | undefined) => {
-        return !allAttributes || !allAttributes['class'] ||
-          allAttributes['class'] === 'verb';
+        return (
+          !allAttributes ||
+          !allAttributes['class'] ||
+          allAttributes['class'] === 'verb'
+        );
       },
       values: new Map([
-        [
-          'indicative', { displayName: 'Indicative' },
-        ],
-        [
-          'infinitive', { displayName: 'Infinitive' },
-        ],
-        [
-          'imperative', { displayName: 'Imperative' },
-        ],
-        [
-          'optative', { displayName: 'Optative' },
-        ],
-        [
-          'participle', { displayName: 'Participle' },
-        ],
-        [
-          'subjunctive', { displayName: 'Subjunctive' },
-        ],
+        ['indicative', { displayName: 'Indicative' }],
+        ['infinitive', { displayName: 'Infinitive' }],
+        ['imperative', { displayName: 'Imperative' }],
+        ['optative', { displayName: 'Optative' }],
+        ['participle', { displayName: 'Participle' }],
+        ['subjunctive', { displayName: 'Subjunctive' }],
       ]),
-    }
-  }
+    },
+  },
 };

@@ -61,14 +61,18 @@ const makeTextElements = (words: WordResult[]): (string | JSX.Element)[] => {
 const dividerStyle = {
   marginLeft: '2%',
   marginRight: '2%',
-}
+};
 
 const PassageCard: React.FC<Props> = memo((props: Props) => {
   const reference = makeReferenceString(props.passage.references);
   const text = makeTextElements(props.passage.words);
   return (
-    <Paper className="results-item passage-card" elevation={3} key={props.passageIndex}>
-      <div className='passage-card-header'>
+    <Paper
+      className="results-item passage-card"
+      elevation={3}
+      key={props.passageIndex}
+    >
+      <div className="passage-card-header">
         <Typography variant="h6" component="h3">
           {reference}
         </Typography>
@@ -82,8 +86,10 @@ const PassageCard: React.FC<Props> = memo((props: Props) => {
           { className: 'passage-card-text-element', variant: 'body1' },
           ...text
         )}
-        <Divider style={dividerStyle} orientation="vertical" flexItem/>
-        <Typography className="passage-card-text-element" variant="body1">{props.passage.translation}</Typography>
+        <Divider style={dividerStyle} orientation="vertical" flexItem />
+        <Typography className="passage-card-text-element" variant="body1">
+          {props.passage.translation}
+        </Typography>
       </div>
     </Paper>
   );

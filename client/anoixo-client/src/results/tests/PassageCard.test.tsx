@@ -11,7 +11,7 @@ describe('PassageCard component', () => {
           book: 'John',
           chapter: 11,
           verse: 35,
-        }
+        },
       ],
       words: [
         {
@@ -32,7 +32,9 @@ describe('PassageCard component', () => {
       ],
       translation: 'Jesus wept.',
     };
-    const { getByText } = render(<PassageCard passage={passageResult} passageIndex={0} />);
+    const { getByText } = render(
+      <PassageCard passage={passageResult} passageIndex={0} />
+    );
     const getByTextWithMarkup = withMarkup(getByText);
     expect(getByText('John 11:35')).toBeInTheDocument();
     expect(getByTextWithMarkup('ἐδάκρυσεν ὁ Ἰησοῦς.')).toBeInTheDocument();
@@ -56,7 +58,9 @@ describe('PassageCard component', () => {
       words: [],
       translation: '',
     };
-    const { getByText } = render(<PassageCard passage={passageResult} passageIndex={0} />);
+    const { getByText } = render(
+      <PassageCard passage={passageResult} passageIndex={0} />
+    );
     expect(getByText('John 11:35-36')).toBeInTheDocument();
   });
 
@@ -77,7 +81,9 @@ describe('PassageCard component', () => {
       words: [],
       translation: '',
     };
-    const { getByText } = render(<PassageCard passage={passageResult} passageIndex={0} />);
+    const { getByText } = render(
+      <PassageCard passage={passageResult} passageIndex={0} />
+    );
     expect(getByText('John 11:35 - 12:1')).toBeInTheDocument();
   });
 
@@ -88,7 +94,7 @@ describe('PassageCard component', () => {
           book: 'John',
           chapter: 11,
           verse: 35,
-        }
+        },
       ],
       words: [
         {
@@ -109,12 +115,14 @@ describe('PassageCard component', () => {
       ],
       translation: 'Jesus wept.',
     };
-    const { getByText } = render(<PassageCard passage={passageResult} passageIndex={0} />);
+    const { getByText } = render(
+      <PassageCard passage={passageResult} passageIndex={0} />
+    );
     const matchedFirstSequence = getByText('ἐδάκρυσεν');
     expect(matchedFirstSequence.className).toBe('matched-word');
     const matchedSecondSequence = getByText('ὁ');
     expect(matchedSecondSequence.className).toBe('matched-word');
-    const didNotMatch = getByText('Ἰησοῦς.')
+    const didNotMatch = getByText('Ἰησοῦς.');
     expect(didNotMatch.className).not.toBe('matched-word');
   });
 });

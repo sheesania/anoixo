@@ -80,25 +80,31 @@ export type TextSetting<Attribute extends AvailableAttributes> = {
        * there are only a few (e.g. for case, gender, number) and attribute queries when there are many (e.g. for root
        * forms).
        */
-      values?: Map<string, {
-        displayName: string;
-      }>;
+      values?: Map<
+        string,
+        {
+          displayName: string;
+        }
+      >;
     };
   };
-}
+};
 
 /**
  * All available texts. If you want to add a new text provider, add it to this enum!
  */
 export enum TextName {
-  NLF
-};
+  NLF,
+}
 
 /**
  * Text settings for each available text. If you want to add a new text provider, add its TextSettings to this object!
  */
-export const TextSettings: Record<TextName, TextSetting<AvailableAttributes>> = {
-  [TextName.NLF]: NLFTextSetting
+export const TextSettings: Record<
+  TextName,
+  TextSetting<AvailableAttributes>
+> = {
+  [TextName.NLF]: NLFTextSetting,
 };
 
 /** Hook for grabbing the currently selected TextSetting */

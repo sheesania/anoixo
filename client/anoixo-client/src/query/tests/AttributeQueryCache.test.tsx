@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { AttributeQueryCacheProvider } from '../AttributeQueryCache';
 import { TextContextProvider } from '../../texts/TextContext';
 import { TextName } from '../../texts/TextSettings';
-import fetchMock from "jest-fetch-mock"
+import fetchMock from 'jest-fetch-mock';
 import { act } from 'react-dom/test-utils';
 
 describe('AttributeQueryCacheProvider component', () => {
@@ -18,8 +18,7 @@ describe('AttributeQueryCacheProvider component', () => {
     await act(async () => {
       render(
         <TextContextProvider text={TextName.NLF}>
-          <AttributeQueryCacheProvider>
-          </AttributeQueryCacheProvider>
+          <AttributeQueryCacheProvider></AttributeQueryCacheProvider>
         </TextContextProvider>
       );
     });
@@ -35,12 +34,15 @@ describe('AttributeQueryCacheProvider component', () => {
     await act(async () => {
       render(
         <TextContextProvider text={TextName.NLF}>
-          <AttributeQueryCacheProvider>
-          </AttributeQueryCacheProvider>
+          <AttributeQueryCacheProvider></AttributeQueryCacheProvider>
         </TextContextProvider>
       );
     });
-    expect(consoleSpy).toHaveBeenCalledWith('Error fetching values for attribute \'lemma\': Error: fake error');
-    expect(consoleSpy).toHaveBeenCalledWith('Error fetching values for attribute \'normalized\': Error: fake error');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Error fetching values for attribute 'lemma': Error: fake error"
+    );
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Error fetching values for attribute 'normalized': Error: fake error"
+    );
   });
 });

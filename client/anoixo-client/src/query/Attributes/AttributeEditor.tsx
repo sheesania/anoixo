@@ -13,7 +13,9 @@ const AttrLabel: React.FC<AttrLabelProps> = memo((props: AttrLabelProps) => {
     <Typography
       variant="subtitle1"
       component="label"
-      className={props.enabled ? 'attribute-label-enabled' : 'attribute-label-disabled'}
+      className={
+        props.enabled ? 'attribute-label-enabled' : 'attribute-label-disabled'
+      }
       {...props.extraProps}
     >
       {props.text}
@@ -45,8 +47,12 @@ type AttrEditorProps = {
 const AttributeEditor: React.FC<AttrEditorProps> = memo(
   (props: AttrEditorProps) => {
     return (
-      <div data-testid='attribute-editor' className='attribute-editor'>
-        <AttrLabel text={props.labelText} enabled={props.enabled} extraProps={props.labelProps} />
+      <div data-testid="attribute-editor" className="attribute-editor">
+        <AttrLabel
+          text={props.labelText}
+          enabled={props.enabled}
+          extraProps={props.labelProps}
+        />
         {props.children}
       </div>
     );

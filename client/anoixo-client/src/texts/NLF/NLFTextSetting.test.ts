@@ -8,14 +8,14 @@ describe('NLF verbalization', () => {
 
   it('ignores incorrect attributes', () => {
     const verbalization = NLFTextSetting.verbalizeAttributes({
-      wrong: 'attr'
+      wrong: 'attr',
     });
     expect(verbalization).toEqual('');
   });
 
   it('defaults to the attribute value if there is no defined display name', () => {
     const verbalization = NLFTextSetting.verbalizeAttributes({
-      case: 'fake case'
+      case: 'fake case',
     });
     expect(verbalization).toEqual('a fake case');
   });
@@ -31,7 +31,9 @@ describe('NLF verbalization', () => {
       voice: 'active',
       mood: 'indicative',
     });
-    expect(verbalization).toEqual('a 1st person singular nominative feminine aorist active indicative verbal');
+    expect(verbalization).toEqual(
+      'a 1st person singular nominative feminine aorist active indicative verbal'
+    );
   });
 
   it('uses participle as the part of speech if mood is set to participle, even if part of speech is also set', () => {
@@ -49,32 +51,35 @@ describe('NLF verbalization', () => {
     expect(verbalizationWithReplace).toEqual('a future participle');
   });
 
-  it('uses infinitive as the part of speech if the mood is set to infinitive, even if part of speech ' +
-    'is also set', () => {
-    const verbalization = NLFTextSetting.verbalizeAttributes({
-      tense: 'future',
-      mood: 'infinitive',
-    });
-    expect(verbalization).toEqual('a future infinitive');
+  it(
+    'uses infinitive as the part of speech if the mood is set to infinitive, even if part of speech ' +
+      'is also set',
+    () => {
+      const verbalization = NLFTextSetting.verbalizeAttributes({
+        tense: 'future',
+        mood: 'infinitive',
+      });
+      expect(verbalization).toEqual('a future infinitive');
 
-    const verbalizationWithReplace = NLFTextSetting.verbalizeAttributes({
-      class: 'verbal',
-      tense: 'future',
-      mood: 'infinitive',
-    });
-    expect(verbalizationWithReplace).toEqual('a future infinitive');
-  });
+      const verbalizationWithReplace = NLFTextSetting.verbalizeAttributes({
+        class: 'verbal',
+        tense: 'future',
+        mood: 'infinitive',
+      });
+      expect(verbalizationWithReplace).toEqual('a future infinitive');
+    }
+  );
 
   it('handles lexical forms with no other attributes', () => {
     const verbalization = NLFTextSetting.verbalizeAttributes({
-      lemma: 'ἀνοίγω'
+      lemma: 'ἀνοίγω',
     });
     expect(verbalization).toEqual('ἀνοίγω');
   });
 
   it('handles inflected forms with no other attributes', () => {
     const verbalization = NLFTextSetting.verbalizeAttributes({
-      normalized: 'ἀνοίγω'
+      normalized: 'ἀνοίγω',
     });
     expect(verbalization).toEqual('ἀνοίγω');
   });
@@ -123,11 +128,11 @@ describe('NLF verbalization', () => {
 
   it('uses "a"/"an" as appropriate based on whether the verbalization starts with a vowel', () => {
     const verbalizationWithA = NLFTextSetting.verbalizeAttributes({
-      case: 'genitive'
+      case: 'genitive',
     });
     expect(verbalizationWithA).toEqual('a genitive');
     const verbalizationWithAn = NLFTextSetting.verbalizeAttributes({
-      case: 'accusative'
+      case: 'accusative',
     });
     expect(verbalizationWithAn).toEqual('an accusative');
   });

@@ -20,12 +20,14 @@ type Props = {
   closeSelf: () => void;
 };
 
-const JSON_PARSING_ERROR_FRIENDLY_MESSAGE = 'I couldn\'t understand the server. Check your Internet ' +
-  'connection. If that doesn\'t help, there might be a bug in the app, so let us know about this problem so we can ' +
-  'fix it!'
-const REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE = 'I couldn\'t send your search to the server. Check your Internet ' +
-  'connection. If that doesn\'t help, there might be a bug in the app, so let us know about this problem so we can ' +
-  'fix it!'
+const JSON_PARSING_ERROR_FRIENDLY_MESSAGE =
+  "I couldn't understand the server. Check your Internet " +
+  "connection. If that doesn't help, there might be a bug in the app, so let us know about this problem so we can " +
+  'fix it!';
+const REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE =
+  "I couldn't send your search to the server. Check your Internet " +
+  "connection. If that doesn't help, there might be a bug in the app, so let us know about this problem so we can " +
+  'fix it!';
 
 const Results: React.FC<Props> = (props: Props) => {
   const { query, isOpen, closeSelf } = props;
@@ -99,7 +101,13 @@ const Results: React.FC<Props> = (props: Props) => {
   if (error) {
     display = <ResultsError error={error} closeResults={closeSelf} />;
   } else if (results) {
-    display = <ResultsListing query={query} results={results} closeResults={closeSelf} />;
+    display = (
+      <ResultsListing
+        query={query}
+        results={results}
+        closeResults={closeSelf}
+      />
+    );
   } else {
     display = <Loading closeSelf={closeSelf} />;
   }

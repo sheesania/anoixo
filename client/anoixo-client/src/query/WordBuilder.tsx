@@ -38,37 +38,41 @@ const WordBuilder: React.FC<Props> = memo((props: Props) => {
   );
 
   const currentText = useTextSetting();
-  const attributes = currentText.attributeDisplayOrder.map((attribute, index) => {
-    let attrValue = undefined;
-    if (word.attributes && attribute in word.attributes) {
-      attrValue = word.attributes[attribute];
-    }
+  const attributes = currentText.attributeDisplayOrder.map(
+    (attribute, index) => {
+      let attrValue = undefined;
+      if (word.attributes && attribute in word.attributes) {
+        attrValue = word.attributes[attribute];
+      }
 
-    const AttrComponent = currentText.attributes[attribute].component;
-    const enabled = currentText.attributes[attribute].shouldBeEnabled(word.attributes);
-    return (
-      <AttrComponent
-        id={attribute}
-        value={attrValue}
-        updateAttr={updateAttr}
-        enabled={enabled}
-        key={index}
-      />
-    );
-  });
+      const AttrComponent = currentText.attributes[attribute].component;
+      const enabled = currentText.attributes[attribute].shouldBeEnabled(
+        word.attributes
+      );
+      return (
+        <AttrComponent
+          id={attribute}
+          value={attrValue}
+          updateAttr={updateAttr}
+          enabled={enabled}
+          key={index}
+        />
+      );
+    }
+  );
 
   return (
     <Paper className="WordBuilder" elevation={3}>
-      <div className='word-card-header'>
+      <div className="word-card-header">
         <Typography variant="h5" component="h2">
           <span className="word-card-title-highlighted">Word</span>{' '}
           <span className="word-card-title-subtitle">with</span>
         </Typography>
-        {showDeleteButton &&
+        {showDeleteButton && (
           <IconButton aria-label="Delete" onClick={() => deleteWord(wordIndex)}>
-            <CloseIcon style={{color: 'crimson'}} />
+            <CloseIcon style={{ color: 'crimson' }} />
           </IconButton>
-        }
+        )}
       </div>
       {attributes}
     </Paper>
