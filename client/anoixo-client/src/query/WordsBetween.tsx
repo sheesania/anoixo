@@ -3,31 +3,13 @@ import { useUID } from 'react-uid';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import './css/WordsBetween.css';
 
 type Props = {
   allowedWordsBetween: number | undefined;
   updateAllowedWordsBetween: (
     newAllowedWordsBetween: number | undefined
   ) => void;
-};
-
-const divStyle = {
-  marginTop: '1em',
-  display: 'flex',
-  alignItems: 'flex-start',
-};
-
-const labelStyle = {
-  lineHeight: '1.4',
-};
-
-const fieldDivStyle = {
-  marginLeft: '0.5em',
-  verticalAlign: 'baseline',
-};
-
-const inputStyle = {
-  padding: '2px',
 };
 
 const WordsBetween: React.FC<Props> = memo((props: Props) => {
@@ -67,7 +49,7 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
   ]);
 
   return (
-    <div style={divStyle}>
+    <div className="words-between">
       <Checkbox
         id={`${uid}-checkbox`}
         checked={checked}
@@ -79,7 +61,7 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
       <div>
         <Typography
           id={`${uid}-up-to`}
-          style={labelStyle}
+          className="words-between-label"
           variant="subtitle1"
           component="label"
           htmlFor={`${uid}-checkbox`}
@@ -88,10 +70,10 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
         </Typography>
         <TextField
           id={`${uid}-num-words`}
-          style={fieldDivStyle}
+          className="words-between-allowed-words-div"
           variant="outlined"
           inputProps={{
-            style: inputStyle,
+            className: 'words-between-allowed-words-input',
             size: 2,
             'aria-labelledby': `${uid}-up-to ${uid}-num-words ${uid}-words-in-between`,
           }}
@@ -103,7 +85,7 @@ const WordsBetween: React.FC<Props> = memo((props: Props) => {
         <br />
         <Typography
           id={`${uid}-words-in-between`}
-          style={labelStyle}
+          className="words-between-label"
           variant="subtitle1"
           component="label"
           htmlFor={`${uid}-checkbox`}

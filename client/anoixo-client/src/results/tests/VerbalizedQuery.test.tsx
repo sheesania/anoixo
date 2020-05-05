@@ -199,8 +199,10 @@ describe('VerbalizedQuery component', () => {
       </TextContextProvider>
     );
 
-    expect(getByText('a preposition').nodeName).toEqual('STRONG');
-    expect(getByText('a genitive').nodeName).toEqual('STRONG');
+    expect(getByText('a preposition').className).toEqual(
+      'attribute-description'
+    );
+    expect(getByText('a genitive').className).toEqual('attribute-description');
   });
 
   it('ignores empty sequences', () => {
