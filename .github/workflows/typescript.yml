@@ -37,5 +37,5 @@ jobs:
         working-directory: ${{env.working-directory}}
       - name: Run prettier check
         run: |
-          prettier --check 'src/**/*.*'
+          npm run prettier-check
         working-directory: ${{env.working-directory}}
