@@ -14,13 +14,15 @@ describe('ResultsListing component', () => {
     const { getByText } = render(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
-          query={{sequences: []}}
+          query={{ sequences: [] }}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
-    const noResultsFoundMessage = getByText('No results were found for your search.')
+    const noResultsFoundMessage = getByText(
+      'No results were found for your search.'
+    );
     expect(noResultsFoundMessage).toBeInTheDocument();
   });
 
@@ -33,9 +35,9 @@ describe('ResultsListing component', () => {
     const wrapper = mount(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
-          query={{sequences: []}}
+          query={{ sequences: [] }}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
@@ -47,13 +49,15 @@ describe('ResultsListing component', () => {
     const { queryByText } = render(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
-          query={{sequences: []}}
+          query={{ sequences: [] }}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
-    const noResultsFoundMessage = queryByText('No results were found for your search.')
+    const noResultsFoundMessage = queryByText(
+      'No results were found for your search.'
+    );
     expect(noResultsFoundMessage).toBeNull();
   });
 
@@ -63,19 +67,19 @@ describe('ResultsListing component', () => {
         [
           {
             attributes: {
-              'case': 'genitive'
-            }
-          }
-        ]
-      ]
-    }
+              case: 'genitive',
+            },
+          },
+        ],
+      ],
+    };
     const result = [{ references: [], words: [], translation: '' }];
     const { getByText } = render(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
           query={query}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
@@ -88,19 +92,19 @@ describe('ResultsListing component', () => {
         [
           {
             attributes: {
-              'case': 'genitive'
-            }
-          }
-        ]
-      ]
-    }
+              case: 'genitive',
+            },
+          },
+        ],
+      ],
+    };
     const result: SuccessResult = [];
     const { getByText } = render(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
           query={query}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
@@ -108,18 +112,19 @@ describe('ResultsListing component', () => {
   });
 
   it('renders the required copyright notice', () => {
-    const result = [{references: [], words: [], translation: ''}]
+    const result = [{ references: [], words: [], translation: '' }];
     const { getByText } = render(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
-          query={{sequences: []}}
+          query={{ sequences: [] }}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
     const getByTextWithMarkup = withMarkup(getByText);
-    const copyright = 'Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), ' +
+    const copyright =
+      'Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), ' +
       'copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights ' +
       'reserved. You may not copy or download more than 500 consecutive verses of the ESV Bible or more than one ' +
       'half of any book of the ESV Bible.';
@@ -127,13 +132,13 @@ describe('ResultsListing component', () => {
   });
 
   it('renders the required link to ESV.org', () => {
-    const result = [{references: [], words: [], translation: ''}]
+    const result = [{ references: [], words: [], translation: '' }];
     const { getByText } = render(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
-          query={{sequences: []}}
+          query={{ sequences: [] }}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
@@ -146,13 +151,13 @@ describe('ResultsListing component', () => {
     const { queryByText } = render(
       <TextContextProvider text={TextName.NLF}>
         <ResultsListing
-          query={{sequences: []}}
+          query={{ sequences: [] }}
           results={result}
-          closeResults={() => { }}
+          closeResults={() => {}}
         />
       </TextContextProvider>
     );
-    const copyright = queryByText('ESV® Bible')
+    const copyright = queryByText('ESV® Bible');
     expect(copyright).toBeNull();
   });
 });

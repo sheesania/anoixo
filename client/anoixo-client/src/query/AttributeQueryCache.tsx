@@ -16,7 +16,7 @@ const AttributeQueryCacheProvider: React.FC<Props> = (props: Props) => {
   const currentText = useTextSetting();
 
   useEffect(() => {
-    const newCache: AttributeQueryCache = {}
+    const newCache: AttributeQueryCache = {};
     const attrsToCache = currentText.attributeQueriesToCache;
     const attrFetches = [];
 
@@ -34,8 +34,11 @@ const AttributeQueryCacheProvider: React.FC<Props> = (props: Props) => {
             newCache[attr] = json;
             return Promise.resolve();
           })
-          .catch((err) => {  //if we can't get the attributes, they just won't be available for autocomplete
-            console.log(`Error fetching values for attribute '${attr}': ${err}`);
+          .catch(err => {
+            //if we can't get the attributes, they just won't be available for autocomplete
+            console.log(
+              `Error fetching values for attribute '${attr}': ${err}`
+            );
           })
       );
     }

@@ -8,13 +8,14 @@ type TextContextProviderProps = {
   text: TextName;
 };
 
-const TextContextProvider: React.FC<TextContextProviderProps> = (props: TextContextProviderProps) => {
+const TextContextProvider: React.FC<TextContextProviderProps> = (
+  props: TextContextProviderProps
+) => {
   return (
     <TextContext.Provider value={props.text}>
       {props.children}
     </TextContext.Provider>
-  )
+  );
 };
-
 
 export { TextContext, TextContextProvider };

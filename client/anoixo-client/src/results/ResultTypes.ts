@@ -58,7 +58,14 @@ export const parseReferenceResult = (json: any): ReferenceResult => {
 };
 
 export const parsePassageResult = (json: any): PassageResult => {
-  if (!(json && Array.isArray(json.references) && Array.isArray(json.words) && typeof json.translation === 'string')) {
+  if (
+    !(
+      json &&
+      Array.isArray(json.references) &&
+      Array.isArray(json.words) &&
+      typeof json.translation === 'string'
+    )
+  ) {
     throw new TypeError();
   }
 

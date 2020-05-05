@@ -1,5 +1,5 @@
 // from https://stackoverflow.com/a/56859650/4954731
-import { MatcherFunction } from '@testing-library/react'
+import { MatcherFunction } from '@testing-library/react';
 
 type Query = (f: MatcherFunction) => HTMLElement;
 

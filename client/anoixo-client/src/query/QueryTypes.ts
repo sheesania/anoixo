@@ -4,7 +4,7 @@ export type Link = {
 
 export type AttributesQuery = {
   [name: string]: string;
-}
+};
 
 export type WordQuery = {
   attributes?: AttributesQuery;

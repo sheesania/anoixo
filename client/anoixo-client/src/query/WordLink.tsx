@@ -37,11 +37,12 @@ const WordLink: React.FC<Props> = memo((props: Props) => {
         </Typography>
       )}
       <Arrow type={type} id={id} />
-      {type === 'active' &&
+      {type === 'active' && (
         <WordsBetween
           allowedWordsBetween={link ? link.allowedWordsBetween : undefined}
           updateAllowedWordsBetween={updateAllowedWordsBetween}
-        />}
+        />
+      )}
     </div>
   );
 });

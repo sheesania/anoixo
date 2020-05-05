@@ -39,7 +39,11 @@ const AttrSelectionBox: React.FC<Props> = memo((props: Props) => {
   );
 
   return (
-    <AttributeEditor labelText={props.label} labelProps={{ id: uid }} enabled={props.enabled}>
+    <AttributeEditor
+      labelText={props.label}
+      labelProps={{ id: uid }}
+      enabled={props.enabled}
+    >
       <Select
         className="attribute-input"
         value={props.currentValue}
@@ -49,7 +53,13 @@ const AttrSelectionBox: React.FC<Props> = memo((props: Props) => {
         disabled={!props.enabled}
       >
         <MenuItem value="">
-          <span className={props.enabled ? 'attribute-any-item' : 'attribute-any-item attribute-label-disabled'}>
+          <span
+            className={
+              props.enabled
+                ? 'attribute-any-item'
+                : 'attribute-any-item attribute-label-disabled'
+            }
+          >
             Any
           </span>
         </MenuItem>

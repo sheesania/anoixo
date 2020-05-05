@@ -18,7 +18,7 @@ describe('Results component', () => {
           <Results
             query={{ sequences: [[{}]] }}
             isOpen={true}
-            closeSelf={() => { }}
+            closeSelf={() => {}}
           />
         </TextContextProvider>
       );

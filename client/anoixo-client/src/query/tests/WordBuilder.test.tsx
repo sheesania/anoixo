@@ -6,9 +6,9 @@ import getSelectItemFunction from '../../test/helpers/getSelectItem';
 import WordBuilder from '../WordBuilder';
 
 import { useAttributeQueryCache } from '../AttributeQueryCache';
-jest.mock("../AttributeQueryCache", () => {
+jest.mock('../AttributeQueryCache', () => {
   return {
-    useAttributeQueryCache: jest.fn(() => [])
+    useAttributeQueryCache: jest.fn(() => []),
   };
 });
 const mockUseAttributeQueryCache = useAttributeQueryCache as jest.Mock;
@@ -76,7 +76,7 @@ describe('WordBuilder component', () => {
             wordIndex={0}
             showDeleteButton={false}
             updateWord={updateWord}
-            deleteWord={() => { }}
+            deleteWord={() => {}}
           />
         </TextContextProvider>
       );
@@ -90,7 +90,7 @@ describe('WordBuilder component', () => {
             wordIndex={0}
             showDeleteButton={false}
             updateWord={updateWord}
-            deleteWord={() => { }}
+            deleteWord={() => {}}
           />
         </TextContextProvider>
       );
@@ -109,8 +109,8 @@ describe('WordBuilder component', () => {
             word={{}}
             wordIndex={0}
             showDeleteButton={false}
-            updateWord={() => { }}
-            deleteWord={() => { }}
+            updateWord={() => {}}
+            deleteWord={() => {}}
           />
         </TextContextProvider>
       );
@@ -138,14 +138,14 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Part of Speech');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('Adjective')).toBeDefined();
         expect(within(options).getByText('Adverb')).toBeDefined();
@@ -157,20 +157,17 @@ describe('WordBuilder component', () => {
         expect(within(options).getByText('Preposition')).toBeDefined();
         expect(within(options).getByText('Pronoun')).toBeDefined();
         expect(within(options).getByText('Verbal')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('Verbal'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'class': 'verb'
-          }
+            class: 'verb',
+          },
         });
       });
-  
+
       it('has an autocompleting lexical form selector', () => {
-        mockUseAttributeQueryCache.mockReturnValue([
-          'λογος',
-          'αγαπη',
-        ]);
+        mockUseAttributeQueryCache.mockReturnValue(['λογος', 'αγαπη']);
         const updateWord = jest.fn();
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -179,33 +176,30 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const lexicalFormField = screen.getByLabelText('Lexical Form');
         fireEvent.mouseDown(lexicalFormField);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('λογος')).toBeDefined();
         expect(within(options).getByText('αγαπη')).toBeDefined();
-  
-        fireEvent.change(lexicalFormField, { target: { value: 'λογος' } })
+
+        fireEvent.change(lexicalFormField, { target: { value: 'λογος' } });
         expect(within(options).queryByText('αγαπη')).toBeNull();
         fireEvent.click(within(options).getByText('λογος'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'lemma': 'λογος'
-          }
+            lemma: 'λογος',
+          },
         });
       });
-  
+
       it('has an autocompleting inflected form selector', () => {
-        mockUseAttributeQueryCache.mockReturnValue([
-          'λογος',
-          'αγαπη',
-        ]);
+        mockUseAttributeQueryCache.mockReturnValue(['λογος', 'αγαπη']);
         const updateWord = jest.fn();
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -214,28 +208,28 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const lexicalFormField = screen.getByLabelText('Inflected Form');
         fireEvent.mouseDown(lexicalFormField);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('λογος')).toBeDefined();
         expect(within(options).getByText('αγαπη')).toBeDefined();
-  
-        fireEvent.change(lexicalFormField, { target: { value: 'λογος' } })
+
+        fireEvent.change(lexicalFormField, { target: { value: 'λογος' } });
         expect(within(options).queryByText('αγαπη')).toBeNull();
         fireEvent.click(within(options).getByText('λογος'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'normalized': 'λογος'
-          }
+            normalized: 'λογος',
+          },
         });
       });
-  
+
       it('has a case dropdown', () => {
         const updateWord = jest.fn();
         render(
@@ -245,29 +239,29 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Case');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('Accusative')).toBeDefined();
         expect(within(options).getByText('Dative')).toBeDefined();
         expect(within(options).getByText('Genitive')).toBeDefined();
         expect(within(options).getByText('Nominative')).toBeDefined();
         expect(within(options).getByText('Vocative')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('Accusative'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'case': 'accusative'
-          }
+            case: 'accusative',
+          },
         });
       });
-  
+
       it('has a person dropdown', () => {
         const updateWord = jest.fn();
         render(
@@ -277,27 +271,27 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Person');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('1st person')).toBeDefined();
         expect(within(options).getByText('2nd person')).toBeDefined();
         expect(within(options).getByText('3rd person')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('1st person'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'person': 'first'
-          }
+            person: 'first',
+          },
         });
       });
-  
+
       it('has a number dropdown', () => {
         const updateWord = jest.fn();
         render(
@@ -307,26 +301,26 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Number');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('Singular')).toBeDefined();
         expect(within(options).getByText('Plural')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('Singular'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'number': 'singular'
-          }
+            number: 'singular',
+          },
         });
       });
-  
+
       it('has a gender dropdown', () => {
         const updateWord = jest.fn();
         render(
@@ -336,27 +330,27 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Gender');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('Masculine')).toBeDefined();
         expect(within(options).getByText('Feminine')).toBeDefined();
         expect(within(options).getByText('Neuter')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('Masculine'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'gender': 'masculine'
-          }
+            gender: 'masculine',
+          },
         });
       });
-  
+
       it('has a tense dropdown', () => {
         const updateWord = jest.fn();
         render(
@@ -366,14 +360,14 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Tense');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('Aorist')).toBeDefined();
         expect(within(options).getByText('Imperfect')).toBeDefined();
@@ -381,15 +375,15 @@ describe('WordBuilder component', () => {
         expect(within(options).getByText('Perfect')).toBeDefined();
         expect(within(options).getByText('Pluperfect')).toBeDefined();
         expect(within(options).getByText('Present')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('Aorist'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'tense': 'aorist'
-          }
+            tense: 'aorist',
+          },
         });
       });
-  
+
       it('has a voice dropdown', () => {
         const updateWord = jest.fn();
         render(
@@ -399,28 +393,28 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Voice');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('Active')).toBeDefined();
         expect(within(options).getByText('Passive')).toBeDefined();
         expect(within(options).getByText('Middle')).toBeDefined();
         expect(within(options).getByText('Middle/Passive')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('Active'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'voice': 'active'
-          }
+            voice: 'active',
+          },
         });
       });
-  
+
       it('has a mood dropdown', () => {
         const updateWord = jest.fn();
         render(
@@ -430,14 +424,14 @@ describe('WordBuilder component', () => {
               wordIndex={0}
               showDeleteButton={false}
               updateWord={updateWord}
-              deleteWord={() => { }}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
-  
+
         const dropdown = screen.getByLabelText('Mood');
         fireEvent.mouseDown(dropdown);
-  
+
         const options = screen.getByRole('listbox');
         expect(within(options).getByText('Indicative')).toBeDefined();
         expect(within(options).getByText('Infinitive')).toBeDefined();
@@ -445,12 +439,12 @@ describe('WordBuilder component', () => {
         expect(within(options).getByText('Optative')).toBeDefined();
         expect(within(options).getByText('Participle')).toBeDefined();
         expect(within(options).getByText('Subjunctive')).toBeDefined();
-  
+
         fireEvent.click(within(options).getByText('Indicative'));
         expect(updateWord).toHaveBeenCalledWith(0, {
           attributes: {
-            'mood': 'indicative'
-          }
+            mood: 'indicative',
+          },
         });
       });
     });
@@ -459,8 +453,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Adjective is the part of speech', () => {
         const adjective = {
           attributes: {
-            'class': 'adj'
-          }
+            class: 'adj',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -468,8 +462,8 @@ describe('WordBuilder component', () => {
               word={adjective}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -485,8 +479,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Adverb is the part of speech', () => {
         const adverb = {
           attributes: {
-            'class': 'adv'
-          }
+            class: 'adv',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -494,8 +488,8 @@ describe('WordBuilder component', () => {
               word={adverb}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -511,8 +505,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Article/Determiner is the part of speech', () => {
         const determiner = {
           attributes: {
-            'class': 'det'
-          }
+            class: 'det',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -520,8 +514,8 @@ describe('WordBuilder component', () => {
               word={determiner}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -537,8 +531,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Conjunction is the part of speech', () => {
         const conjunction = {
           attributes: {
-            'class': 'conj'
-          }
+            class: 'conj',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -546,8 +540,8 @@ describe('WordBuilder component', () => {
               word={conjunction}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -563,8 +557,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Interjection is the part of speech', () => {
         const interjection = {
           attributes: {
-            'class': 'intj'
-          }
+            class: 'intj',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -572,8 +566,8 @@ describe('WordBuilder component', () => {
               word={interjection}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -589,8 +583,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Noun is the part of speech', () => {
         const noun = {
           attributes: {
-            'class': 'noun'
-          }
+            class: 'noun',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -598,8 +592,8 @@ describe('WordBuilder component', () => {
               word={noun}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -615,8 +609,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Particle is the part of speech', () => {
         const particle = {
           attributes: {
-            'class': 'ptcl'
-          }
+            class: 'ptcl',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -624,8 +618,8 @@ describe('WordBuilder component', () => {
               word={particle}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -641,8 +635,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Preposition is the part of speech', () => {
         const preposition = {
           attributes: {
-            'class': 'prep'
-          }
+            class: 'prep',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -650,8 +644,8 @@ describe('WordBuilder component', () => {
               word={preposition}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -667,8 +661,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Pronoun is the part of speech', () => {
         const pronoun = {
           attributes: {
-            'class': 'pron'
-          }
+            class: 'pron',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -676,8 +670,8 @@ describe('WordBuilder component', () => {
               word={pronoun}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
@@ -693,8 +687,8 @@ describe('WordBuilder component', () => {
       it('disables the correct attribute editors when Verbal is the part of speech', () => {
         const verb = {
           attributes: {
-            'class': 'verb'
-          }
+            class: 'verb',
+          },
         };
         render(
           <TextContextProvider text={TextName.NLF}>
@@ -702,8 +696,8 @@ describe('WordBuilder component', () => {
               word={verb}
               wordIndex={0}
               showDeleteButton={false}
-              updateWord={() => { }}
-              deleteWord={() => { }}
+              updateWord={() => {}}
+              deleteWord={() => {}}
             />
           </TextContextProvider>
         );
