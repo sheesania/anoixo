@@ -31,10 +31,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "12.x"
-      - name: Install dependencies
-        run: |
-          npm install
-        working-directory: ${{env.working-directory}}
+      - name: Install dependencies (with caching)
+        uses: bahmutov/npm-install@v1
+        with:
+          working-directory: ${{env.working-directory}}
       - name: Run prettier check
         run: |
           npm run prettier-check
