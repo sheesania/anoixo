@@ -16,5 +16,6 @@ jobs:
         pip install -r requirements.txt
       working-directory: ${{env.working-directory}}
     - run: |
+        pip install pytest
         pytest
       working-directory: ${{env.working-directory}}
