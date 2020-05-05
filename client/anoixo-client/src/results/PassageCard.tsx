@@ -75,7 +75,13 @@ const PassageCard: React.FC<Props> = memo((props: Props) => {
         <PassageLinks references={props.passage.references} />
       </div>
       <div className="passage-card-text-container">
-        <Typography className="passage-card-text-element" variant="body1">{text}</Typography>
+        {/* Workaround for 'missing key props' warning, which is irrelevant here since 'text' will never dynamically
+            change and need to be rerendered */}
+        {React.createElement(
+          Typography,
+          { className: 'passage-card-text-element', variant: 'body1' },
+          ...text
+        )}
         <Divider style={dividerStyle} orientation="vertical" flexItem/>
         <Typography className="passage-card-text-element" variant="body1">{props.passage.translation}</Typography>
       </div>

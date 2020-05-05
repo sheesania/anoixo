@@ -51,14 +51,16 @@ const verbalizeQuery = (query: Query, verbalizeAttributes: (attributes: Attribut
 const VerbalizedQuery: React.FC<Props> = memo((props: Props) => {
   const currentText = useTextSetting();
 
-  let verbalizedQuery: (string | JSX.Element)[] | string = verbalizeQuery(props.query, currentText.verbalizeAttributes);
+  let verbalizedQuery = verbalizeQuery(props.query, currentText.verbalizeAttributes);
   if (!verbalizedQuery.length) {
-    verbalizedQuery = 'an empty query';
+    verbalizedQuery = ['an empty query'];
   }
 
+  // Note React.createElement workaround for "missing key props" warning, which is irrelevant here since the array will
+  // not dynamically change and need to be rerendered
   return (
-    <Typography style={{ margin: '1.2rem'}}>
-      for {verbalizedQuery}
+    <Typography style={{ margin: '1.2rem' }}>
+      for {React.createElement('span', {}, ...verbalizedQuery)}
     </Typography>
   );
 });
