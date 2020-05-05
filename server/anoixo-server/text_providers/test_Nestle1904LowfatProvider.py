@@ -126,6 +126,40 @@ def test_text_query_handles_word_query_with_no_attributes(mocker, basex_session_
     assert "for $word0 in $sentence//w[@lemma='λόγος'] for $word1 in $sentence//w" in basex_query_spy.call_args.args[1]
 
 
+def test_text_query_handles_disallowed_attribute(provider):
+    query = TextQuery({
+        'sequences': [
+            [
+                {
+                    'attributes': {
+                        'fake-attr': 'value'
+                    }
+                }
+            ]
+        ]
+    }, lambda x: None)
+    with pytest.raises(ProbableBugError) as excinfo:
+        provider.text_query(query)
+    assert excinfo.value.message == 'Attribute \'fake-attr\' not allowed'
+
+
+def test_text_query_sanitizes_attribute_values(mocker, basex_session_mock, provider):
+    basex_query_spy = mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '[]')
+    query = TextQuery({
+        'sequences': [
+            [
+                {
+                    'attributes': {
+                        'lemma': "&μετ'"
+                    }
+                }
+            ]
+        ]
+    }, lambda x: None)
+    provider.text_query(query)
+    assert "for $word0 in $sentence//w[@lemma='μετ’']" in basex_query_spy.call_args.args[1]
+
+
 def test_attribute_query_success(mocker, basex_session_mock, provider):
     mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '["value1","value2"]')
     result = provider.attribute_query('gender')
@@ -162,6 +196,12 @@ def test_attribute_query_surface_form_caching(mocker, basex_session_mock, provid
     result2 = provider.attribute_query('normalized')
     assert result2 == ['normalized1', 'normalized2']
     assert basex_query_spy.call_count == 1
+
+
+def test_attribute_query_disallowed_attribute(provider):
+    with pytest.raises(ProbableBugError) as excinfo:
+        provider.attribute_query('disallowed')
+    assert excinfo.value.message == 'Attribute \'disallowed\' not allowed'
 
 
 def test_attribute_query_error_on_query(mocker, basex_session_mock, provider):
