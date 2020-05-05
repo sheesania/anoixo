@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { StylesProvider } from '@material-ui/core/styles';
 import { Query } from './query/QueryTypes';
 import { TextContextProvider } from './texts/TextContext';
 import { TextName } from './texts/TextSettings';
@@ -31,12 +32,14 @@ const App: React.FC = () => {
 
   return (
     <TextContextProvider text={currentText}>
-      <QueryBuilder
-        query={query}
-        updateQuery={updateQuery}
-        openResults={openResults}
-      />
-      <Results query={query} isOpen={showResults} closeSelf={closeResults} />
+      <StylesProvider injectFirst>
+        <QueryBuilder
+          query={query}
+          updateQuery={updateQuery}
+          openResults={openResults}
+        />
+        <Results query={query} isOpen={showResults} closeSelf={closeResults} />
+      </StylesProvider>
     </TextContextProvider>
   );
 };

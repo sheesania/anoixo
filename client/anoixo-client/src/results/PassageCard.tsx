@@ -58,11 +58,6 @@ const makeTextElements = (words: WordResult[]): (string | JSX.Element)[] => {
   return joinedText;
 };
 
-const dividerStyle = {
-  marginLeft: '2%',
-  marginRight: '2%',
-};
-
 const PassageCard: React.FC<Props> = memo((props: Props) => {
   const reference = makeReferenceString(props.passage.references);
   const text = makeTextElements(props.passage.words);
@@ -86,7 +81,11 @@ const PassageCard: React.FC<Props> = memo((props: Props) => {
           { className: 'passage-card-text-element', variant: 'body1' },
           ...text
         )}
-        <Divider style={dividerStyle} orientation="vertical" flexItem />
+        <Divider
+          className="passage-card-divider"
+          orientation="vertical"
+          flexItem
+        />
         <Typography className="passage-card-text-element" variant="body1">
           {props.passage.translation}
         </Typography>
