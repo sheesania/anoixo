@@ -11,12 +11,8 @@ jobs:
       with:
         python-version: 3.8
     - run: |
-        python -m venv venv
+        pip install -r requirements.txt
       working-directory: ${{env.working-directory}}
     - run: |
-        venv/bin/python -m pip install -r requirements.txt
-      working-directory: ${{env.working-directory}}
-    - run: |
-        source venv/bin/activate
-        python -m pytest
+        pytest
       working-directory: ${{env.working-directory}}
