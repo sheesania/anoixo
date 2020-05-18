@@ -197,6 +197,28 @@ def test_text_query_handles_translation_provider_error(monkeypatch, client):
     }
 
 
+def test_text_query_rate_limit(monkeypatch, client):
+    def mock_provider_text_query(self, query_result):
+        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], lambda x: None)
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
+
+    def mock_add_translations(self, query_result):
+        return query_result
+    monkeypatch.setattr(ESVApiTranslationProvider, 'add_translations', mock_add_translations)
+
+    responses = []
+    for _ in range(13):
+        responses.append(client.post('/api/text/nlf', json={'sequences': []}))
+
+    assert responses[-1].status_code == 429
+    assert get_json_response(responses[-1]) == {
+        'error': 'Too Many Requests',
+        'description': 'Rate limit exceeded: 12 per 1 minute',
+        'friendlyErrorMessage': 'You\'ve made too many searches in too short a period of time. Try your search again ' +
+                                'later.'
+    }
+
+
 def test_attribute_query_success(monkeypatch, client):
     def mock_attribute_query(self, attribute_id):
         return [f'{attribute_id}_val1', f'{attribute_id}_val2']

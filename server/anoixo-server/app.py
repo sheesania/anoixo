@@ -1,12 +1,13 @@
 import time
 from flask import g, jsonify, make_response, request, Flask
 from flask_cors import CORS
+from flask_limiter import Limiter
 from typing import Any, Dict, Union
 from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
 from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
 from text_providers.TextProvider import TextProvider
 from werkzeug.http import HTTP_STATUS_CODES
-from AnoixoError import AnoixoError, ProbableBugError
+from AnoixoError import AnoixoError, ProbableBugError, TooManyRequestsError
 from TextQuery import TextQuery
 from translation_providers.TranslationProvider import TranslationProvider
 
@@ -28,6 +29,12 @@ def _get_address_for_request():
     return request.headers.get('X-Real-Ip', request.remote_addr)
 
 
+limiter = Limiter(
+    app,
+    key_func=_get_address_for_request
+)
+
+
 @app.errorhandler(AnoixoError)
 def handle_anoixo_error(error: AnoixoError):
     return make_response(jsonify({
@@ -35,6 +42,11 @@ def handle_anoixo_error(error: AnoixoError):
         'description': error.message,
         'friendlyErrorMessage': error.get_friendly_error_message()
     }), error.http_error_code)
+
+
+@app.errorhandler(429)
+def handle_rate_limit_exceeded(e):
+    return handle_anoixo_error(TooManyRequestsError(f'Rate limit exceeded: {e.description}', http_error_code=429))
 
 
 @app.before_request
@@ -76,6 +88,7 @@ def _get_text_provider(text_id: str) -> TextProvider:
 
 
 @app.route('/api/text/<string:text_id>', methods=['POST'])
+@limiter.limit('1000/day;200/hour;12/minute')
 def text_query(text_id: str):
     text_provider = _get_text_provider(text_id)
 
