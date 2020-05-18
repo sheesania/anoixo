@@ -21,6 +21,13 @@ translation_providers: Dict[str, TranslationProvider] = {
 }
 
 
+def _get_address_for_request():
+    # If the app is behind a Nginx proxy, Nginx will set a 'X-Real-Ip' header with the original remote address that we
+    # should use (at least in the default Nginx configuration for Anoixo present in the ansible directory).
+    # If that header is not present, we are presumably not behind a proxy and can just use the remote address.
+    return request.headers.get('X-Real-Ip', request.remote_addr)
+
+
 @app.errorhandler(AnoixoError)
 def handle_anoixo_error(error: AnoixoError):
     return make_response(jsonify({
@@ -37,7 +44,7 @@ def get_request_start_time():
 
 @app.after_request
 def log_request(response):
-    source_address = request.headers.get('X-Real-Ip', request.remote_addr)
+    source_address = _get_address_for_request()
     exec_time = time.time() - g.start_time
     print(f'[{time.asctime()}] {source_address} {request.method} {request.path} {response.status_code}', flush=True)
     print(f'\tTime: {exec_time}', flush=True)
