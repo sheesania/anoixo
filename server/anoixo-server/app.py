@@ -23,9 +23,19 @@ translation_providers: Dict[str, TranslationProvider] = {
 
 
 def _get_address_for_request():
-    # If the app is behind a Nginx proxy, Nginx will set a 'X-Real-Ip' header with the original remote address that we
-    # should use (at least in the default Nginx configuration for Anoixo present in the ansible directory).
-    # If that header is not present, we are presumably not behind a proxy and can just use the remote address.
+    """
+    In the default Nginx configuration for Anoixo, this Flask server is behind a proxy, and Nginx sets a 'X-Real-Ip'
+    header with the original remote address whenever it forwards requests to Flask.
+
+    If that header is not present (e.g. in a testing/development situation where a proxy server isn't set up), we are
+    presumably not behind a proxy and can just use the original remote address.
+
+    Please note this system means that IP addresses can be easily spoofed if the app is deployed NOT behind a proxy! All
+    the spoofer would need to do is set a bogus X-Real-Ip header. So please make sure to deploy Anoixo behind a proxy
+    in production environments.
+
+    :return: The client IP address for the current request
+    """
     return request.headers.get('X-Real-Ip', request.remote_addr)
 
 
