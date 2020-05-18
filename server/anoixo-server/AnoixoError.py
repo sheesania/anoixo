@@ -19,3 +19,8 @@ class ProbableBugError(AnoixoError):
 class ServerOverwhelmedError(AnoixoError):
     def get_friendly_error_message(self) -> str:
         return 'It looks like the server is currently overwhelmed. Try your search again later.'
+
+
+class TooManyRequestsError(AnoixoError):
+    def get_friendly_error_message(self) -> str:
+        return 'You\'ve made too many searches in too short a period of time. Try your search again later.'

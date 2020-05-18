@@ -1,12 +1,13 @@
 import time
 from flask import g, jsonify, make_response, request, Flask
 from flask_cors import CORS
+from flask_limiter import Limiter
 from typing import Any, Dict, Union
 from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
 from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
 from text_providers.TextProvider import TextProvider
 from werkzeug.http import HTTP_STATUS_CODES
-from AnoixoError import AnoixoError, ProbableBugError
+from AnoixoError import AnoixoError, ProbableBugError, TooManyRequestsError
 from TextQuery import TextQuery
 from translation_providers.TranslationProvider import TranslationProvider
 
@@ -21,6 +22,29 @@ translation_providers: Dict[str, TranslationProvider] = {
 }
 
 
+def _get_address_for_request():
+    """
+    In the default Nginx configuration for Anoixo, this Flask server is behind a proxy, and Nginx sets a 'X-Real-Ip'
+    header with the original remote address whenever it forwards requests to Flask.
+
+    If that header is not present (e.g. in a testing/development situation where a proxy server isn't set up), we are
+    presumably not behind a proxy and can just use the original remote address.
+
+    Please note this system means that IP addresses can be easily spoofed if the app is deployed NOT behind a proxy! All
+    the spoofer would need to do is set a bogus X-Real-Ip header. So please make sure to deploy Anoixo behind a proxy
+    in production environments.
+
+    :return: The client IP address for the current request
+    """
+    return request.headers.get('X-Real-Ip', request.remote_addr)
+
+
+limiter = Limiter(
+    app,
+    key_func=_get_address_for_request
+)
+
+
 @app.errorhandler(AnoixoError)
 def handle_anoixo_error(error: AnoixoError):
     return make_response(jsonify({
@@ -30,6 +54,11 @@ def handle_anoixo_error(error: AnoixoError):
     }), error.http_error_code)
 
 
+@app.errorhandler(429)
+def handle_rate_limit_exceeded(e):
+    return handle_anoixo_error(TooManyRequestsError(f'Rate limit exceeded: {e.description}', http_error_code=429))
+
+
 @app.before_request
 def get_request_start_time():
     g.start_time = time.time()
@@ -37,7 +66,7 @@ def get_request_start_time():
 
 @app.after_request
 def log_request(response):
-    source_address = request.headers.get('X-Real-Ip', request.remote_addr)
+    source_address = _get_address_for_request()
     exec_time = time.time() - g.start_time
     print(f'[{time.asctime()}] {source_address} {request.method} {request.path} {response.status_code}', flush=True)
     print(f'\tTime: {exec_time}', flush=True)
@@ -69,6 +98,7 @@ def _get_text_provider(text_id: str) -> TextProvider:
 
 
 @app.route('/api/text/<string:text_id>', methods=['POST'])
+@limiter.limit('1000/day;200/hour;12/minute')
 def text_query(text_id: str):
     text_provider = _get_text_provider(text_id)
 

@@ -1,4 +1,5 @@
 import pytest
+import re
 from app import app
 from text_providers.Nestle1904LowfatProvider import Nestle1904LowfatProvider
 from translation_providers.ESVApiTranslationProvider import ESVApiTranslationProvider
@@ -21,6 +22,79 @@ def client(mocker):
 def get_json_response(response: BaseResponse) -> Dict:
     import json
     return json.loads(response.get_data(as_text=True))
+
+
+def test_logging_for_text_query(monkeypatch, capsys, client):
+    def mock_provider_text_query(self, query_result):
+        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], lambda x: None)
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
+
+    def mock_add_translations(self, query_result):
+        return query_result
+    monkeypatch.setattr(ESVApiTranslationProvider, 'add_translations', mock_add_translations)
+
+    client.post('/api/text/nlf', json={'sequences': [
+        [
+            {
+                'attributes': {
+                    'lemma': 'λόγος'
+                }
+            }
+        ]
+    ]})
+    captured = capsys.readouterr()
+    assert re.search(
+        r"^\[\w\w\w \w\w\w \d\d \d\d:\d\d:\d\d \d\d\d\d\] 127\.0\.0\.1 POST /api/text/nlf 200\n\t" +
+        r"Time: \d+\.\d+\n\t" +
+        r"Request: {'sequences': \[\[{'attributes': {'lemma': 'λόγος'}}]]}\n\t" +
+        r"Response: <1 results>$",
+        captured.out
+    )
+
+
+def test_logging_for_attribute_query(monkeypatch, capsys, client):
+    def mock_attribute_query(self, attribute_id):
+        return [f'val1', f'val2']
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'attribute_query', mock_attribute_query)
+    client.get('/api/text/nlf/attribute/lemma')
+    captured = capsys.readouterr()
+    assert re.search(
+        r"GET /api/text/nlf/attribute/lemma 200\n\t" +
+        r"Time: .*\n\t" +
+        r"Request: None\n\t" +
+        r"Response: <2 results>$",
+        captured.out
+    )
+
+
+def test_logging_for_error(monkeypatch, capsys, client):
+    def mock_provider_text_query(self, query_result):
+        raise ServerOverwhelmedError('Error message')
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
+    client.post('/api/text/nlf', json={'sequences': []})
+    captured = capsys.readouterr()
+    assert re.search(
+        r"POST /api/text/nlf 500\n\t" +
+        r"Time: .*\n\t" +
+        r"Request: {'sequences': \[]}\n\t" +
+        r"Response: {'description': 'Error message', 'error': 'Internal Server Error', 'friendlyErrorMessage': " +
+        r"'It looks like the server is currently overwhelmed. Try your search again later.'}$",
+        captured.out
+    )
+
+
+def test_logging_with_proxy_ip(monkeypatch, capsys, client):
+    def mock_attribute_query(self, attribute_id):
+        return [f'val1', f'val2']
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'attribute_query', mock_attribute_query)
+    client.get('/api/text/nlf/attribute/lemma', headers={
+        'X-Real-Ip': '256.256.256.256'
+    })
+    captured = capsys.readouterr()
+    assert re.search(
+        r"256\.256\.256\.256 GET /api/text/nlf/attribute/lemma 200",
+        captured.out
+    )
 
 
 def test_text_query_success(monkeypatch, client):
@@ -120,6 +194,28 @@ def test_text_query_handles_translation_provider_error(monkeypatch, client):
         'error': 'Internal Server Error',
         'description': 'Error message',
         'friendlyErrorMessage': 'It looks like the server is currently overwhelmed. Try your search again later.'
+    }
+
+
+def test_text_query_rate_limit(monkeypatch, client):
+    def mock_provider_text_query(self, query_result):
+        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], lambda x: None)
+    monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
+
+    def mock_add_translations(self, query_result):
+        return query_result
+    monkeypatch.setattr(ESVApiTranslationProvider, 'add_translations', mock_add_translations)
+
+    responses = []
+    for _ in range(13):
+        responses.append(client.post('/api/text/nlf', json={'sequences': []}))
+
+    assert responses[-1].status_code == 429
+    assert get_json_response(responses[-1]) == {
+        'error': 'Too Many Requests',
+        'description': 'Rate limit exceeded: 12 per 1 minute',
+        'friendlyErrorMessage': 'You\'ve made too many searches in too short a period of time. Try your search again ' +
+                                'later.'
     }
 
 
