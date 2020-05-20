@@ -14,6 +14,11 @@
         filename: nodesource
         state: present
 
+    - name: configure certbot PPA
+      when: enable_https
+      apt_repository:
+        repo: ppa:certbot/certbot
+
     - name: install apt packages
       apt:
         pkg: "{{ item }}"
@@ -27,6 +32,15 @@
         - python3-venv
         - python3.8-venv
         - supervisor
+
+    - name: install certbot packages
+      when: enable_https
+      apt:
+        pkg: "{{ item }}"
+        update_cache: yes
+      loop:
+        - certbot
+        - python3-certbot-nginx
 
 - name: setup firewall
   hosts: staging, production
@@ -233,6 +247,10 @@
         src: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
         dest: "{{ nginx_enabled_abs_dir }}/{{ nginx_conf_file }}"
         state: link
+
+    - name: setup SSL
+      when: enable_https
+      command: "certbot -n --nginx -m {{ admin_email }} --agree-tos -d {{ server_name }} --redirect"
 
     - name: restart nginx
       service:

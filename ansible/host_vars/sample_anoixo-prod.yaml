@@ -15,7 +15,8 @@ basex_server_admin_password: password
 basex_server_username: anoixo
 basex_server_password: password
 
-https_enabled: True
+enable_https: True
+admin_email: admin@example.com
 
 esv_api_key: "Token ffffffffffffffffffffffffffffffffffffffff"
 

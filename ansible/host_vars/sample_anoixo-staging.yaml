@@ -17,8 +17,10 @@ basex_server_admin_password: password
 basex_server_username: anoixo
 basex_server_password: password
 
-# Where you want to enable HTTPS and set up a Let's Encrypt cert
-https_enabled: False
+# Whether you want to enable HTTPS and set up a Let's Encrypt cert
+enable_https: False
+# An email is only needed if you want HTTPS (it's used as a notification email for the Let's Encrypt cert)
+admin_email: admin@example.com
 
 # Your ESV API key from https://api.esv.org/
 esv_api_key: "Token ffffffffffffffffffffffffffffffffffffffff"
