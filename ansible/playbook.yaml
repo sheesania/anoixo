@@ -45,7 +45,7 @@
     - name: allow nginx
       ufw:
         rule: allow
-        name: 'Nginx Full'
+        name: "Nginx Full"
     - name: enable firewall
       ufw:
         state: enabled
@@ -70,11 +70,9 @@
   hosts: staging, production
   tags: db
   become: yes
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: install systemd unit file
-      template: 
+      template:
         src: templates/basexserver.service
         dest: "{{ systemd_abs_dir }}/basexserver.service"
     - name: have service start on boot, and start it
@@ -117,8 +115,6 @@
   tags: git, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: clone application from GitHub
       git:
@@ -132,8 +128,6 @@
   tags: config, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: create Nestle Lowfat Treebank provider config file for API
       template:
@@ -155,8 +149,6 @@
   tags: python, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: create and populate python venv
       pip:
@@ -169,8 +161,6 @@
   tags: ui, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: install node modules for client app
       npm:
@@ -185,8 +175,6 @@
   hosts: staging, production
   tags: supervisor
   become: yes
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: instantiate supervisor template
       template:
@@ -211,7 +199,7 @@
         state: restarted
 
 - name: setup password authentication
-  hosts: production
+  hosts: staging
   tags: nginx
   become: yes
   tasks:
@@ -228,8 +216,6 @@
   hosts: staging, production
   tags: nginx
   become: yes
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: disable nginx default configuration
       file:

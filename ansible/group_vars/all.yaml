@@ -8,6 +8,8 @@ systemd_abs_dir: "/etc/systemd/system"
 
 supervisor_abs_dir: /etc/supervisor
 supervisor_conf_abs_dir: "{{ supervisor_abs_dir }}/conf.d"
+# Meant to be overridden for specific hosts
+supervisor_env_variables: ""
 
 nginx_base_abs_dir: "/etc/nginx"
 nginx_available_abs_dir: "{{ nginx_base_abs_dir}}/sites-available"
