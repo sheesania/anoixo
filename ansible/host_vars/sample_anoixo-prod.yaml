@@ -15,14 +15,9 @@ basex_server_admin_password: password
 basex_server_username: anoixo
 basex_server_password: password
 
-esv_api_key: 'Token ffffffffffffffffffffffffffffffffffffffff'
+esv_api_key: "Token ffffffffffffffffffffffffffffffffffffffff"
 
 feedback_form_url: https://forms.gle/fffffffffffffffff
-
-# The username and password to put the app behind (a temporary security measure)
-htpasswd_path: /etc/nginx/.htpasswd
-app_auth_username: username
-app_auth_password: password
 
 source_abs_dir: /home/anoixo/anoixo
 logs_abs_dir: /home/anoixo/logs

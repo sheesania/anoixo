@@ -18,10 +18,15 @@ basex_server_username: anoixo
 basex_server_password: password
 
 # Your ESV API key from https://api.esv.org/
-esv_api_key: 'Token ffffffffffffffffffffffffffffffffffffffff'
+esv_api_key: "Token ffffffffffffffffffffffffffffffffffffffff"
 
 # Where you want your users to be linked to if they click "report a problem", "submit feedback", etc
 feedback_form_url: https://forms.gle/fffffffffffffffff
+
+# The username and password to put the app behind (as a security measure)
+htpasswd_path: /etc/nginx/.htpasswd
+app_auth_username: username
+app_auth_password: password
 
 # Desired directories for where Ansible will put the repo, logs, etc
 source_abs_dir: /home/anoixo/anoixo
