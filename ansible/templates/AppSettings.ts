@@ -1,5 +1,5 @@
 export const ServerSettings = {
-  apiUrl: 'http://{{ server_name }}/api'
+  apiUrl: '{{ "https" if enable_https else "http" }}://{{ server_name }}/api',
 };
 
-export const FEEDBACK_FORM_URL = '{{ feedback_form_url }}';
+export const FEEDBACK_FORM_URL = "{{ feedback_form_url }}";

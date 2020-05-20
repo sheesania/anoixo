@@ -14,6 +14,11 @@
         filename: nodesource
         state: present
 
+    - name: configure certbot PPA
+      when: enable_https
+      apt_repository:
+        repo: ppa:certbot/certbot
+
     - name: install apt packages
       apt:
         pkg: "{{ item }}"
@@ -27,6 +32,15 @@
         - python3-venv
         - python3.8-venv
         - supervisor
+
+    - name: install certbot packages
+      when: enable_https
+      apt:
+        pkg: "{{ item }}"
+        update_cache: yes
+      loop:
+        - certbot
+        - python3-certbot-nginx
 
 - name: setup firewall
   hosts: staging, production
@@ -45,7 +59,7 @@
     - name: allow nginx
       ufw:
         rule: allow
-        name: 'Nginx Full'
+        name: "Nginx Full"
     - name: enable firewall
       ufw:
         state: enabled
@@ -70,11 +84,9 @@
   hosts: staging, production
   tags: db
   become: yes
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: install systemd unit file
-      template: 
+      template:
         src: templates/basexserver.service
         dest: "{{ systemd_abs_dir }}/basexserver.service"
     - name: have service start on boot, and start it
@@ -117,8 +129,6 @@
   tags: git, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: clone application from GitHub
       git:
@@ -132,8 +142,6 @@
   tags: config, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: create Nestle Lowfat Treebank provider config file for API
       template:
@@ -155,8 +163,6 @@
   tags: python, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: create and populate python venv
       pip:
@@ -169,8 +175,6 @@
   tags: ui, update
   become: yes
   become_user: "{{ anoixo_username }}"
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: install node modules for client app
       npm:
@@ -185,8 +189,6 @@
   hosts: staging, production
   tags: supervisor
   become: yes
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: instantiate supervisor template
       template:
@@ -211,7 +213,7 @@
         state: restarted
 
 - name: setup password authentication
-  hosts: production
+  hosts: staging
   tags: nginx
   become: yes
   tasks:
@@ -228,8 +230,6 @@
   hosts: staging, production
   tags: nginx
   become: yes
-  vars_files:
-    - public_vars.yaml
   tasks:
     - name: disable nginx default configuration
       file:
@@ -247,6 +247,10 @@
         src: "{{ nginx_available_abs_dir }}/{{ nginx_conf_file }}"
         dest: "{{ nginx_enabled_abs_dir }}/{{ nginx_conf_file }}"
         state: link
+
+    - name: setup SSL
+      when: enable_https
+      command: "certbot -n --nginx -m {{ admin_email }} --agree-tos -d {{ server_name }} --redirect"
 
     - name: restart nginx
       service:
