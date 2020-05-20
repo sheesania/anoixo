@@ -17,6 +17,9 @@ basex_server_admin_password: password
 basex_server_username: anoixo
 basex_server_password: password
 
+# Where you want to enable HTTPS and set up a Let's Encrypt cert
+https_enabled: False
+
 # Your ESV API key from https://api.esv.org/
 esv_api_key: "Token ffffffffffffffffffffffffffffffffffffffff"
 
