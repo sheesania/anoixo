@@ -61,8 +61,9 @@ class ESVApiTranslationProvider(TranslationProvider):
         return TranslationsForResultIndexes(json, chunk_start_index)
 
     async def _request_translations(self, query_result: QueryResult) -> List[TranslationsForResultIndexes]:
+        # trust_env pulls proxy information from environment variables (HTTP_PROXY and HTTPS_PROXY)
         async with aiohttp.ClientSession(
-                headers={'Authorization': Config.esv_api_key}, raise_for_status=True) as session:
+                headers={'Authorization': Config.esv_api_key}, trust_env=True, raise_for_status=True) as session:
             result_index = 0
             verses_in_chunk_counter = 0
             query_string_length = self.STARTING_REQUEST_LINE_SIZE
