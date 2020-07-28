@@ -1,10 +1,16 @@
 # Anoixo: Grammatical Bible Search
 [Anoixo](#why-anoixo) (a-NOIKS-oh [ə'nɔikso]) is a web app for finding morphological and syntactic constructions in the Bible in its original languages.
 
-Currently under development at Taylor University.
+Try it out at http://anoixo.sheesania.com/!
+
+## Background
+Anoixo was developed at Taylor University.
 
 - [Original project proposal with background, rationale, and a survey of existing morphological/syntactic search tools](https://docs.google.com/document/d/1tC8CPp7WmkOH8jjgBRM_YxbxWEMFS7oJpzKfHDsqlTA/edit?usp=sharing)
 - [A list of use cases for this tool](https://docs.google.com/document/d/1QOQpY0kGr6Km8lhTpPEhFMSxMB0C4uTeNH45Kl_2SKg/edit?usp=sharing)
+
+## Why "Anoixo"?
+ἀνοίξω means "I will open" in Koine Greek. The root ἀνοίγω appears in verses like Matthew 7:7 "Ask and it will be given to you, seek and you will find, knock and it will be opened [ἀνοιγήσεται] for you."
 
 ## Setup for development
 ### Database
@@ -142,6 +148,3 @@ If you'd like to update your deployment to the current version of the master bra
 ```
 ansible-playbook -i hosts.yaml playbook.yaml --tags "update" -K
 ```
-
-## Why "Anoixo"?
-ἀνοίξω means "I will open" in Koine Greek. The root ἀνοίγω appears in verses like Matthew 7:7 "Ask and it will be given to you, seek and you will find, knock and it will be opened [ἀνοιγήσεται] for you."
