@@ -41,17 +41,24 @@ const ResultsListing: React.FC<Props> = (props: Props) => {
     const pageEnd = pageStart + PAGE_SIZE;
     const totalPages = Math.ceil(props.results.length / PAGE_SIZE);
     const resultsForPage = props.results.slice(pageStart, pageEnd);
+    const pagination = (
+      <Pagination
+        className="results-item results-pagination"
+        count={totalPages}
+        page={page}
+        onChange={handlePageChange}
+        showFirstButton
+        showLastButton
+      />
+    );
 
     resultsView = (
       <div>
+        {pagination}
         {resultsForPage.map((passage, index) => (
           <PassageCard key={index} passage={passage} passageIndex={index} />
         ))}
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={handlePageChange}
-        />
+        {pagination}
       </div>
     );
   } else {
