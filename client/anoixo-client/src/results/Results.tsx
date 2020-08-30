@@ -118,7 +118,9 @@ const Results: React.FC<Props> = (props: Props) => {
       anchor="right"
       PaperProps={{ classes: { root: 'results-paper' } }}
     >
-      <div className="results-content">{display}</div>
+      <div id="results-content" className="results-content">
+        {display}
+      </div>
     </Drawer>
   );
 };
