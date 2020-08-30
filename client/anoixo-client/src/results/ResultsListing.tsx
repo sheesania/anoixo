@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SuccessResult } from './ResultTypes';
 import { Query } from '../query/QueryTypes';
 import BackForwardButton from '../common/BackForwardButton';
@@ -6,6 +6,7 @@ import CopyrightNotice from './CopyrightNotice';
 import PassageCard from './PassageCard';
 import VerbalizedQuery from './VerbalizedQuery';
 import Alert from '@material-ui/lab/Alert';
+import Pagination from '@material-ui/lab/Pagination';
 import Typography from '@material-ui/core/Typography';
 import './css/ResultsListing.css';
 
@@ -15,13 +16,51 @@ type Props = {
   closeResults: () => void;
 };
 
-const ResultsListing: React.FC<Props> = memo((props: Props) => {
+const PAGE_SIZE = 10;
+
+const ResultsListing: React.FC<Props> = (props: Props) => {
+  const [page, setPage] = useState(1);
+  const handlePageChange = useCallback(
+    (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+    },
+    [setPage]
+  );
+
+  useEffect(() => {
+    // Temporary hack for scrolling to top of page after page changes
+    const resultsDrawer = document.getElementById('results-content');
+    resultsDrawer && resultsDrawer.scrollIntoView(true);
+  }, [page]);
+
   const hasResults = props.results.length > 0;
   let resultsView;
+
   if (hasResults) {
-    resultsView = props.results.map((passage, index) => (
-      <PassageCard key={index} passage={passage} passageIndex={index} />
-    ));
+    const pageStart = (page - 1) * PAGE_SIZE;
+    const pageEnd = pageStart + PAGE_SIZE;
+    const totalPages = Math.ceil(props.results.length / PAGE_SIZE);
+    const resultsForPage = props.results.slice(pageStart, pageEnd);
+    const pagination = (
+      <Pagination
+        className="results-item results-pagination"
+        count={totalPages}
+        page={page}
+        onChange={handlePageChange}
+        showFirstButton
+        showLastButton
+      />
+    );
+
+    resultsView = (
+      <div>
+        {pagination}
+        {resultsForPage.map((passage, index) => (
+          <PassageCard key={index} passage={passage} passageIndex={index} />
+        ))}
+        {pagination}
+      </div>
+    );
   } else {
     resultsView = (
       <Alert className="results-item" severity="info">
@@ -52,6 +91,6 @@ const ResultsListing: React.FC<Props> = memo((props: Props) => {
       />
     </div>
   );
-});
+};
 
 export default ResultsListing;

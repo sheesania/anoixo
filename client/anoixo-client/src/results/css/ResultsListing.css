@@ -8,3 +8,7 @@
 .results-item {
   margin: 1.2rem;
 }
+
+.results-pagination > ul {
+  justify-content: center;
+}
