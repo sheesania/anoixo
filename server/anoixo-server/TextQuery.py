@@ -53,5 +53,10 @@ class TextQuery:
         for sequence in json['sequences']:
             self.sequences.append(WordSequence(sequence, on_parsing_error))
 
+        if 'page' in json and isinstance(json['page'], int) and json['page'] > 0:
+            self.page: int = json['page']
+        else:
+            self.page = 1
+
     def __repr__(self):
         return str(self.sequences)

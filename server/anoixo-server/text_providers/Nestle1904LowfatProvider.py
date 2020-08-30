@@ -1,6 +1,8 @@
 from typing import Any, Callable, Dict, List, Union
 from AnoixoError import AnoixoError, ProbableBugError, ServerOverwhelmedError
+import app_constants
 from BaseXClient import BaseXClient
+import math
 from QueryResult import QueryResult
 from text_providers.TextProvider import TextProvider
 from TextQuery import TextQuery
@@ -288,11 +290,20 @@ class Nestle1904LowfatProvider(TextProvider):
 
         def process_results(raw_results: str) -> QueryResult:
             results_json = json.loads(raw_results)
+            num_results = len(results_json)
+            total_pages = math.ceil(num_results / app_constants.page_size)
+            if query.page > total_pages:
+                raise ProbableBugError(
+                    f'Requested page {query.page} is out of bounds for results with {total_pages} total pages')
+
+            page_start = (query.page - 1) * app_constants.page_size
+            page_end = page_start + app_constants.page_size
+            results_for_page = results_json[page_start:page_end]
 
             def on_parsing_error(message: str):
                 raise ProbableBugError(f'Error parsing XML database response JSON: {message}')
 
-            return QueryResult(results_json, on_parsing_error)
+            return QueryResult(results_for_page, on_parsing_error)
 
         return self._execute_query_and_process_results(query_string, process_results)
 
