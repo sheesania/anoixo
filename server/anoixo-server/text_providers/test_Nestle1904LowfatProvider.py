@@ -90,6 +90,50 @@ def test_closes_basex_session_even_on_errors(mocker, basex_session_mock, provide
     assert basex_session_mock.return_value.close.call_count == 3
 
 
+def test_text_query_adds_pagination_info(mocker, basex_session_mock, provider):
+    basex_results = ['{"references": ["Mark.1.1"], "words": []}' for _ in range(23)]
+    basex_string = f'[{",".join(basex_results)}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert result.page == 1
+    assert result.total_pages == 3
+
+
+def test_text_query_returns_requested_page(mocker, basex_session_mock, provider):
+    basex_results = [f'{{"references": ["Mark.1.{i}"], "words": []}}' for i in range(23)]
+    basex_string = f'[{",".join(basex_results)}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': [], 'page': 2}, lambda x: None))
+    assert result.page == 2
+    assert len(result.passages) == 10
+    assert result.passages[0].references[0].verse == 10
+    assert result.passages[9].references[0].verse == 19
+
+
+def test_text_query_handles_page_smaller_than_pagesize(mocker, basex_session_mock, provider):
+    basex_results = [f'{{"references": ["Mark.1.1"], "words": []}}' for i in range(5)]
+    basex_string = f'[{",".join(basex_results)}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert len(result.passages) == 5
+
+
+def test_text_query_handles_request_for_invalid_page(mocker, basex_session_mock, provider):
+    basex_string = '[{"references": ["Mark.1.1"], "words": []}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    with pytest.raises(ProbableBugError) as excinfo:
+        provider.text_query(TextQuery({'sequences': [], 'page': 2}, lambda x: None))
+    assert excinfo.value.message == 'Requested page 2 is out of bounds for results with 1 total pages'
+
+
+def test_text_query_handles_pagination_for_no_results(mocker, basex_session_mock, provider):
+    basex_string = '[]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert result.page == 1
+    assert result.total_pages == 1
+
+
 def test_text_query_error_on_query(mocker, basex_session_mock, provider):
     def raise_exception():
         raise Exception()
