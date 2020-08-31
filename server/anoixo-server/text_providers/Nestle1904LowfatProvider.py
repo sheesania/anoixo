@@ -289,21 +289,23 @@ class Nestle1904LowfatProvider(TextProvider):
         query_string = self._build_query_string(query)
 
         def process_results(raw_results: str) -> QueryResult:
+            def on_parsing_error(message: str):
+                raise ProbableBugError(f'Error parsing XML database response JSON: {message}')
+
             results_json = json.loads(raw_results)
+            if not isinstance(results_json, list):
+                on_parsing_error('Results are not a list')
+
             num_results = len(results_json)
-            total_pages = math.ceil(num_results / app_constants.page_size)
+            total_pages = math.ceil(num_results / app_constants.page_size) or 1
             if query.page > total_pages:
                 raise ProbableBugError(
                     f'Requested page {query.page} is out of bounds for results with {total_pages} total pages')
-
             page_start = (query.page - 1) * app_constants.page_size
             page_end = page_start + app_constants.page_size
             results_for_page = results_json[page_start:page_end]
 
-            def on_parsing_error(message: str):
-                raise ProbableBugError(f'Error parsing XML database response JSON: {message}')
-
-            return QueryResult(results_for_page, on_parsing_error)
+            return QueryResult(results_for_page, query.page, total_pages, on_parsing_error)
 
         return self._execute_query_and_process_results(query_string, process_results)
 
