@@ -74,7 +74,7 @@ def log_request(response):
     response_json = response.json
     if isinstance(response_json, list):
         response_log = f'<{len(response_json)} results>'
-    elif 'results' in response_json:
+    elif response_json and 'results' in response_json:
         response_json['results'] = f'<{len(response_json["results"])} results>'
         response_log = response_json
     else:

@@ -101,13 +101,14 @@ const Results: React.FC<Props> = (props: Props) => {
   if (error) {
     display = <ResultsError error={error} closeResults={closeSelf} />;
   } else if (results) {
-    display = (
-      <ResultsListing
-        query={query}
-        results={results}
-        closeResults={closeSelf}
-      />
-    );
+    // display = (
+    //   <ResultsListing
+    //     query={query}
+    //     results={results}
+    //     closeResults={closeSelf}
+    //   />
+    // );
+    display = <div>{JSON.stringify(results)}</div>;
   } else {
     display = <Loading closeSelf={closeSelf} />;
   }

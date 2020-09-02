@@ -17,7 +17,15 @@ export type PassageResult = {
   translation: string;
 };
 
-export type SuccessResult = PassageResult[];
+export type Pagination = {
+  page: number;
+  totalPages: number;
+};
+
+export type SuccessResult = {
+  pagination: Pagination;
+  results: PassageResult[];
+};
 
 export type ErrorResult = {
   error: string;
@@ -78,11 +86,30 @@ export const parsePassageResult = (json: any): PassageResult => {
   };
 };
 
-export const parseSuccessResult = (json: any): SuccessResult => {
-  if (!Array.isArray(json)) {
+export const parsePagination = (json: any): Pagination => {
+  if (
+    !(json && Number.isInteger(json.page) && Number.isInteger(json.totalPages))
+  ) {
     throw new TypeError();
   }
-  return json.map((passage: any) => parsePassageResult(passage));
+
+  return {
+    page: json.page,
+    totalPages: json.totalPages,
+  };
+};
+
+export const parseSuccessResult = (json: any): SuccessResult => {
+  if (
+    !(json && json.pagination && json.results && Array.isArray(json.results))
+  ) {
+    throw new TypeError();
+  }
+
+  return {
+    pagination: parsePagination(json.pagination),
+    results: json.results.map((passage: any) => parsePassageResult(passage)),
+  };
 };
 
 export const parseErrorResult = (json: any): ErrorResult => {

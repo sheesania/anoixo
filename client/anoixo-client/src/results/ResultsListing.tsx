@@ -33,14 +33,14 @@ const ResultsListing: React.FC<Props> = (props: Props) => {
     resultsDrawer && resultsDrawer.scrollIntoView(true);
   }, [page]);
 
-  const hasResults = props.results.length > 0;
+  const hasResults = props.results.results.length > 0;
   let resultsView;
 
   if (hasResults) {
     const pageStart = (page - 1) * PAGE_SIZE;
     const pageEnd = pageStart + PAGE_SIZE;
-    const totalPages = Math.ceil(props.results.length / PAGE_SIZE);
-    const resultsForPage = props.results.slice(pageStart, pageEnd);
+    const totalPages = Math.ceil(props.results.results.length / PAGE_SIZE);
+    const resultsForPage = props.results.results.slice(pageStart, pageEnd);
     const pagination = (
       <Pagination
         className="results-item results-pagination"
