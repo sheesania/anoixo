@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useTextSetting } from '../texts/TextSettings';
 import { Query } from '../query/QueryTypes';
 import {
-  ErrorResult,
-  SuccessResult,
-  parseErrorResult,
-  parseSuccessResult,
+  ErrorResponse,
+  SuccessResponse,
+  parseErrorResponse,
+  parseSuccessResponse,
 } from './ResultTypes';
 import { ServerSettings } from '../AppSettings';
 import Loading from './Loading';
@@ -31,15 +31,17 @@ const REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE =
 
 const Results: React.FC<Props> = (props: Props) => {
   const { query, isOpen, closeSelf } = props;
-  const [results, setResults] = useState<SuccessResult | undefined>(undefined);
-  const [error, setError] = useState<ErrorResult | undefined>(undefined);
+  const [success, setSuccess] = useState<SuccessResponse | undefined>(
+    undefined
+  );
+  const [error, setError] = useState<ErrorResponse | undefined>(undefined);
   const currentText = useTextSetting();
 
   const handleRequestSuccess = (getJson: Promise<any>) => {
     getJson.then((json: any) => {
       try {
-        const parsedResult = parseSuccessResult(json);
-        setResults(parsedResult);
+        const parsedSuccess = parseSuccessResponse(json);
+        setSuccess(parsedSuccess);
       } catch (e) {
         setError({
           error: 'JSON parsing error',
@@ -53,7 +55,7 @@ const Results: React.FC<Props> = (props: Props) => {
   const handleRequestError = (getJson: Promise<any>) => {
     getJson.then((json: any) => {
       try {
-        const parsedError = parseErrorResult(json);
+        const parsedError = parseErrorResponse(json);
         setError(parsedError);
       } catch (e) {
         setError({
@@ -70,7 +72,7 @@ const Results: React.FC<Props> = (props: Props) => {
     if (!isOpen) {
       return;
     }
-    setResults(undefined);
+    setSuccess(undefined);
     setError(undefined);
     const url = `${ServerSettings.apiUrl}/text/${currentText.serverTextId}`;
     fetch(url, {
@@ -100,7 +102,7 @@ const Results: React.FC<Props> = (props: Props) => {
   let display;
   if (error) {
     display = <ResultsError error={error} closeResults={closeSelf} />;
-  } else if (results) {
+  } else if (success) {
     // display = (
     //   <ResultsListing
     //     query={query}
@@ -108,7 +110,7 @@ const Results: React.FC<Props> = (props: Props) => {
     //     closeResults={closeSelf}
     //   />
     // );
-    display = <div>{JSON.stringify(results)}</div>;
+    display = <div>{JSON.stringify(success)}</div>;
   } else {
     display = <Loading closeSelf={closeSelf} />;
   }

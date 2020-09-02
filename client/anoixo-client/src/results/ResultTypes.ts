@@ -22,18 +22,18 @@ export type Pagination = {
   totalPages: number;
 };
 
-export type SuccessResult = {
+export type SuccessResponse = {
   pagination: Pagination;
   results: PassageResult[];
 };
 
-export type ErrorResult = {
+export type ErrorResponse = {
   error: string;
   description: string;
   friendlyErrorMessage: string;
 };
 
-export const parseWordResult = (json: any): WordResult => {
+const parseWordResult = (json: any): WordResult => {
   if (
     !(
       json &&
@@ -47,7 +47,7 @@ export const parseWordResult = (json: any): WordResult => {
   return json as WordResult;
 };
 
-export const parseReferenceResult = (json: any): ReferenceResult => {
+const parseReferenceResult = (json: any): ReferenceResult => {
   if (
     !(
       json &&
@@ -65,7 +65,7 @@ export const parseReferenceResult = (json: any): ReferenceResult => {
   };
 };
 
-export const parsePassageResult = (json: any): PassageResult => {
+const parsePassageResult = (json: any): PassageResult => {
   if (
     !(
       json &&
@@ -86,7 +86,7 @@ export const parsePassageResult = (json: any): PassageResult => {
   };
 };
 
-export const parsePagination = (json: any): Pagination => {
+const parsePagination = (json: any): Pagination => {
   if (
     !(json && Number.isInteger(json.page) && Number.isInteger(json.totalPages))
   ) {
@@ -99,7 +99,7 @@ export const parsePagination = (json: any): Pagination => {
   };
 };
 
-export const parseSuccessResult = (json: any): SuccessResult => {
+export const parseSuccessResponse = (json: any): SuccessResponse => {
   if (
     !(json && json.pagination && json.results && Array.isArray(json.results))
   ) {
@@ -112,7 +112,7 @@ export const parseSuccessResult = (json: any): SuccessResult => {
   };
 };
 
-export const parseErrorResult = (json: any): ErrorResult => {
+export const parseErrorResponse = (json: any): ErrorResponse => {
   if (
     !(
       json &&

@@ -6,12 +6,12 @@ import { TextContextProvider } from '../../texts/TextContext';
 import { TextName } from '../../texts/TextSettings';
 import PassageCard from '../PassageCard';
 import ResultsListing from '../ResultsListing';
-import { SuccessResult } from '../ResultTypes';
+import { SuccessResponse } from '../ResultTypes';
 
 describe('ResultsListing component', () => {
   describe('results view', () => {
     it('displays a message if no results were passed in', () => {
-      const result: SuccessResult = [];
+      const result: SuccessResponse = [];
       const { getByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
@@ -101,7 +101,7 @@ describe('ResultsListing component', () => {
           ],
         ],
       };
-      const result: SuccessResult = [];
+      const result: SuccessResponse = [];
       const { getByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
@@ -152,7 +152,7 @@ describe('ResultsListing component', () => {
     });
 
     it('does not render the copyright notice and link if there are no results', () => {
-      const result: SuccessResult = [];
+      const result: SuccessResponse = [];
       const { queryByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
@@ -169,7 +169,7 @@ describe('ResultsListing component', () => {
 
   describe('pagination', () => {
     it('displays the correct pages in the pagination if there are results', () => {
-      const result: SuccessResult = [];
+      const result: SuccessResponse = [];
       for (let i = 0; i < 23; i++) {
         result.push({ references: [], words: [], translation: '' });
       }
@@ -189,7 +189,7 @@ describe('ResultsListing component', () => {
     });
 
     it('goes to the right page when the pagination is clicked', () => {
-      const result: SuccessResult = [];
+      const result: SuccessResponse = [];
       for (let i = 0; i < 23; i++) {
         result.push({ references: [], words: [], translation: `passage ${i}` });
       }
@@ -211,7 +211,7 @@ describe('ResultsListing component', () => {
     });
 
     it('does not display pagination if there are no results', () => {
-      const result: SuccessResult = [];
+      const result: SuccessResponse = [];
       const { queryAllByLabelText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing

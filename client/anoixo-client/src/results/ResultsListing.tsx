@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { SuccessResult } from './ResultTypes';
+import { SuccessResponse } from './ResultTypes';
 import { Query } from '../query/QueryTypes';
 import BackForwardButton from '../common/BackForwardButton';
 import CopyrightNotice from './CopyrightNotice';
@@ -12,7 +12,7 @@ import './css/ResultsListing.css';
 
 type Props = {
   query: Query;
-  results: SuccessResult;
+  results: SuccessResponse;
   closeResults: () => void;
 };
 

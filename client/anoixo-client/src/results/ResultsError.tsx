@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { ErrorResult } from './ResultTypes';
+import { ErrorResponse } from './ResultTypes';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import BackForwardButton from '../common/BackForwardButton';
@@ -8,7 +8,7 @@ import { FEEDBACK_FORM_URL } from '../AppSettings';
 import './css/ResultsError.css';
 
 type Props = {
-  error: ErrorResult;
+  error: ErrorResponse;
   closeResults: () => void;
 };
 
