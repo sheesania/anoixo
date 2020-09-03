@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTextSetting } from '../texts/TextSettings';
 import { Query } from '../query/QueryTypes';
 import {
@@ -35,7 +35,15 @@ const Results: React.FC<Props> = (props: Props) => {
     undefined
   );
   const [error, setError] = useState<ErrorResponse | undefined>(undefined);
+  const [page, setPage] = useState<number>(1);
   const currentText = useTextSetting();
+
+  const goToPage = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+    },
+    [setPage]
+  );
 
   const handleRequestSuccess = (getJson: Promise<any>) => {
     getJson.then((json: any) => {
@@ -80,7 +88,10 @@ const Results: React.FC<Props> = (props: Props) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(query),
+      body: JSON.stringify({
+        page: page,
+        ...query,
+      }),
     })
       .then(response => {
         const getJson = response.json();
@@ -97,20 +108,32 @@ const Results: React.FC<Props> = (props: Props) => {
           friendlyErrorMessage: REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE,
         });
       });
-  }, [isOpen, query, currentText]);
+  }, [isOpen, page, query, currentText]);
 
   let display;
   if (error) {
     display = <ResultsError error={error} closeResults={closeSelf} />;
   } else if (success) {
+    display = (
+      <ResultsListing
+        query={query}
+        response={success}
+        goToPage={goToPage}
+        closeResults={closeSelf}
+      />
+    );
     // display = (
-    //   <ResultsListing
-    //     query={query}
-    //     results={results}
-    //     closeResults={closeSelf}
-    //   />
+    //   <div>
+    //     <button
+    //       onClick={() => {
+    //         goToPage(page + 1);
+    //       }}
+    //     >
+    //       give me the next page
+    //     </button>
+    //     {JSON.stringify(success)}
+    //   </div>
     // );
-    display = <div>{JSON.stringify(success)}</div>;
   } else {
     display = <Loading closeSelf={closeSelf} />;
   }
