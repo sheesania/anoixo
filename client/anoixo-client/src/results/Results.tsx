@@ -38,6 +38,11 @@ const Results: React.FC<Props> = (props: Props) => {
   const [page, setPage] = useState<number>(1);
   const currentText = useTextSetting();
 
+  const closeResults = useCallback(() => {
+    setPage(1);
+    closeSelf();
+  }, [setPage, closeSelf]);
+
   const goToPage = useCallback(
     (newPage: number) => {
       setPage(newPage);
@@ -112,14 +117,14 @@ const Results: React.FC<Props> = (props: Props) => {
 
   let display;
   if (error) {
-    display = <ResultsError error={error} closeResults={closeSelf} />;
+    display = <ResultsError error={error} closeResults={closeResults} />;
   } else if (success) {
     display = (
       <ResultsListing
         query={query}
         response={success}
         goToPage={goToPage}
-        closeResults={closeSelf}
+        closeResults={closeResults}
       />
     );
     // display = (
@@ -135,7 +140,7 @@ const Results: React.FC<Props> = (props: Props) => {
     //   </div>
     // );
   } else {
-    display = <Loading closeSelf={closeSelf} />;
+    display = <Loading closeSelf={closeResults} />;
   }
 
   return (
