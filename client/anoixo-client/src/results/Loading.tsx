@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import BackForwardButton from '../common/BackForwardButton';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import LoadingGif from './Loading.gif';
 import './css/Loading.css';
 
