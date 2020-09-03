@@ -127,18 +127,6 @@ const Results: React.FC<Props> = (props: Props) => {
         closeResults={closeResults}
       />
     );
-    // display = (
-    //   <div>
-    //     <button
-    //       onClick={() => {
-    //         goToPage(page + 1);
-    //       }}
-    //     >
-    //       give me the next page
-    //     </button>
-    //     {JSON.stringify(success)}
-    //   </div>
-    // );
   } else {
     display = <Loading closeSelf={closeResults} />;
   }
