@@ -10,11 +10,7 @@ type Props = {
 const Loading: React.FC<Props> = memo((props: Props) => {
   return (
     <div className="loading-screen">
-      <img
-        src={LoadingGif}
-        alt="Loading animation"
-        style={{ maxWidth: '450px' }}
-      />
+      <img src={LoadingGif} alt="Loading animation" className="loading-gif" />
       <BackForwardButton
         type="back"
         onClick={props.closeSelf}
