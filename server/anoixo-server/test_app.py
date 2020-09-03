@@ -26,7 +26,7 @@ def get_json_response(response: BaseResponse) -> Dict:
 
 def test_logging_for_text_query(monkeypatch, capsys, client):
     def mock_provider_text_query(self, query_result):
-        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], lambda x: None)
+        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], 1, 1, lambda x: None)
     monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
 
     def mock_add_translations(self, query_result):
@@ -47,7 +47,7 @@ def test_logging_for_text_query(monkeypatch, capsys, client):
         r"^\[\w\w\w \w\w\w \d\d \d\d:\d\d:\d\d \d\d\d\d\] 127\.0\.0\.1 POST /api/text/nlf 200\n\t" +
         r"Time: \d+\.\d+\n\t" +
         r"Request: {'sequences': \[\[{'attributes': {'lemma': 'λόγος'}}]]}\n\t" +
-        r"Response: <1 results>$",
+        r"Response: {'pagination': {'page': 1, 'totalPages': 1}, 'results': '<1 results>'}$",
         captured.out
     )
 
@@ -106,7 +106,7 @@ def test_text_query_success(monkeypatch, client):
                 'matchedWordQuery': 0,
                 'text': 'word'
             }]
-        }], lambda x: None)
+        }], 1, 1, lambda x: None)
     monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
 
     def mock_add_translations(self, query_result):
@@ -116,21 +116,27 @@ def test_text_query_success(monkeypatch, client):
 
     response = client.post('/api/text/nlf', json={'sequences': []})
     assert response.status_code == 200
-    assert get_json_response(response) == [
-        {
-            'references': [{
-                'book': 'Mark',
-                'chapter': 1,
-                'verse': 1,
-            }],
-            'words': [{
-                'matchedSequence': 0,
-                'matchedWordQuery': 0,
-                'text': 'word'
-            }],
-            'translation': 'translation text'
-        }
-    ]
+    assert get_json_response(response) == {
+        'pagination': {
+            'page': 1,
+            'totalPages': 1,
+        },
+        'results': [
+            {
+                'references': [{
+                    'book': 'Mark',
+                    'chapter': 1,
+                    'verse': 1,
+                }],
+                'words': [{
+                    'matchedSequence': 0,
+                    'matchedWordQuery': 0,
+                    'text': 'word'
+                }],
+                'translation': 'translation text'
+            }
+        ],
+    }
 
 
 def test_text_query_handles_no_json_given(client):
@@ -181,7 +187,7 @@ def test_text_query_handles_text_provider_error(monkeypatch, client):
 
 def test_text_query_handles_translation_provider_error(monkeypatch, client):
     def mock_provider_text_query(self, query_result):
-        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], lambda x: None)
+        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], 1, 1, lambda x: None)
     monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
 
     def mock_add_translations(self, query_result):
@@ -199,7 +205,7 @@ def test_text_query_handles_translation_provider_error(monkeypatch, client):
 
 def test_text_query_rate_limit(monkeypatch, client):
     def mock_provider_text_query(self, query_result):
-        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], lambda x: None)
+        return QueryResult([{'references': ['Mark.1.1'], 'words': []}], 1, 1, lambda x: None)
     monkeypatch.setattr(Nestle1904LowfatProvider, 'text_query', mock_provider_text_query)
 
     def mock_add_translations(self, query_result):

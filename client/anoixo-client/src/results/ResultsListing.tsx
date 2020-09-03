@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { SuccessResult } from './ResultTypes';
+import React, { useCallback } from 'react';
+import { SuccessResponse } from './ResultTypes';
 import { Query } from '../query/QueryTypes';
 import BackForwardButton from '../common/BackForwardButton';
 import CopyrightNotice from './CopyrightNotice';
@@ -12,40 +12,29 @@ import './css/ResultsListing.css';
 
 type Props = {
   query: Query;
-  results: SuccessResult;
+  response: SuccessResponse;
+  goToPage: (page: number) => void;
   closeResults: () => void;
 };
 
-const PAGE_SIZE = 10;
-
 const ResultsListing: React.FC<Props> = (props: Props) => {
-  const [page, setPage] = useState(1);
+  const { query, response, goToPage, closeResults } = props;
   const handlePageChange = useCallback(
-    (event: React.ChangeEvent<unknown>, value: number) => {
-      setPage(value);
+    (event: React.ChangeEvent<unknown>, pageNumber: number) => {
+      goToPage(pageNumber);
     },
-    [setPage]
+    [goToPage]
   );
 
-  useEffect(() => {
-    // Temporary hack for scrolling to top of page after page changes
-    const resultsDrawer = document.getElementById('results-content');
-    resultsDrawer && resultsDrawer.scrollIntoView(true);
-  }, [page]);
-
-  const hasResults = props.results.length > 0;
+  const hasResults = response.results.length > 0;
   let resultsView;
 
   if (hasResults) {
-    const pageStart = (page - 1) * PAGE_SIZE;
-    const pageEnd = pageStart + PAGE_SIZE;
-    const totalPages = Math.ceil(props.results.length / PAGE_SIZE);
-    const resultsForPage = props.results.slice(pageStart, pageEnd);
     const pagination = (
       <Pagination
         className="results-item results-pagination"
-        count={totalPages}
-        page={page}
+        count={response.pagination.totalPages}
+        page={response.pagination.page}
         onChange={handlePageChange}
         showFirstButton
         showLastButton
@@ -55,7 +44,7 @@ const ResultsListing: React.FC<Props> = (props: Props) => {
     resultsView = (
       <div>
         {pagination}
-        {resultsForPage.map((passage, index) => (
+        {response.results.map((passage, index) => (
           <PassageCard key={index} passage={passage} passageIndex={index} />
         ))}
         {pagination}
@@ -77,16 +66,16 @@ const ResultsListing: React.FC<Props> = (props: Props) => {
         </Typography>
         <BackForwardButton
           type="back"
-          onClick={props.closeResults}
+          onClick={closeResults}
           customStyling={{ marginLeft: '1.2rem' }}
         />
         {hasResults && <CopyrightNotice />}
       </div>
-      <VerbalizedQuery query={props.query} />
+      <VerbalizedQuery query={query} />
       {resultsView}
       <BackForwardButton
         type="back"
-        onClick={props.closeResults}
+        onClick={closeResults}
         customStyling={{ marginLeft: '1.2rem', marginBottom: '1.2rem' }}
       />
     </div>

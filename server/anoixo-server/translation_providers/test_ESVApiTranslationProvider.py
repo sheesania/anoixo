@@ -23,7 +23,7 @@ def make_mock_exception(mocker, exception_class_name):
 
 
 def query_result_for_json(json: List) -> QueryResult:
-    return QueryResult(json, lambda x: None)
+    return QueryResult(json, 1, 1, lambda x: None)
 
 
 @pytest.fixture
