@@ -44,7 +44,7 @@ def test_logging_for_text_query(monkeypatch, capsys, client):
     ]})
     captured = capsys.readouterr()
     assert re.search(
-        r"^\[\w\w\w \w\w\w \d\d \d\d:\d\d:\d\d \d\d\d\d\] 127\.0\.0\.1 POST /api/text/nlf 200\n\t" +
+        r"^\[\w\w\w \w\w\w (\d| )\d \d\d:\d\d:\d\d \d\d\d\d\] 127\.0\.0\.1 POST /api/text/nlf 200\n\t" +
         r"Time: \d+\.\d+\n\t" +
         r"Request: {'sequences': \[\[{'attributes': {'lemma': 'λόγος'}}]]}\n\t" +
         r"Response: {'pagination': {'page': 1, 'totalPages': 1}, 'results': '<1 results>'}$",
