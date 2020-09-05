@@ -39,8 +39,8 @@ const Results: React.FC<Props> = (props: Props) => {
   const currentText = useTextSetting();
 
   const closeResults = useCallback(() => {
-    setPage(1);
     closeSelf();
+    setPage(1);
   }, [setPage, closeSelf]);
 
   const goToPage = useCallback(
