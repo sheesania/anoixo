@@ -78,13 +78,21 @@ class PassageResult:
 
 
 class QueryResult:
-    def __init__(self, json: Any, on_parsing_error: Callable[[str], Any]):
+    def __init__(self, json: Any, page: int, total_pages: int, on_parsing_error: Callable[[str], Any]):
         if not isinstance(json, list):
             on_parsing_error('Results are not a list')
         self.passages: List[PassageResult] = [PassageResult(passage, on_parsing_error) for passage in json]
+        self.page = page
+        self.total_pages = total_pages
 
     def __repr__(self):
         return f'{self.serialize()}'
 
-    def serialize(self) -> List[Dict]:
-        return [passage.serialize() for passage in self.passages]
+    def serialize(self) -> Dict[str, Any]:
+        return {
+            'pagination': {
+                'page': self.page,
+                'totalPages': self.total_pages,
+            },
+            'results': [passage.serialize() for passage in self.passages]
+        }

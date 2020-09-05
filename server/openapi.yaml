@@ -6,7 +6,7 @@
 
 openapi: 3.0.2
 info:
-  version: 0.1.0
+  version: 0.1.1
   title: Anoixo Server
   description: Server API for Anoixo Grammatical Bible Search. Meant to be
     consumed by the Anoixo client.
@@ -121,6 +121,11 @@ components:
           items:
             $ref: '#/components/schemas/WordSequence'
           example: '[[{"attributes": {"root": "ουδε"}, "link": {"allowedWordsBetween": 0}}, {"attributes": {"pos": "Verb", "mood": "Infinitive"}}], [{"attributes": {"pos": "Verb", "mood": "Infinitive"}}]]'
+        page:
+          description: What page of results to get. If not included, page 1
+            will be returned by default.
+          type: integer
+          example: 2
       required:
         - sequences
       example:  # A query for ουδε immediately followed by an infinitive in the
@@ -136,6 +141,7 @@ components:
           - - attributes: 
                 pos: Verb
                 mood: Infinitive
+        page: 2
               
     WordSequence:
       title: WordSequence
@@ -192,31 +198,43 @@ components:
     QueryResults:
       title: QueryResults
       description: Results of a search for passages matching a query.
-      type: array
-      items:
-        $ref: '#/components/schemas/PassageResult'
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PassageResult'
+      required:
+        - pagination
+        - results
       example:
-        - references:
-            - book: John
-              chapter: 11
-              verse: 35
-        - words:
-            - text: ἐδάκρυσεν
-              matchedSequence: 0
-              matchedWordQuery: 0
-              partOfSpeech: Verb
-              tense: Aorist
-            - text: ὁ
-              matchedSequence: 0
-              matchedWordQuery: 1
-              partOfSpeech: Determiner
-              case: Nominative
-            - text: Ἰησοῦς.
-              matchedSequence: -1
-              matchedWordQuery: -1
-              partOfSpeech: Noun
-              case: Nominative
-        - translation: 'Jesus wept.'
+        - pagination:
+          - page: 2
+          - totalPages: 5
+        - results:
+          - - references:
+                - book: John
+                  chapter: 11
+                  verse: 35
+            - words:
+                - text: ἐδάκρυσεν
+                  matchedSequence: 0
+                  matchedWordQuery: 0
+                  partOfSpeech: Verb
+                  tense: Aorist
+                - text: ὁ
+                  matchedSequence: 0
+                  matchedWordQuery: 1
+                  partOfSpeech: Determiner
+                  case: Nominative
+                - text: Ἰησοῦς.
+                  matchedSequence: -1
+                  matchedWordQuery: -1
+                  partOfSpeech: Noun
+                  case: Nominative
+            - translation: 'Jesus wept.'
     
     PassageResult:
       title: PassageResult
@@ -307,6 +325,23 @@ components:
         - text
         - matchedSequence
         - matchedWordQuery
+
+    Pagination:
+      title: Pagination
+      description: Information about the pages of results.
+      type: object
+      properties:
+        page:
+          description: The current page being sent back. Page indexes start at 1.
+          type: integer
+          example: 2
+        totalPages:
+          description: The total number of pages of results available.
+          type: integer
+          example: 5
+      required:
+        - page
+        - totalPages
 
 
     AttributeQueryResults:

@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from TextQuery import Link
+from TextQuery import Link, TextQuery
 
 
 def test_link_allowed_words_between_must_be_int():
@@ -10,3 +10,8 @@ def test_link_allowed_words_between_must_be_int():
     on_parsing_error_float = MagicMock()
     Link({'allowedWordsBetween': 3.14}, on_parsing_error_float)
     on_parsing_error_float.assert_called_with('Link is not a dictionary with int attribute \'allowedWordsBetween\'')
+
+
+def test_page_defaults_to_1():
+    query = TextQuery({'sequences': []}, lambda x: None)
+    assert query.page == 1

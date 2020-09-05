@@ -17,15 +17,23 @@ export type PassageResult = {
   translation: string;
 };
 
-export type SuccessResult = PassageResult[];
+export type Pagination = {
+  page: number;
+  totalPages: number;
+};
 
-export type ErrorResult = {
+export type SuccessResponse = {
+  pagination: Pagination;
+  results: PassageResult[];
+};
+
+export type ErrorResponse = {
   error: string;
   description: string;
   friendlyErrorMessage: string;
 };
 
-export const parseWordResult = (json: any): WordResult => {
+const parseWordResult = (json: any): WordResult => {
   if (
     !(
       json &&
@@ -39,7 +47,7 @@ export const parseWordResult = (json: any): WordResult => {
   return json as WordResult;
 };
 
-export const parseReferenceResult = (json: any): ReferenceResult => {
+const parseReferenceResult = (json: any): ReferenceResult => {
   if (
     !(
       json &&
@@ -57,7 +65,7 @@ export const parseReferenceResult = (json: any): ReferenceResult => {
   };
 };
 
-export const parsePassageResult = (json: any): PassageResult => {
+const parsePassageResult = (json: any): PassageResult => {
   if (
     !(
       json &&
@@ -78,14 +86,33 @@ export const parsePassageResult = (json: any): PassageResult => {
   };
 };
 
-export const parseSuccessResult = (json: any): SuccessResult => {
-  if (!Array.isArray(json)) {
+const parsePagination = (json: any): Pagination => {
+  if (
+    !(json && Number.isInteger(json.page) && Number.isInteger(json.totalPages))
+  ) {
     throw new TypeError();
   }
-  return json.map((passage: any) => parsePassageResult(passage));
+
+  return {
+    page: json.page,
+    totalPages: json.totalPages,
+  };
 };
 
-export const parseErrorResult = (json: any): ErrorResult => {
+export const parseSuccessResponse = (json: any): SuccessResponse => {
+  if (
+    !(json && json.pagination && json.results && Array.isArray(json.results))
+  ) {
+    throw new TypeError();
+  }
+
+  return {
+    pagination: parsePagination(json.pagination),
+    results: json.results.map((passage: any) => parsePassageResult(passage)),
+  };
+};
+
+export const parseErrorResponse = (json: any): ErrorResponse => {
   if (
     !(
       json &&

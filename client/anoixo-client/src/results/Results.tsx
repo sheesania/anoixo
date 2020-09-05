@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTextSetting } from '../texts/TextSettings';
 import { Query } from '../query/QueryTypes';
 import {
-  ErrorResult,
-  SuccessResult,
-  parseErrorResult,
-  parseSuccessResult,
+  ErrorResponse,
+  SuccessResponse,
+  parseErrorResponse,
+  parseSuccessResponse,
 } from './ResultTypes';
 import { ServerSettings } from '../AppSettings';
 import Loading from './Loading';
@@ -31,15 +31,30 @@ const REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE =
 
 const Results: React.FC<Props> = (props: Props) => {
   const { query, isOpen, closeSelf } = props;
-  const [results, setResults] = useState<SuccessResult | undefined>(undefined);
-  const [error, setError] = useState<ErrorResult | undefined>(undefined);
+  const [success, setSuccess] = useState<SuccessResponse | undefined>(
+    undefined
+  );
+  const [error, setError] = useState<ErrorResponse | undefined>(undefined);
+  const [page, setPage] = useState<number>(1);
   const currentText = useTextSetting();
+
+  const closeResults = useCallback(() => {
+    closeSelf();
+    setPage(1);
+  }, [setPage, closeSelf]);
+
+  const goToPage = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+    },
+    [setPage]
+  );
 
   const handleRequestSuccess = (getJson: Promise<any>) => {
     getJson.then((json: any) => {
       try {
-        const parsedResult = parseSuccessResult(json);
-        setResults(parsedResult);
+        const parsedSuccess = parseSuccessResponse(json);
+        setSuccess(parsedSuccess);
       } catch (e) {
         setError({
           error: 'JSON parsing error',
@@ -53,7 +68,7 @@ const Results: React.FC<Props> = (props: Props) => {
   const handleRequestError = (getJson: Promise<any>) => {
     getJson.then((json: any) => {
       try {
-        const parsedError = parseErrorResult(json);
+        const parsedError = parseErrorResponse(json);
         setError(parsedError);
       } catch (e) {
         setError({
@@ -70,7 +85,7 @@ const Results: React.FC<Props> = (props: Props) => {
     if (!isOpen) {
       return;
     }
-    setResults(undefined);
+    setSuccess(undefined);
     setError(undefined);
     const url = `${ServerSettings.apiUrl}/text/${currentText.serverTextId}`;
     fetch(url, {
@@ -78,7 +93,10 @@ const Results: React.FC<Props> = (props: Props) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(query),
+      body: JSON.stringify({
+        page: page,
+        ...query,
+      }),
     })
       .then(response => {
         const getJson = response.json();
@@ -95,21 +113,22 @@ const Results: React.FC<Props> = (props: Props) => {
           friendlyErrorMessage: REQUEST_SENDING_ERROR_FRIENDLY_MESSAGE,
         });
       });
-  }, [isOpen, query, currentText]);
+  }, [isOpen, page, query, currentText]);
 
   let display;
   if (error) {
-    display = <ResultsError error={error} closeResults={closeSelf} />;
-  } else if (results) {
+    display = <ResultsError error={error} closeResults={closeResults} />;
+  } else if (success) {
     display = (
       <ResultsListing
         query={query}
-        results={results}
-        closeResults={closeSelf}
+        response={success}
+        goToPage={goToPage}
+        closeResults={closeResults}
       />
     );
   } else {
-    display = <Loading closeSelf={closeSelf} />;
+    display = <Loading closeSelf={closeResults} />;
   }
 
   return (

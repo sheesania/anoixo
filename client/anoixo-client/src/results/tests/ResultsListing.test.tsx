@@ -6,17 +6,25 @@ import { TextContextProvider } from '../../texts/TextContext';
 import { TextName } from '../../texts/TextSettings';
 import PassageCard from '../PassageCard';
 import ResultsListing from '../ResultsListing';
-import { SuccessResult } from '../ResultTypes';
 
 describe('ResultsListing component', () => {
+  const blankResponse = {
+    pagination: {
+      page: 1,
+      totalPages: 1,
+    },
+    results: [],
+  };
+
   describe('results view', () => {
     it('displays a message if no results were passed in', () => {
-      const result: SuccessResult = [];
+      const response = blankResponse;
       const { getByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -28,16 +36,20 @@ describe('ResultsListing component', () => {
     });
 
     it('displays passage cards for results if results were passed in', () => {
-      const result = [
-        { references: [], words: [], translation: '' },
-        { references: [], words: [], translation: '' },
-        { references: [], words: [], translation: '' },
-      ];
+      const response = {
+        ...blankResponse,
+        results: [
+          { references: [], words: [], translation: '' },
+          { references: [], words: [], translation: '' },
+          { references: [], words: [], translation: '' },
+        ],
+      };
       const wrapper = mount(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -46,12 +58,16 @@ describe('ResultsListing component', () => {
     });
 
     it('does not display the no results found message if there are results', () => {
-      const result = [{ references: [], words: [], translation: '' }];
+      const response = {
+        ...blankResponse,
+        results: [{ references: [], words: [], translation: '' }],
+      };
       const { queryByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -76,12 +92,16 @@ describe('ResultsListing component', () => {
           ],
         ],
       };
-      const result = [{ references: [], words: [], translation: '' }];
+      const response = {
+        ...blankResponse,
+        results: [{ references: [], words: [], translation: '' }],
+      };
       const { getByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={query}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -101,12 +121,13 @@ describe('ResultsListing component', () => {
           ],
         ],
       };
-      const result: SuccessResult = [];
+      const response = blankResponse;
       const { getByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={query}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -117,12 +138,16 @@ describe('ResultsListing component', () => {
 
   describe('copyright notice', () => {
     it('renders the required copyright notice', () => {
-      const result = [{ references: [], words: [], translation: '' }];
+      const response = {
+        ...blankResponse,
+        results: [{ references: [], words: [], translation: '' }],
+      };
       const { getByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -137,12 +162,16 @@ describe('ResultsListing component', () => {
     });
 
     it('renders the required link to ESV.org', () => {
-      const result = [{ references: [], words: [], translation: '' }];
+      const response = {
+        ...blankResponse,
+        results: [{ references: [], words: [], translation: '' }],
+      };
       const { getByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -152,12 +181,13 @@ describe('ResultsListing component', () => {
     });
 
     it('does not render the copyright notice and link if there are no results', () => {
-      const result: SuccessResult = [];
+      const response = blankResponse;
       const { queryByText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -169,15 +199,19 @@ describe('ResultsListing component', () => {
 
   describe('pagination', () => {
     it('displays the correct pages in the pagination if there are results', () => {
-      const result: SuccessResult = [];
-      for (let i = 0; i < 23; i++) {
-        result.push({ references: [], words: [], translation: '' });
-      }
+      const response = {
+        pagination: {
+          page: 1,
+          totalPages: 3,
+        },
+        results: [{ references: [], words: [], translation: '' }],
+      };
       const { getAllByLabelText, queryAllByLabelText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
@@ -189,34 +223,37 @@ describe('ResultsListing component', () => {
     });
 
     it('goes to the right page when the pagination is clicked', () => {
-      const result: SuccessResult = [];
-      for (let i = 0; i < 23; i++) {
-        result.push({ references: [], words: [], translation: `passage ${i}` });
-      }
-      const { getAllByLabelText, getByText, queryByText } = render(
+      const response = {
+        pagination: {
+          page: 1,
+          totalPages: 3,
+        },
+        results: [{ references: [], words: [], translation: '' }],
+      };
+      const goToPageCallback = jest.fn();
+      const { getAllByLabelText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={goToPageCallback}
             closeResults={() => {}}
           />
         </TextContextProvider>
       );
       const page2Button = getAllByLabelText('Go to page 2')[0];
       fireEvent.click(page2Button);
-      expect(queryByText('passage 9')).toBeNull();
-      expect(getByText('passage 10')).toBeInTheDocument();
-      expect(getByText('passage 19')).toBeInTheDocument();
-      expect(queryByText('passage 20')).toBeNull();
+      expect(goToPageCallback).toHaveBeenCalledWith(2);
     });
 
     it('does not display pagination if there are no results', () => {
-      const result: SuccessResult = [];
+      const response = blankResponse;
       const { queryAllByLabelText } = render(
         <TextContextProvider text={TextName.NLF}>
           <ResultsListing
             query={{ sequences: [] }}
-            results={result}
+            response={response}
+            goToPage={() => {}}
             closeResults={() => {}}
           />
         </TextContextProvider>
