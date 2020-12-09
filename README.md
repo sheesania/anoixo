@@ -1,6 +1,3 @@
-test branch 1
-test branch 2
-
 ![Friendly robot logo](logo.png)
 # Anoixo: Grammatical Bible Search
 [Anoixo](#why-anoixo) (a-NOIKS-oh [ə'nɔikso]) is a web app for finding morphological and syntactic constructions in the Bible in its original languages.
