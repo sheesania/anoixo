@@ -262,7 +262,17 @@ class Nestle1904LowfatProvider(TextProvider):
                 return map {{
                   "text": local:punctuated($w),
                   "matchedSequence": {matched_sequence_switch},
-                  "matchedWordQuery": {matched_word_query_switch}
+                  "matchedWordQuery": {matched_word_query_switch},
+                  "class": data($w/@class),
+                  "lemma": data($w/@lemma),
+                  "normalized": data($w/@normalized),
+                  "person": data($w/@person),
+                  "number": data($w/@number),
+                  "gender": data($w/@gender),
+                  "case": data($w/@case),
+                  "tense": data($w/@tense),
+                  "voice": data($w/@voice),
+                  "mood": data($w/@mood)
                 }}
               }}
             }}
