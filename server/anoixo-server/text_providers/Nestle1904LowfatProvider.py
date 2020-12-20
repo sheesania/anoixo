@@ -252,7 +252,7 @@ class Nestle1904LowfatProvider(TextProvider):
             for $sentence in //sentence
             {get_matching_sequences}
             {where_matching_sequences_found}
-            return map {{ nu
+            return map {{
               "references": array {{for $ref in $sentence//milestone/@id return string($ref)}},
               "sentence": $sentence//p/text(),
               "words":  array {{
@@ -307,10 +307,11 @@ class Nestle1904LowfatProvider(TextProvider):
                 on_parsing_error('Results are not a list')
 
             for result in results_json:
-                for word in result["words"]:
-                    for attribute in allowed_attributes:
-                        if word[attribute] is None:
-                            del word[attribute]
+                for i, word in enumerate(result["words"]):
+                    result["words"][i] = {
+                        key: word[key] for key in word
+                            if word[key] is not None
+                    }
 
             num_results = len(results_json)
             total_pages = math.ceil(num_results / app_constants.page_size) or 1
