@@ -238,6 +238,14 @@ class Nestle1904LowfatProvider(TextProvider):
         # else -1
         matched_word_query_switch = '\nelse '.join(word_query_index_getters) + '\nelse -1'
 
+        # Goes through allowed_attributes and makes a string to include in the XQuery that gets all their data
+        # Each line will look something like:
+        # "class": data($w/@class),
+        generated_attributes = ""
+        for attribute in allowed_attributes:
+            generated_attributes = generated_attributes + """,
+                  \"""" + attribute + "\": data($w/@" + attribute + ")"
+
         return f"""
         declare function local:punctuated($w as node()) as xs:string {{
           let $punc := $w/following-sibling::*[1][name()='pc']
@@ -262,17 +270,7 @@ class Nestle1904LowfatProvider(TextProvider):
                 return map {{
                   "text": local:punctuated($w),
                   "matchedSequence": {matched_sequence_switch},
-                  "matchedWordQuery": {matched_word_query_switch},
-                  "class": data($w/@class),
-                  "lemma": data($w/@lemma),
-                  "normalized": data($w/@normalized),
-                  "person": data($w/@person),
-                  "number": data($w/@number),
-                  "gender": data($w/@gender),
-                  "case": data($w/@case),
-                  "tense": data($w/@tense),
-                  "voice": data($w/@voice),
-                  "mood": data($w/@mood)
+                  "matchedWordQuery": {matched_word_query_switch}{generated_attributes}
                 }}
               }}
             }}
