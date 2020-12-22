@@ -90,6 +90,57 @@ def test_closes_basex_session_even_on_errors(mocker, basex_session_mock, provide
     assert basex_session_mock.return_value.close.call_count == 3
 
 
+def test_build_query_string_adds_extra_attributes(mocker, basex_session_mock, provider):
+    basex_query_spy = mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '[]')
+    query = TextQuery({
+        'sequences': [
+            [
+                {
+                    'attributes': {
+                        'lemma': 'λόγος'
+                    }
+                },
+                {
+                    # no attributes
+                }
+            ]
+        ]
+    }, lambda x: None)
+    provider.text_query(query)
+    assert """"class": data($w/@class),
+                  "lemma": data($w/@lemma),
+                  "normalized": data($w/@normalized),
+                  "person": data($w/@person),
+                  "number": data($w/@number),
+                  "gender": data($w/@gender),
+                  "case": data($w/@case),
+                  "tense": data($w/@tense),
+                  "voice": data($w/@voice),
+                  "mood": data($w/@mood)""" in basex_query_spy.call_args.args[1]
+
+# put test_build_query_string_returns_extra_attributes
+# put all non-null things
+# it kind of checks returning attributes which are not null as well?
+
+
+def test_text_query_excludes_null_attributes(mocker, basex_session_mock, provider):
+    basex_results = ['{"references": ["Mark.1.1"], "words": [{"gender": "feminine", "matchedSequence": -1, "text": "ἣν", "tense": null, "matchedWordQuery": -1}]}']
+    basex_string = f'[{",".join(basex_results)}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert "tense" not in result.passages[0].words[0].attributes
+
+
+def test_text_query_does_not_have_null_attributes(mocker, basex_session_mock, provider):
+    basex_results = [
+        '{"references": ["Mark.1.1"], "words": [{"gender": "feminine", "matchedSequence": -1, "text": "ἣν", "tense": null, "matchedWordQuery": -1}]}']
+    basex_string = f'[{",".join(basex_results)}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    for attribute in result.passages[0].words[0].attributes:
+        assert result.passages[0].words[0].attributes[attribute] is not None
+
+
 def test_text_query_adds_pagination_info(mocker, basex_session_mock, provider):
     basex_results = ['{"references": ["Mark.1.1"], "words": []}' for _ in range(23)]
     basex_string = f'[{",".join(basex_results)}]'
