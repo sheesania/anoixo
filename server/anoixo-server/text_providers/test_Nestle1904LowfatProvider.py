@@ -90,6 +90,39 @@ def test_closes_basex_session_even_on_errors(mocker, basex_session_mock, provide
     assert basex_session_mock.return_value.close.call_count == 3
 
 
+def test_build_query_string_adds_extra_attributes(mocker, basex_session_mock, provider):
+    basex_query_spy = mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '[]')
+    query = TextQuery({'sequences': [[{'attributes': {'lemma': 'λόγος'}}]]}, lambda x: None)
+    provider.text_query(query)
+    assert '"class": data($w/@class)' in basex_query_spy.call_args.args[1]
+    assert '"lemma": data($w/@lemma)' in basex_query_spy.call_args.args[1]
+    assert '"normalized": data($w/@normalized)' in basex_query_spy.call_args.args[1]
+    assert '"person": data($w/@person)' in basex_query_spy.call_args.args[1]
+    assert '"number": data($w/@number)' in basex_query_spy.call_args.args[1]
+    assert '"gender": data($w/@gender)' in basex_query_spy.call_args.args[1]
+    assert '"case": data($w/@case)' in basex_query_spy.call_args.args[1]
+    assert '"tense": data($w/@tense)' in basex_query_spy.call_args.args[1]
+    assert '"voice": data($w/@voice)' in basex_query_spy.call_args.args[1]
+    assert '"mood": data($w/@mood)' in basex_query_spy.call_args.args[1]
+
+
+def test_text_query_includes_extra_attributes(mocker, basex_session_mock, provider):
+    basex_results = [
+        '{"references": ["Mark.1.1"], "words": [{"gender": "feminine", "matchedSequence": -1, "text": "ἣν", "matchedWordQuery": -1}]}']
+    basex_string = f'[{",".join(basex_results)}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert result.passages[0].words[0].attributes["gender"] == "feminine"
+
+
+def test_text_query_excludes_null_attributes(mocker, basex_session_mock, provider):
+    basex_results = ['{"references": ["Mark.1.1"], "words": [{"gender": "feminine", "matchedSequence": -1, "text": "ἣν", "tense": null, "matchedWordQuery": -1}]}']
+    basex_string = f'[{",".join(basex_results)}]'
+    mock_basex_on_query_execute(mocker, basex_session_mock, lambda: basex_string)
+    result = provider.text_query(TextQuery({'sequences': []}, lambda x: None))
+    assert "tense" not in result.passages[0].words[0].attributes
+
+
 def test_text_query_adds_pagination_info(mocker, basex_session_mock, provider):
     basex_results = ['{"references": ["Mark.1.1"], "words": []}' for _ in range(23)]
     basex_string = f'[{",".join(basex_results)}]'

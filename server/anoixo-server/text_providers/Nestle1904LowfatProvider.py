@@ -238,6 +238,12 @@ class Nestle1904LowfatProvider(TextProvider):
         # else -1
         matched_word_query_switch = '\nelse '.join(word_query_index_getters) + '\nelse -1'
 
+        # Goes through allowed_attributes and makes a string to include in the XQuery that gets all their data
+        # Each line will look something like:
+        # "class": data($w/@class),
+        attribute_getters = [f'"{attribute}": data($w/@{attribute})' for attribute in allowed_attributes]
+        get_addl_attributes = ",\n".join(attribute_getters)
+
         return f"""
         declare function local:punctuated($w as node()) as xs:string {{
           let $punc := $w/following-sibling::*[1][name()='pc']
@@ -262,7 +268,8 @@ class Nestle1904LowfatProvider(TextProvider):
                 return map {{
                   "text": local:punctuated($w),
                   "matchedSequence": {matched_sequence_switch},
-                  "matchedWordQuery": {matched_word_query_switch}
+                  "matchedWordQuery": {matched_word_query_switch},
+                  {get_addl_attributes}
                 }}
               }}
             }}
@@ -295,6 +302,13 @@ class Nestle1904LowfatProvider(TextProvider):
             results_json = json.loads(raw_results)
             if not isinstance(results_json, list):
                 on_parsing_error('Results are not a list')
+
+            for result in results_json:
+                for i, word in enumerate(result["words"]):
+                    result["words"][i] = {
+                        key: word[key] for key in word
+                            if word[key] is not None
+                    }
 
             num_results = len(results_json)
             total_pages = math.ceil(num_results / app_constants.page_size) or 1
