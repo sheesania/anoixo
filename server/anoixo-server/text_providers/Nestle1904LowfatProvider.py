@@ -241,10 +241,8 @@ class Nestle1904LowfatProvider(TextProvider):
         # Goes through allowed_attributes and makes a string to include in the XQuery that gets all their data
         # Each line will look something like:
         # "class": data($w/@class),
-        generated_attributes = ""
-        for attribute in allowed_attributes:
-            generated_attributes = generated_attributes + """,
-                  \"""" + attribute + "\": data($w/@" + attribute + ")"
+        attribute_getters = [f'"{attribute}": data($w/@{attribute})' for attribute in allowed_attributes]
+        get_addl_attributes = ",\n".join(attribute_getters)
 
         return f"""
         declare function local:punctuated($w as node()) as xs:string {{
@@ -270,7 +268,8 @@ class Nestle1904LowfatProvider(TextProvider):
                 return map {{
                   "text": local:punctuated($w),
                   "matchedSequence": {matched_sequence_switch},
-                  "matchedWordQuery": {matched_word_query_switch}{generated_attributes}
+                  "matchedWordQuery": {matched_word_query_switch},
+                  {get_addl_attributes}
                 }}
               }}
             }}

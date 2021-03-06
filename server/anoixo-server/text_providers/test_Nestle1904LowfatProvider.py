@@ -94,16 +94,16 @@ def test_build_query_string_adds_extra_attributes(mocker, basex_session_mock, pr
     basex_query_spy = mock_basex_on_query_execute(mocker, basex_session_mock, lambda: '[]')
     query = TextQuery({'sequences': [[{'attributes': {'lemma': 'λόγος'}}]]}, lambda x: None)
     provider.text_query(query)
-    assert """"class": data($w/@class),
-                  "lemma": data($w/@lemma),
-                  "normalized": data($w/@normalized),
-                  "person": data($w/@person),
-                  "number": data($w/@number),
-                  "gender": data($w/@gender),
-                  "case": data($w/@case),
-                  "tense": data($w/@tense),
-                  "voice": data($w/@voice),
-                  "mood": data($w/@mood)""" in basex_query_spy.call_args.args[1]
+    assert '"class": data($w/@class)' in basex_query_spy.call_args.args[1]
+    assert '"lemma": data($w/@lemma)' in basex_query_spy.call_args.args[1]
+    assert '"normalized": data($w/@normalized)' in basex_query_spy.call_args.args[1]
+    assert '"person": data($w/@person)' in basex_query_spy.call_args.args[1]
+    assert '"number": data($w/@number)' in basex_query_spy.call_args.args[1]
+    assert '"gender": data($w/@gender)' in basex_query_spy.call_args.args[1]
+    assert '"case": data($w/@case)' in basex_query_spy.call_args.args[1]
+    assert '"tense": data($w/@tense)' in basex_query_spy.call_args.args[1]
+    assert '"voice": data($w/@voice)' in basex_query_spy.call_args.args[1]
+    assert '"mood": data($w/@mood)' in basex_query_spy.call_args.args[1]
 
 
 def test_text_query_includes_extra_attributes(mocker, basex_session_mock, provider):
