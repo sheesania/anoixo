@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
+import { useTextSetting, TextSetting } from '../texts/TextSettings';
 import { WordResult } from './ResultTypes';
 import './css/Word.css';
 
@@ -7,18 +8,43 @@ type Props = {
   word: WordResult;
 };
 
+const getAttributeTooltipText = (
+  word: WordResult,
+  currentText: TextSetting<string>
+) => {
+  const attributeElements = [];
+  for (let attribute of currentText.attributeDisplayOrder) {
+    if (!(attribute in word)) {
+      continue;
+    }
+
+    const attrSettings = currentText.attributes[attribute];
+    const attrDisplayName = attrSettings.displayName;
+    let attrValue = word[attribute];
+    if (attrSettings.values) {
+      const valueSettings = attrSettings.values.get(attrValue);
+      if (valueSettings) {
+        attrValue = valueSettings.displayName;
+      }
+    }
+
+    attributeElements.push(
+      <React.Fragment>
+        <strong>{attrDisplayName}: </strong>
+        {attrValue}
+        <br />
+      </React.Fragment>
+    );
+  }
+
+  return <div>{attributeElements}</div>;
+};
+
 const Word: React.FC<Props> = memo((props: Props) => {
   const word = props.word;
 
   const matchedWordClass = word.matchedSequence > -1 ? 'matched-word' : '';
-  const tooltipContent = (
-    <div>
-      <strong>Awoo: </strong>Bewy
-      <br />
-      <strong>Heemin: </strong>Bobo
-      <br />
-    </div>
-  );
+  const tooltipContent = getAttributeTooltipText(word, useTextSetting());
 
   return (
     <Tooltip
