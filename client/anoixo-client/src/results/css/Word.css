@@ -1,0 +1,15 @@
+.matched-word {
+  background-color: lightblue;
+}
+
+.attribute-tooltip {
+  background-color: #e0e0e0;
+  color: rgba(0, 0, 0, 0.87);
+  max-width: 220;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.attribute-tooltip-arrow {
+  color: #e0e0e0;
+}
