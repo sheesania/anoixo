@@ -54,6 +54,8 @@ const Word: React.FC<Props> = memo((props: Props) => {
   return (
     <span
       data-tip={renderToStaticMarkup(tooltipContent)}
+      data-background-color="#e0e0e0"
+      data-text-color="black"
       className={matchedWordClass}
     >
       {word.text}
