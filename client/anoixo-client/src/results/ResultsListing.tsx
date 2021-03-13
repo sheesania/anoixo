@@ -8,7 +8,6 @@ import VerbalizedQuery from './VerbalizedQuery';
 import Alert from '@material-ui/lab/Alert';
 import Pagination from '@material-ui/lab/Pagination';
 import Typography from '@material-ui/core/Typography';
-import ReactTooltip from 'react-tooltip';
 import './css/ResultsListing.css';
 
 type Props = {
@@ -48,8 +47,6 @@ const ResultsListing: React.FC<Props> = (props: Props) => {
         {response.results.map((passage, index) => (
           <PassageCard key={index} passage={passage} passageIndex={index} />
         ))}
-        {/* for attribute tooltips */}
-        <ReactTooltip html={true} clickable={true} />
         {pagination}
       </div>
     );

@@ -1,5 +1,7 @@
 import React, { memo } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { useUID } from 'react-uid';
+import ReactTooltip from 'react-tooltip';
 import Typography from '@material-ui/core/Typography';
 import { useTextSetting, TextSetting } from '../texts/TextSettings';
 import { WordResult } from './ResultTypes';
@@ -50,16 +52,23 @@ const Word: React.FC<Props> = memo((props: Props) => {
 
   const matchedWordClass = word.matchedSequence > -1 ? 'matched-word' : '';
   const tooltipContent = getAttributeTooltipText(word, useTextSetting());
+  const tooltipUid = 'tooltip-' + useUID();
 
   return (
-    <span
-      data-tip={renderToStaticMarkup(tooltipContent)}
-      data-background-color="#e0e0e0"
-      data-text-color="black"
-      className={matchedWordClass}
-    >
-      {word.text}
-    </span>
+    <React.Fragment>
+      <span data-tip="" data-for={tooltipUid} className={matchedWordClass}>
+        {word.text}
+      </span>
+      <ReactTooltip
+        id={tooltipUid}
+        html={true}
+        clickable={true}
+        backgroundColor="#e0e0e0"
+        textColor="black"
+      >
+        {renderToStaticMarkup(tooltipContent)}
+      </ReactTooltip>
+    </React.Fragment>
   );
 });
 
