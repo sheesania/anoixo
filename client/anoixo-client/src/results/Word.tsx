@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import Tooltip from '@material-ui/core/Tooltip';
+import { renderToStaticMarkup } from 'react-dom/server';
+import Typography from '@material-ui/core/Typography';
 import { useTextSetting, TextSetting } from '../texts/TextSettings';
 import { WordResult } from './ResultTypes';
 import './css/Word.css';
@@ -41,7 +42,7 @@ const getAttributeTooltipText = (
     );
   }
 
-  return <div>{attributeElements}</div>;
+  return <Typography variant="body1">{attributeElements}</Typography>;
 };
 
 const Word: React.FC<Props> = memo((props: Props) => {
@@ -51,17 +52,12 @@ const Word: React.FC<Props> = memo((props: Props) => {
   const tooltipContent = getAttributeTooltipText(word, useTextSetting());
 
   return (
-    <Tooltip
-      title={tooltipContent}
-      classes={{
-        tooltip: 'attribute-tooltip',
-        arrow: 'attribute-tooltip-arrow',
-      }}
-      interactive
-      arrow
+    <span
+      data-tip={renderToStaticMarkup(tooltipContent)}
+      className={matchedWordClass}
     >
-      <span className={matchedWordClass}>{word.text}</span>
-    </Tooltip>
+      {word.text}
+    </span>
   );
 });
 
