@@ -20,6 +20,10 @@ const getAttributeTooltipText = (
 
     const attrSettings = currentText.attributes[attribute];
     const attrDisplayName = attrSettings.displayName;
+
+    // Some kinds of attributes have display names for specific values in the settings (for instance, 'ptcp' should be
+    // displayed as 'Participle'). Others don't (lemmas, for instance). So check the settings for a value display
+    // name, and just use the raw value of the attribute otherwise
     let attrValue = word[attribute];
     if (attrSettings.values) {
       const valueSettings = attrSettings.values.get(attrValue);
