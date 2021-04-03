@@ -21,6 +21,7 @@
     "react-dom": "^16.13.1",
     "react-scripts": "3.3.0",
     "react-test-renderer": "^16.13.1",
+    "react-tooltip": "^4.2.15",
     "react-uid": "^2.2.0",
     "typescript": "^3.8.3"
   },
