@@ -7,6 +7,7 @@ Try it out at http://anoixo.sheesania.com/!
 ## Background
 Anoixo was developed at Taylor University.
 
+- [Here's a quick intro to Anoixo, the problems it solves, and the technical design from my senior project presentation](https://drive.google.com/file/d/1FMJDJQPTuPu5CdDPbUqUXINAtNcARxVG/view?usp=sharing)
 - [Original project proposal with background, rationale, and a survey of existing morphological/syntactic search tools](https://docs.google.com/document/d/1tC8CPp7WmkOH8jjgBRM_YxbxWEMFS7oJpzKfHDsqlTA/edit?usp=sharing)
 - [A list of use cases for this tool](https://docs.google.com/document/d/1QOQpY0kGr6Km8lhTpPEhFMSxMB0C4uTeNH45Kl_2SKg/edit?usp=sharing)
 
