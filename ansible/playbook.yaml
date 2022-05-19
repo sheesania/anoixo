@@ -14,11 +14,6 @@
         filename: nodesource
         state: present
 
-    - name: configure certbot PPA
-      when: enable_https
-      apt_repository:
-        repo: ppa:certbot/certbot
-
     - name: install apt packages
       apt:
         pkg: "{{ item }}"
@@ -35,12 +30,9 @@
 
     - name: install certbot packages
       when: enable_https
-      apt:
-        pkg: "{{ item }}"
-        update_cache: yes
-      loop:
-        - certbot
-        - python3-certbot-nginx
+      snap:
+        name: certbot
+        classic: yes
 
 - name: setup firewall
   hosts: staging, production
