@@ -27,6 +27,6 @@ pytest-mock==2.0.0
 six==1.13.0
 typing-extensions==3.7.4.1
 wcwidth==0.1.8
-Werkzeug==0.16.0
+Werkzeug==2.2.3
 yarl==1.4.2
 zipp==3.0.0
